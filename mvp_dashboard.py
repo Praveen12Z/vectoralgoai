@@ -7,6 +7,11 @@ import pandas as pd
 import streamlit as st
 import yaml
 import joblib
+def run_mvp_dashboard():
+    # paste your full MVP code here
+    # Example:
+    st.title("VectorAlgoAI Trading Dashboard")
+    # ... rest of your original Streamlit app ...
 
 # Optional: OpenAI for GPT parsing
 try:

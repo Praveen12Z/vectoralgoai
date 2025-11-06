@@ -13,188 +13,87 @@ st.set_page_config(
 # ---------------- CSS ----------------
 st.markdown("""
 <style>
-/* Hide default Streamlit chrome */
-header[data-testid="stHeader"] {display: none;}
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
+header[data-testid="stHeader"] {display:none;}
+#MainMenu, footer {visibility:hidden;}
 
-/* Main container padding */
-.block-container {
-    padding-top: 90px !important;
-    padding-bottom: 40px !important;
+.block-container {padding-top:90px!important; padding-bottom:40px!important;}
+body,.stApp {
+  background:radial-gradient(circle at 20% 20%,#001b2e 0%,#000814 90%)!important;
+  color:#f8fafc!important;
+  font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
+h1,h2,h3,h4{font-weight:700}
 
-/* Global background + typography */
-body, .stApp {
-    background: radial-gradient(circle at 20% 20%, #001b2e 0%, #000814 90%) !important;
-    color: #f8fafc !important;
-    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-h1, h2, h3, h4 {font-weight: 700;}
+/* Navbar */
+.navbar{position:fixed;top:0;left:0;right:0;height:64px;
+background:rgba(3,7,18,0.85);backdrop-filter:blur(18px);
+display:flex;justify-content:space-between;align-items:center;
+padding:0 5%;border-bottom:1px solid rgba(148,163,184,0.35);z-index:9999}
+.nav-logo{display:flex;align-items:center;gap:.5rem;font-weight:700;
+font-size:1.15rem;color:#e5f2ff;letter-spacing:.04em}
+.nav-logo-mark{width:22px;height:22px;border-radius:7px;
+background:conic-gradient(from 160deg,#22d3ee,#a855f7,#22c55e,#22d3ee);
+box-shadow:0 0 18px rgba(56,189,248,0.7)}
+.nav-logo span:last-child{background:linear-gradient(90deg,#38bdf8,#22c55e);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-menu a{margin:0 .7rem;text-decoration:none;font-weight:500;font-size:.95rem;
+color:#cbd5f5;transition:.18s ease}
+.nav-menu a:hover{color:#22d3ee}
 
-/* NAVBAR */
-.navbar {
-    position: fixed; top: 0; left: 0; right: 0;
-    height: 64px;
-    background: rgba(3,7,18,0.85);
-    backdrop-filter: blur(18px);
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 5%;
-    border-bottom: 1px solid rgba(148,163,184,0.35);
-    z-index: 9999;
-}
-.nav-logo {
-    display: flex; align-items: center; gap: 0.5rem;
-    font-weight: 700;
-    font-size: 1.15rem;
-    color: #e5f2ff;
-    letter-spacing: 0.04em;
-}
-.nav-logo-mark {
-    width: 22px; height: 22px;
-    border-radius: 7px;
-    background: conic-gradient(from 160deg, #22d3ee, #a855f7, #22c55e, #22d3ee);
-    box-shadow: 0 0 18px rgba(56,189,248,0.7);
-}
-.nav-logo span:last-child {
-    background: linear-gradient(90deg, #38bdf8, #22c55e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.nav-menu a {
-    margin: 0 0.7rem;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.95rem;
-    color: #cbd5f5;
-    transition: 0.18s ease;
-}
-.nav-menu a:hover { color: #22d3ee; }
+/* Hero */
+.hero{text-align:center;padding-top:10px;padding-bottom:60px}
+.hero h1{font-size:3rem;line-height:1.15;margin-bottom:.7rem;
+background:linear-gradient(90deg,#22d3ee,#a855f7,#22c55e);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{max-width:700px;margin:auto;color:#94a3b8;font-size:1.05rem}
 
-/* HERO */
-.hero {
-    text-align: center;
-    padding-top: 10px;
-    padding-bottom: 60px;
+/* Launch box + pulse */
+@keyframes pulseGlow{
+  0%{box-shadow:0 0 20px rgba(34,197,94,.6),inset 0 0 12px rgba(16,185,129,.25)}
+  50%{box-shadow:0 0 30px rgba(34,197,94,.9),inset 0 0 14px rgba(16,185,129,.4)}
+  100%{box-shadow:0 0 20px rgba(34,197,94,.6),inset 0 0 12px rgba(16,185,129,.25)}
 }
-.hero h1 {
-    font-size: 3rem;
-    line-height: 1.15;
-    margin-bottom: 0.7rem;
-    background: linear-gradient(90deg, #22d3ee, #a855f7, #22c55e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.hero p {
-    max-width: 700px;
-    margin: auto;
-    color: #94a3b8;
-    font-size: 1.05rem;
-}
+.launch-box{display:inline-block;margin-top:20px;padding:12px 30px;border-radius:16px;
+background:rgba(16,185,129,.08);border:1px solid rgba(34,197,94,.45);color:#a7f3d0;
+font-size:1.2rem;font-weight:600;letter-spacing:.04em;text-align:center;
+text-shadow:0 0 8px rgba(52,211,153,.5);backdrop-filter:blur(6px);
+animation:pulseGlow 2.8s infinite ease-in-out}
+.launch-box span{color:#22c55e;font-weight:700}
 
-/* --- LAUNCH DATE BOX (Style C) --- */
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 20px rgba(34,197,94,0.6), inset 0 0 12px rgba(16,185,129,0.25); }
-  50% { box-shadow: 0 0 30px rgba(34,197,94,0.9), inset 0 0 14px rgba(16,185,129,0.4); }
-  100% { box-shadow: 0 0 20px rgba(34,197,94,0.6), inset 0 0 12px rgba(16,185,129,0.25); }
-}
-.launch-box {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 30px;
-    border-radius: 16px;
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(34,197,94,0.45);
-    color: #a7f3d0;
-    font-size: 1.2rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-align: center;
-    text-shadow: 0 0 8px rgba(52,211,153,0.5);
-    backdrop-filter: blur(6px);
-    animation: pulseGlow 2.8s infinite ease-in-out;
-}
-.launch-box span { color: #22c55e; font-weight: 700; }
+/* Countdown glow */
+.countdown-wrapper{margin-top:26px;animation:pulseGlow 3s infinite ease-in-out}
+.countdown{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.countdown-item{background:rgba(15,23,42,.85);border-radius:12px;padding:10px 14px;
+min-width:70px;border:1px solid rgba(34,197,94,.45)}
+.countnum{font-size:1.4rem;font-weight:700;color:#22d3ee}
+.countlbl{font-size:.75rem;color:#9ca3af;text-transform:uppercase}
 
-/* COUNTDOWN - GLOW STYLE */
-.countdown-wrapper {
-    margin-top: 26px;
-    animation: pulseGlow 3s infinite ease-in-out;
-}
-.countdown {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.countdown-item {
-    background: rgba(15,23,42,0.85);
-    border-radius: 12px;
-    padding: 10px 14px;
-    min-width: 70px;
-    border: 1px solid rgba(34,197,94,0.45);
-}
-.countnum { font-size: 1.4rem; font-weight: 700; color: #22d3ee; }
-.countlbl { font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; }
+/* Buttons */
+.btn-primary{background:radial-gradient(circle at 0% 0%,#4ade80,#16a34a);
+padding:.75rem 1.7rem;border-radius:999px;font-weight:600;color:#022c22;
+box-shadow:0 0 26px rgba(34,197,94,.55);text-decoration:none;display:inline-block;
+transition:all .25s}
+.btn-primary:hover{transform:translateY(-1px) scale(1.04);
+box-shadow:0 0 40px rgba(34,197,94,.9)}
 
-/* BUTTONS */
-.btn-primary {
-    background: radial-gradient(circle at 0% 0%, #4ade80, #16a34a);
-    padding: 0.75rem 1.7rem;
-    border-radius: 999px;
-    font-weight: 600;
-    color: #022c22;
-    box-shadow: 0 0 26px rgba(34,197,94,0.55);
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.25s;
-}
-.btn-primary:hover {
-    transform: translateY(-1px) scale(1.04);
-    box-shadow: 0 0 40px rgba(34,197,94,0.9);
-}
+/* Sections */
+.section{padding:70px 8% 0 8%;text-align:center}
+.section h2{font-size:2rem;margin-bottom:.4rem}
+.section p{color:#94a3b8}
 
-/* SECTIONS */
-.section {
-    padding: 70px 8% 0 8%;
-    text-align: center;
-}
-.section h2 {
-    font-size: 2rem;
-    margin-bottom: 0.4rem;
-}
-.section p { color: #94a3b8; }
+/* Cards */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:24px;margin-top:40px}
+.card{background:rgba(15,23,42,.75);border:1px solid rgba(148,163,184,.45);
+border-radius:20px;padding:22px;backdrop-filter:blur(12px);
+box-shadow:0 18px 45px rgba(15,23,42,.9);transition:.25s ease}
+.card:hover{transform:translateY(-5px);
+box-shadow:0 22px 55px rgba(34,197,94,.25)}
+.card h4{margin-bottom:.4rem}
+.card p{color:#cbd5f5;font-size:.95rem}
 
-/* FEATURE CARDS */
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
-    margin-top: 40px;
-}
-.card {
-    background: rgba(15,23,42,0.75);
-    border: 1px solid rgba(148,163,184,0.45);
-    border-radius: 20px;
-    padding: 22px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 18px 45px rgba(15,23,42,0.9);
-    transition: 0.25s ease;
-}
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 22px 55px rgba(34,197,94,0.25);
-}
-.card h4 { margin-bottom: 0.4rem; }
-.card p { color: #cbd5f5; font-size: 0.95rem; }
-
-/* FOOTER */
-.footer {
-    padding: 40px 0 10px 0;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #64748b;
-}
+/* Footer */
+.footer{padding:40px 0 10px 0;text-align:center;font-size:.9rem;color:#64748b}
 </style>
 """, unsafe_allow_html=True)
 
@@ -204,7 +103,6 @@ def countdown():
     delta = LAUNCH_DATE - now
     st.markdown("<div class='countdown-wrapper'>", unsafe_allow_html=True)
     if delta.total_seconds() < 0:
-        st.markdown("</div>", unsafe_allow_html=True)
         st.success("🚀 VectorAlgoAI has launched!")
         return
     days = delta.days
@@ -217,8 +115,7 @@ def countdown():
         <div class='countdown-item'><div class='countnum'>{mins}</div><div class='countlbl'>Mins</div></div>
         <div class='countdown-item'><div class='countnum'>{secs}</div><div class='countlbl'>Secs</div></div>
     </div>
-    </div>
-    """, unsafe_allow_html=True)
+    </div>""", unsafe_allow_html=True)
 
 # ---------------- Navbar ----------------
 st.markdown("""
@@ -229,6 +126,7 @@ st.markdown("""
   </div>
   <div class="nav-menu">
     <a href="#home">Home</a>
+    <a href="#about">About</a>
     <a href="#services">Services</a>
     <a href="#founders">Founders</a>
     <a href="#mvp">MVP</a>
@@ -247,8 +145,23 @@ st.markdown("""
   <a href="#mvp" class="btn-primary">Launch Trading Lab</a>
 </section>
 """, unsafe_allow_html=True)
-
 countdown()
+
+# ---------------- About ----------------
+st.markdown("""
+<section class="section" id="about">
+  <h2>About VectorAlgoAI</h2>
+  <p>VectorAlgoAI was founded with a single goal — to bridge the gap between advanced Artificial Intelligence and everyday traders. 
+  We believe AI shouldn’t be reserved for hedge funds and quant desks. 
+  Our mission is to make intelligent automation accessible, transparent, and personal for every trader in the world.</p>
+  <p>Our journey began when we realized that traders waste countless hours manually testing strategies or coding bots that quickly become obsolete. 
+  By combining deep learning models, news sentiment analysis, and intuitive design, we built a platform that understands traders’ language — literally. 
+  You describe your idea, VectorAlgoAI builds the strategy, tests it, and explains the logic behind each trade.</p>
+  <p>We’re building the future of trading — one where AI doesn’t replace the trader, but empowers them with clarity, speed, and precision. 
+  Whether you’re a beginner experimenting with indicators or a professional fine-tuning risk parameters, 
+  VectorAlgoAI is your AI-powered copilot in the markets.</p>
+</section>
+""", unsafe_allow_html=True)
 
 # ---------------- Services ----------------
 st.markdown("""
@@ -256,22 +169,14 @@ st.markdown("""
   <h2>Our Core Features</h2>
   <p>Everything you need to go from idea → strategy → automation.</p>
   <div class="card-grid">
-    <div class="card">
-      <h4>🧠 Strategy-to-Bot Engine</h4>
-      <p>Convert plain-English trading ideas into rule-based bots and executable strategies automatically.</p>
-    </div>
-    <div class="card">
-      <h4>📈 Hybrid AI Signal Layer</h4>
-      <p>Combine ML models, indicators, and regime filters to generate adaptive market signals.</p>
-    </div>
-    <div class="card">
-      <h4>📰 News Intelligence</h4>
-      <p>AI parses real-time news and macro events to align your strategy with sentiment and risk.</p>
-    </div>
-    <div class="card">
-      <h4>🧩 Explainable Decisions</h4>
-      <p>Every signal includes reasoning — transparency and trust in your AI system.</p>
-    </div>
+    <div class="card"><h4>🧠 Strategy-to-Bot Engine</h4>
+      <p>Convert plain-English trading ideas into rule-based bots and executable strategies automatically.</p></div>
+    <div class="card"><h4>📈 Hybrid AI Signal Layer</h4>
+      <p>Combine ML models, indicators, and regime filters to generate adaptive market signals.</p></div>
+    <div class="card"><h4>📰 News Intelligence</h4>
+      <p>AI parses real-time news and macro events to align your strategy with sentiment and risk.</p></div>
+    <div class="card"><h4>🧩 Explainable Decisions</h4>
+      <p>Every signal includes reasoning — transparency and trust in your AI system.</p></div>
   </div>
 </section>
 """, unsafe_allow_html=True)
@@ -285,12 +190,19 @@ st.markdown("""
     <div class="card">
       <h4>Praveen Kumar</h4>
       <p><strong>Founder & AI Architect</strong></p>
-      <p>Praveen Kumar is the technical architect and creator behind VectorAlgoAI. With a deep background in Artificial Intelligence, quantitative trading, and neural network design, he brings 7+ years of experience building intelligent trading systems. His vision is to democratize access to AI-driven trading automation — empowering every trader, regardless of coding skill, to build institutional-grade systems.</p>
+      <p>Praveen Kumar is the technical architect and creator behind VectorAlgoAI. 
+      With a deep background in Artificial Intelligence, quantitative trading, and neural network design, 
+      he brings 7+ years of experience building intelligent trading systems. 
+      His vision is to democratize access to AI-driven trading automation — empowering every trader, regardless of coding skill, 
+      to build institutional-grade systems.</p>
     </div>
     <div class="card">
       <h4>Sandhya Moni</h4>
       <p><strong>Co-Founder & Product Strategist</strong></p>
-      <p>Sandhya Moni leads VectorAlgoAI’s product and business strategy. With a background in digital product management and leadership at global firms like Electrolux, she ensures that every AI feature serves real trader workflows. Her strategic mindset shapes the platform’s user experience, growth, and brand direction.</p>
+      <p>Sandhya Moni leads VectorAlgoAI’s product and business strategy. 
+      With a background in digital product management and leadership at global firms like Electrolux, 
+      she ensures that every AI feature serves real trader workflows. 
+      Her strategic mindset shapes the platform’s user experience, growth, and brand direction.</p>
     </div>
   </div>
 </section>
@@ -311,23 +223,14 @@ st.markdown("""
   <h2>Contact & Early Access</h2>
   <p>We’d love to hear from you. Reach out depending on what you need.</p>
   <div class="card-grid">
-    <div class="card">
-      <h4>🚀 Early Access & Founder Chat</h4>
-      <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a></p>
-    </div>
-    <div class="card">
-      <h4>📩 General Questions & Support</h4>
-      <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#38bdf8;">contact@vectoralgoai.com</a></p>
-    </div>
-    <div class="card">
-      <h4>📚 Info & Documentation</h4>
-      <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a></p>
-    </div>
-  </div>
-  <br>
-  <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">
-    Join Early Access
-  </a>
+    <div class="card"><h4>🚀 Early Access & Founder Chat</h4>
+      <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a></p></div>
+    <div class="card"><h4>📩 General Questions & Support</h4>
+      <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#38bdf8;">contact@vectoralgoai.com</a></p></div>
+    <div class="card"><h4>📚 Info & Documentation</h4>
+      <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a></p></div>
+  </div><br>
+  <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">Join Early Access</a>
 </section>
 """, unsafe_allow_html=True)
 

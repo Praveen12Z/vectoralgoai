@@ -424,30 +424,55 @@ def compute_model_features(close: pd.Series) -> pd.DataFrame:
 
 
 def get_ml_predictions(symbol: str, timeframe: str, df: pd.DataFrame):
+    """
+    Returns (df_with_ai, prob_series, description)
+
+    - If a real model bundle exists in models/eurusd_1h_clf.pkl and symbol/timeframe match,
+      use it to compute probabilities.
+    - Otherwise, create a smooth, demo-style probability series from price action so
+      the UI still shows an 'AI' overlay for investors / testers.
+    """
     bundle = load_ml_model(symbol, timeframe)
-    if bundle is None:
-        return df, None, "No ML model available for this symbol/timeframe yet."
 
-    model = bundle["model"]
-    feature_names = bundle.get(
-        "feature_names",
-        ["ret_1", "ret_3", "ret_6", "ema_10", "ema_20", "ema_50", "rsi_14", "vol_20"],
-    )
+    # ----- REAL MODEL AVAILABLE -----
+    if bundle is not None:
+        model = bundle["model"]
+        feature_names = bundle.get(
+            "feature_names",
+            ["ret_1", "ret_3", "ret_6", "ema_10", "ema_20", "ema_50", "rsi_14", "vol_20"],
+        )
 
-    feat = compute_model_features(df["close"])
-    if feat.empty:
-        return df, None, "Not enough data to compute AI features."
+        feat = compute_model_features(df["close"])
+        if feat.empty:
+            return df, None, "Not enough data to compute AI features."
 
-    X = feat[feature_names].values
-    probs = model.predict_proba(X)[:, 1]
-    prob_series = pd.Series(probs, index=feat.index, name="ai_prob_up")
+        X = feat[feature_names].values
+        probs = model.predict_proba(X)[:, 1]
+        prob_series = pd.Series(probs, index=feat.index, name="ai_prob_up")
 
+        df_ai = df.copy()
+        df_ai["ai_prob_up"] = prob_series.reindex(df_ai.index)
+
+        desc = (
+            "AI model (RandomForest) trained on EURUSD 1h predicting the probability "
+            "that the NEXT 1h candle closes higher than the current close."
+        )
+        return df_ai, prob_series, desc
+
+    # ----- NO MODEL FILE -> DEMO / SIMULATED AI OVERLAY -----
+    # Use smoothed recent returns to create a pseudo probability in [0.05, 0.95]
+    ret = df["close"].pct_change().fillna(0)
+    signal = ret.rolling(5, min_periods=1).sum()
+    probs = 0.5 + 0.15 * np.tanh(signal * 20)  # squash into range
+    probs = probs.clip(0.05, 0.95)
+
+    prob_series = pd.Series(probs, index=df.index, name="ai_prob_up")
     df_ai = df.copy()
-    df_ai["ai_prob_up"] = prob_series.reindex(df_ai.index)
+    df_ai["ai_prob_up"] = prob_series
 
     desc = (
-        "AI model (RandomForest) trained on EURUSD 1h predicting the probability "
-        "that the NEXT 1h candle closes higher than the current close."
+        "Prototype AI overlay (simulated from recent price action). "
+        "A real trained model will replace this once models/eurusd_1h_clf.pkl is added."
     )
     return df_ai, prob_series, desc
 
@@ -462,6 +487,15 @@ def run_mvp_dashboard():
     """Called from app.py to render the full MVP dashboard inside the landing page."""
     st.title("📈 VectorAlgoAI – Strategy-to-Bot MVP")
     st.caption("Built by Praveen Kumar – AI-powered trading bot generator (v0.4)")
+    # AI model status (real vs simulated)
+    ml_bundle = load_ml_model("EURUSD", "1h")
+if ml_bundle is not None:
+    st.markdown("🧠 **AI model status:** Real EURUSD 1h classifier loaded.")
+else:
+    st.markdown(
+        "🧠 **AI model status:** Demo probability overlay (no trained model file yet)."
+    )
+
 
     with st.sidebar:
         st.header("⚙️ Settings")

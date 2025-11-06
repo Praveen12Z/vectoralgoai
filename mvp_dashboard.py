@@ -433,8 +433,9 @@ def get_ml_predictions(symbol: str, timeframe: str, df: pd.DataFrame):
       the UI still shows an 'AI' overlay.
     """
     bundle = load_ml_model(symbol, timeframe)
+    close = df["close"].astype(float)
 
-    # Real model available
+    # ---------- REAL MODEL AVAILABLE ----------
     if bundle is not None:
         model = bundle["model"]
         feature_names = bundle.get(
@@ -442,13 +443,29 @@ def get_ml_predictions(symbol: str, timeframe: str, df: pd.DataFrame):
             ["ret_1", "ret_3", "ret_6", "ema_10", "ema_20", "ema_50", "rsi_14", "vol_20"],
         )
 
-        feat = compute_model_features(df["close"])
+        feat = compute_model_features(close)
         if feat.empty:
             return df, None, "Not enough data to compute AI features."
 
         X = feat[feature_names].values
-        probs = model.predict_proba(X)[:, 1]
-        prob_series = pd.Series(probs, index=feat.index, name="ai_prob_up")
+
+        raw_probs = model.predict_proba(X)
+        raw_probs = np.asarray(raw_probs)
+
+        # Ensure 1-D: handle [n,2], [n,1], or [n]
+        if raw_probs.ndim == 2:
+            if raw_probs.shape[1] == 1:
+                probs = raw_probs[:, 0]
+            else:
+                probs = raw_probs[:, 1]  # assume column 1 = prob_up
+        else:
+            probs = raw_probs
+
+        probs = np.asarray(probs, dtype="float64").reshape(-1)
+
+        # Align index with the last len(probs) rows of feat
+        prob_index = feat.index[-len(probs):]
+        prob_series = pd.Series(probs, index=prob_index, name="ai_prob_up")
 
         df_ai = df.copy()
         df_ai["ai_prob_up"] = prob_series.reindex(df_ai.index)
@@ -459,15 +476,19 @@ def get_ml_predictions(symbol: str, timeframe: str, df: pd.DataFrame):
         )
         return df_ai, prob_series, desc
 
-    # No model -> simulated overlay
-    ret = df["close"].pct_change().fillna(0)
+    # ---------- NO MODEL -> SIMULATED OVERLAY ----------
+    # Use smoothed recent returns to synthesize a probability in [0.05, 0.95]
+    ret = close.pct_change().fillna(0.0)
     signal = ret.rolling(5, min_periods=1).sum()
-    probs = 0.5 + 0.15 * np.tanh(signal * 20)
-    probs = probs.clip(0.05, 0.95)
 
-    prob_series = pd.Series(probs, index=df.index, name="ai_prob_up")
+    raw_probs = 0.5 + 0.15 * np.tanh(signal * 20)
+    probs = np.asarray(raw_probs, dtype="float64").reshape(-1)
+    probs = np.clip(probs, 0.05, 0.95)
+
+    prob_series = pd.Series(probs, index=signal.index, name="ai_prob_up")
+
     df_ai = df.copy()
-    df_ai["ai_prob_up"] = prob_series
+    df_ai["ai_prob_up"] = prob_series.reindex(df_ai.index)
 
     desc = (
         "Prototype AI overlay (simulated from recent price action). "

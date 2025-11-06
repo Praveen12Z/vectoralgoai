@@ -118,65 +118,28 @@ h1,h2,h3,h4{font-weight:700}
 .card p{color:#cbd5f5;font-size:.95rem}
 
 /* Social links */
-.social-links{
-  text-align:center;
-  margin-top:50px;
-  margin-bottom:20px;
-}
-.social-icons{
-  display:flex;
-  justify-content:center;
-  gap:40px;
-  margin-top:20px;
-}
-.social-icon{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-decoration:none;
-  color:#e5f2ff;
-  transition:0.3s ease;
-}
-.social-icon i{
-  font-size:32px;
-  margin-bottom:5px;
-  transition:0.3s ease;
-}
-.social-icon span{
-  font-size:0.9rem;
-  color:#cbd5f5;
-}
+.social-links{text-align:center;margin-top:50px;margin-bottom:20px;}
+.social-icons{display:flex;justify-content:center;gap:40px;margin-top:20px;}
+.social-icon{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#e5f2ff;transition:0.3s ease;}
+.social-icon i{font-size:32px;margin-bottom:5px;transition:0.3s ease;}
+.social-icon span{font-size:0.9rem;color:#cbd5f5;}
 
-/* Brand-specific colors */
+/* Brand Colors */
 .social-icon.instagram i{color:#E4405F;}
-.social-icon.twitter i{color:#000000;}
+.social-icon.twitter i{color:#000;}
 .social-icon.linkedin i{color:#0077B5;}
+.social-icon.youtube i{color:#FF0000;}
+.social-icon.telegram i{color:#0088CC;}
 
-.social-icon.instagram:hover i{
-  background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  transform:scale(1.2);
-  text-shadow:0 0 15px rgba(255,105,180,0.8);
-}
-.social-icon.twitter:hover i{
-  color:#000;
-  transform:scale(1.2);
-  text-shadow:0 0 10px rgba(255,255,255,0.5);
-}
-.social-icon.linkedin:hover i{
-  color:#0077B5;
-  transform:scale(1.2);
-  text-shadow:0 0 12px rgba(0,119,181,0.8);
-}
+.social-icon:hover i{transform:scale(1.2);}
+.social-icon.instagram:hover i{text-shadow:0 0 15px rgba(255,105,180,0.8);}
+.social-icon.twitter:hover i{text-shadow:0 0 12px rgba(255,255,255,0.5);}
+.social-icon.linkedin:hover i{text-shadow:0 0 12px rgba(0,119,181,0.8);}
+.social-icon.youtube:hover i{text-shadow:0 0 15px rgba(255,0,0,0.8);}
+.social-icon.telegram:hover i{text-shadow:0 0 15px rgba(0,136,204,0.8);}
 
 /* Footer */
-.footer{
-  padding:40px 0 10px 0;
-  text-align:center;
-  font-size:.9rem;
-  color:#64748b
-}
+.footer{padding:40px 0 10px 0;text-align:center;font-size:.9rem;color:#64748b}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 """, unsafe_allow_html=True)
@@ -236,7 +199,6 @@ st.markdown("""
 <section class="section" id="about">
   <h2>About VectorAlgoAI</h2>
   <p>VectorAlgoAI was founded to bridge the gap between advanced Artificial Intelligence and everyday traders. 
-  We believe AI shouldn’t be reserved for hedge funds and quant desks. 
   Our mission is to make intelligent automation accessible, transparent, and personal for every trader in the world.</p>
 </section>
 """, unsafe_allow_html=True)
@@ -245,7 +207,6 @@ st.markdown("""
 st.markdown("""
 <section class="section" id="services">
   <h2>Our Core Features</h2>
-  <p>Everything you need to go from idea → strategy → automation.</p>
   <div class="card-grid">
     <div class="card"><h4>🧠 Strategy-to-Bot Engine</h4>
       <p>Convert plain-English trading ideas into rule-based bots and executable strategies automatically.</p></div>
@@ -265,14 +226,14 @@ st.markdown("""
   <h2>Meet the Founders</h2>
   <div class="card-grid">
     <div class="card">
-      <h4>Praveen Kumar</h4>
+      <h4>👨‍💻 Praveen Kumar</h4>
       <p><strong>Founder & AI Architect</strong></p>
       <p>Praveen Kumar is the technical architect and creator behind VectorAlgoAI. 
       With deep expertise in Artificial Intelligence, quantitative trading, and neural networks, 
       he brings 7+ years of experience building intelligent trading systems.</p>
     </div>
     <div class="card">
-      <h4>Sandhya Moni</h4>
+      <h4>👩‍💼 Sandhya Moni</h4>
       <p><strong>Co-Founder & Product Strategist</strong></p>
       <p>Sandhya Moni leads product strategy and user experience. 
       Her background in digital product leadership ensures the platform remains focused on real trader workflows.</p>
@@ -294,7 +255,7 @@ run_mvp_dashboard()
 st.markdown("""
 <section class="section" id="contact">
   <h2>Contact & Early Access</h2>
-  <p>We’d love to hear from you. Reach out depending on what you need.</p>
+  <p>We’d love to hear from you.</p>
   <div class="card-grid">
     <div class="card"><h4>🚀 Early Access & Founder Chat</h4>
       <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a></p></div>
@@ -311,20 +272,22 @@ st.markdown("""
 st.markdown("""
 <section class="section">
   <h2>Follow Us</h2>
-  <p>Stay connected for updates, behind-the-scenes, and early access to AI trading innovations.</p>
   <div class="social-links">
     <div class="social-icons">
       <a href="https://instagram.com/vectoralgoai" target="_blank" class="social-icon instagram">
-        <i class="fab fa-instagram"></i>
-        <span>Instagram</span>
+        <i class="fab fa-instagram"></i><span>Instagram</span>
       </a>
       <a href="https://twitter.com/vectoralgoai" target="_blank" class="social-icon twitter">
-        <i class="fab fa-x-twitter"></i>
-        <span>Twitter (X)</span>
+        <i class="fab fa-x-twitter"></i><span>Twitter (X)</span>
       </a>
       <a href="https://linkedin.com/company/vectoralgoai" target="_blank" class="social-icon linkedin">
-        <i class="fab fa-linkedin"></i>
-        <span>LinkedIn</span>
+        <i class="fab fa-linkedin"></i><span>LinkedIn</span>
+      </a>
+      <a href="https://youtube.com/@vectoralgoai" target="_blank" class="social-icon youtube">
+        <i class="fab fa-youtube"></i><span>YouTube</span>
+      </a>
+      <a href="https://t.me/vectoralgoai" target="_blank" class="social-icon telegram">
+        <i class="fab fa-telegram"></i><span>Telegram</span>
       </a>
     </div>
   </div>

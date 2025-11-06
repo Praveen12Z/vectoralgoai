@@ -1,29 +1,18 @@
-# Core framework
-streamlit==1.39.0
+streamlit
+pandas
+numpy
 
-# Data handling
-pandas==2.2.2
-numpy==1.26.4
+pandas_ta
+yfinance
+ta
 
-# Technical indicators and trading tools
-pandas_ta==0.3.14b0
-yfinance==0.2.40
-ta==0.11.0
+scikit-learn
+joblib
 
-# Machine learning and model handling
-scikit-learn==1.5.2
-joblib==1.4.2
+matplotlib
+plotly
 
-# Visualization
-matplotlib==3.9.2
-plotly==5.24.0
-
-# News and sentiment analysis
-openai==1.52.0
-requests==2.32.3
-
-# Time utilities
-python-dateutil==2.9.0
-
-# Optional extras (safe to include)
-tqdm==4.66.5
+openai
+requests
+python-dateutil
+tqdm

@@ -489,12 +489,12 @@ def run_mvp_dashboard():
     st.caption("Built by Praveen Kumar – AI-powered trading bot generator (v0.4)")
     # AI model status (real vs simulated)
     ml_bundle = load_ml_model("EURUSD", "1h")
-if ml_bundle is not None:
-    st.markdown("🧠 **AI model status:** Real EURUSD 1h classifier loaded.")
-else:
-    st.markdown(
+      if ml_bundle is not None:
+        st.markdown("🧠 **AI model status:** Real EURUSD 1h classifier loaded.")
+     else:
+       st.markdown(
         "🧠 **AI model status:** Demo probability overlay (no trained model file yet)."
-    )
+      )
 
 
     with st.sidebar:

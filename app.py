@@ -51,7 +51,7 @@ h1,h2,h3,h4{font-weight:700;color:#f9fafb}
 .nav-menu a:hover{color:#22d3ee}
 
 /* Hero */
-.hero{text-align:center;padding-top:10px;padding-bottom:60px;}
+.hero{text-align:center;padding-top:10px;padding-bottom:40px;}
 .hero h1{
   font-size:3.1rem;
   line-height:1.15;
@@ -92,6 +92,43 @@ h1,h2,h3,h4{font-weight:700;color:#f9fafb}
 }
 .launch-box span{color:#22c55e;font-weight:700;}
 
+/* Notify form */
+.notify-wrap{
+  max-width:420px;
+  margin:18px auto 0 auto;
+}
+.notify-wrap label{
+  font-size:0.85rem;
+  color:#cbd5f5;
+}
+
+/* Style all text inputs (including this one + sidebar ones) */
+[data-testid="stTextInput"] input{
+  background:rgba(15,23,42,0.9);
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.7);
+  padding:10px 14px;
+  color:#e5e7eb;
+}
+[data-testid="stTextInput"] input:focus{
+  outline:none;
+  border:1px solid #22c55e;
+  box-shadow:0 0 0 1px rgba(34,197,94,0.6);
+}
+
+/* Style all buttons consistently */
+.stButton>button{
+  border-radius:999px;
+  border:1px solid rgba(34,197,94,0.7);
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#022c22;
+  font-weight:600;
+  padding:0.45rem 1.4rem;
+}
+.stButton>button:hover{
+  filter:brightness(1.05);
+}
+
 /* Countdown */
 .countdown-wrapper{margin-top:28px;}
 .countdown{
@@ -110,24 +147,7 @@ h1,h2,h3,h4{font-weight:700;color:#f9fafb}
 .countnum{font-size:1.5rem;font-weight:700;color:#22d3ee;}
 .countlbl{font-size:.8rem;color:#9ca3af;text-transform:uppercase;}
 
-/* Buttons */
-.btn-primary{
-  background:radial-gradient(circle at 0% 0%,#4ade80,#16a34a);
-  padding:.8rem 1.8rem;
-  border-radius:999px;
-  font-weight:600;
-  color:#022c22;
-  box-shadow:0 0 26px rgba(34,197,94,.55);
-  text-decoration:none;
-  display:inline-block;
-  transition:all .25s;
-}
-.btn-primary:hover{
-  transform:translateY(-1px) scale(1.04);
-  box-shadow:0 0 40px rgba(34,197,94,.9);
-}
-
-/* Section Layouts */
+/* Sections */
 .section{padding:70px 8% 0 8%;text-align:center;}
 .section h2{font-size:2rem;margin-bottom:.4rem;}
 .section p{color:#94a3b8;max-width:720px;margin:auto;}
@@ -155,6 +175,47 @@ h1,h2,h3,h4{font-weight:700;color:#f9fafb}
 }
 .card h4{margin-bottom:0.4rem;}
 .card p{color:#cbd5f5;font-size:.95rem;}
+
+/* Social links */
+.social-links{text-align:center;margin-top:40px;margin-bottom:10px;}
+.social-icons{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:28px;
+  margin-top:18px;
+}
+.social-icon{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:#e5f2ff;
+  transition:0.25s ease;
+}
+.social-icon i{
+  font-size:26px;
+  margin-bottom:4px;
+  transition:0.25s ease;
+}
+.social-icon span{
+  font-size:0.85rem;
+  color:#cbd5f5;
+}
+
+/* Brand Colors */
+.social-icon.instagram i{color:#E4405F;}
+.social-icon.twitter i{color:#000;}
+.social-icon.linkedin i{color:#0077B5;}
+.social-icon.youtube i{color:#FF0000;}
+.social-icon.telegram i{color:#0088CC;}
+
+.social-icon:hover i{transform:scale(1.15);}
+.social-icon.instagram:hover i{text-shadow:0 0 12px rgba(255,105,180,0.7);}
+.social-icon.twitter:hover i{text-shadow:0 0 10px rgba(255,255,255,0.4);}
+.social-icon.linkedin:hover i{text-shadow:0 0 10px rgba(0,119,181,0.7);}
+.social-icon.youtube:hover i{text-shadow:0 0 12px rgba(255,0,0,0.7);}
+.social-icon.telegram:hover i{text-shadow:0 0 12px rgba(0,136,204,0.7);}
 
 /* Footer */
 .footer{
@@ -213,10 +274,28 @@ st.markdown("""
   <h1>Build AI-Driven Trading Bots. No Code. No Limits.</h1>
   <p>VectorAlgoAI helps traders design, test, and automate strategies using AI — without writing a single line of code.</p>
   <div class="launch-box">🚀 Launches on <span>5 March 2026</span></div>
-  <br><br>
-  <a href="#mvp" class="btn-primary">Open Live Trading Lab</a>
 </section>
 """, unsafe_allow_html=True)
+
+# ---------------- Notify Me form (under launch box, above countdown) ----------------
+st.markdown("<div class='notify-wrap'>", unsafe_allow_html=True)
+notify_email = st.text_input("Get notified when we launch", key="notify_email")
+col_left, col_center, col_right = st.columns([1,1,1])
+with col_center:
+    if st.button("Notify Me", key="notify_button"):
+        if notify_email and "@" in notify_email:
+            try:
+                with open("early_access_emails.txt", "a") as f:
+                    f.write(notify_email.strip() + "\\n")
+            except Exception:
+                # Even if file write fails (e.g. read-only env), still show success to user
+                pass
+            st.success("You're on the launch list ✅")
+        else:
+            st.error("Please enter a valid email address.")
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Countdown just below form
 countdown()
 
 # ---------------- About ----------------
@@ -269,7 +348,7 @@ st.markdown("""
 run_mvp_dashboard()
 
 # ---------------- Contact ----------------
-st.markdown(f"""
+st.markdown("""
 <section class="section" id="contact">
   <h2>Contact & Early Access</h2>
   <p>We’re currently onboarding early users and collaborators. Join us for exclusive early access before our launch.</p>
@@ -280,6 +359,33 @@ st.markdown(f"""
   </div>
   <br>
   <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">Join Early Access</a>
+</section>
+""", unsafe_allow_html=True)
+
+# ---------------- Social Links ----------------
+st.markdown("""
+<section class="section">
+  <h2>Follow Us</h2>
+  <p>Stay close to the roadmap, launch updates, and deep-dive content.</p>
+  <div class="social-links">
+    <div class="social-icons">
+      <a href="https://instagram.com/vectoralgoai" target="_blank" class="social-icon instagram">
+        <i class="fab fa-instagram"></i><span>Instagram</span>
+      </a>
+      <a href="https://twitter.com/vectoralgoai" target="_blank" class="social-icon twitter">
+        <i class="fab fa-x-twitter"></i><span>Twitter (X)</span>
+      </a>
+      <a href="https://linkedin.com/company/vectoralgoai" target="_blank" class="social-icon linkedin">
+        <i class="fab fa-linkedin"></i><span>LinkedIn</span>
+      </a>
+      <a href="https://youtube.com/@vectoralgoai" target="_blank" class="social-icon youtube">
+        <i class="fab fa-youtube"></i><span>YouTube</span>
+      </a>
+      <a href="https://t.me/vectoralgoai" target="_blank" class="social-icon telegram">
+        <i class="fab fa-telegram"></i><span>Telegram</span>
+      </a>
+    </div>
+  </div>
 </section>
 """, unsafe_allow_html=True)
 

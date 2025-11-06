@@ -339,14 +339,5 @@ st.markdown(f"""
 Contact: founder@vectoralgoai.com · contact@vectoralgoai.com · info@vectoralgoai.com
 </div>
 """, unsafe_allow_html=True)
-```
 
----
-
-Once you paste this into `app.py`, commit, push, and redeploy:
-
-* Above the countdown you’ll see **“Launches on 5 March 2026”** and below the hero: **“Official launch · 5 March 2026”**
-* The **Contact** section will have three clear cards plus the **Join Early Access** button sending to `founder@vectoralgoai.com`.
-
-If you want to tweak wording or which email is used where, tell me and I’ll adjust copy + links.
 

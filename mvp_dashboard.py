@@ -430,11 +430,11 @@ def get_ml_predictions(symbol: str, timeframe: str, df: pd.DataFrame):
     - If a real model bundle exists in models/eurusd_1h_clf.pkl and symbol/timeframe match,
       use it to compute probabilities.
     - Otherwise, create a smooth, demo-style probability series from price action so
-      the UI still shows an 'AI' overlay for investors / testers.
+      the UI still shows an 'AI' overlay.
     """
     bundle = load_ml_model(symbol, timeframe)
 
-    # ----- REAL MODEL AVAILABLE -----
+    # Real model available
     if bundle is not None:
         model = bundle["model"]
         feature_names = bundle.get(
@@ -459,11 +459,10 @@ def get_ml_predictions(symbol: str, timeframe: str, df: pd.DataFrame):
         )
         return df_ai, prob_series, desc
 
-    # ----- NO MODEL FILE -> DEMO / SIMULATED AI OVERLAY -----
-    # Use smoothed recent returns to create a pseudo probability in [0.05, 0.95]
+    # No model -> simulated overlay
     ret = df["close"].pct_change().fillna(0)
     signal = ret.rolling(5, min_periods=1).sum()
-    probs = 0.5 + 0.15 * np.tanh(signal * 20)  # squash into range
+    probs = 0.5 + 0.15 * np.tanh(signal * 20)
     probs = probs.clip(0.05, 0.95)
 
     prob_series = pd.Series(probs, index=df.index, name="ai_prob_up")
@@ -487,15 +486,15 @@ def run_mvp_dashboard():
     """Called from app.py to render the full MVP dashboard inside the landing page."""
     st.title("📈 VectorAlgoAI – Strategy-to-Bot MVP")
     st.caption("Built by Praveen Kumar – AI-powered trading bot generator (v0.4)")
-    # AI model status (real vs simulated)
-    ml_bundle = load_ml_model("EURUSD", "1h")
-      if ml_bundle is not None:
-        st.markdown("🧠 **AI model status:** Real EURUSD 1h classifier loaded.")
-     else:
-       st.markdown(
-        "🧠 **AI model status:** Demo probability overlay (no trained model file yet)."
-      )
 
+    # Show AI model status
+    ml_bundle = load_ml_model("EURUSD", "1h")
+    if ml_bundle is not None:
+        st.markdown("🧠 **AI model status:** Real EURUSD 1h classifier loaded.")
+    else:
+        st.markdown(
+            "🧠 **AI model status:** Demo probability overlay (no trained model file yet)."
+        )
 
     with st.sidebar:
         st.header("⚙️ Settings")
@@ -595,12 +594,15 @@ def run_mvp_dashboard():
             ["🧾 YAML Config", "🧩 Raw JSON", "📊 Chart + AI", "🧠 Bot Summary"]
         )
 
+        # --- YAML tab ---
         with tab_yaml:
             st.code(config_to_yaml(cfg), language="yaml")
 
+        # --- JSON tab ---
         with tab_json:
             st.json(cfg)
 
+        # --- Chart + AI tab ---
         with tab_chart:
             import plotly.graph_objects as go
 
@@ -624,7 +626,7 @@ def run_mvp_dashboard():
                 sells = plot_df[plot_df["signal_filtered"] == -1]
                 signal_caption = (
                     "Signals filtered by AI: only longs with prob_up ≥ 0.55 "
-                    "and shorts with prob_up ≤ 0.45 (EURUSD 1h model)."
+                    "and shorts with prob_up ≤ 0.45 (EURUSD 1h model or demo overlay)."
                 )
             else:
                 buys = plot_df[plot_df["signal"] == 1]
@@ -643,6 +645,7 @@ def run_mvp_dashboard():
                 )
             )
 
+            # EMAs
             if "ema_fast" in plot_df.columns:
                 fig.add_trace(
                     go.Scatter(
@@ -662,6 +665,7 @@ def run_mvp_dashboard():
                     )
                 )
 
+            # Bollinger bands
             if "bb_upper" in plot_df.columns:
                 fig.add_trace(
                     go.Scatter(
@@ -690,6 +694,7 @@ def run_mvp_dashboard():
                     )
                 )
 
+            # Buy / sell markers
             fig.add_trace(
                 go.Scatter(
                     x=buys.index,
@@ -724,16 +729,13 @@ def run_mvp_dashboard():
             st.caption(signal_caption)
 
             if prob_series is not None:
-                st.subheader("🧠 AI probability of next-bar up (EURUSD 1h model)")
+                st.subheader("🧠 AI probability of next-bar up")
                 st.line_chart(prob_series)
                 st.caption(ai_desc)
             else:
-                st.info(
-                    "No AI model available yet for this symbol/timeframe. "
-                    "Currently only EURUSD 1h is supported.",
-                    icon="🧠",
-                )
+                st.info("No AI probability series available.", icon="🧠")
 
+        # --- Summary tab ---
         with tab_summary:
             summary_lines = [
                 f"**Bot name:** {cfg.get('meta', {}).get('name', 'VectorAlgoAI Bot')}",

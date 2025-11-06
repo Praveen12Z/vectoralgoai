@@ -117,31 +117,67 @@ h1,h2,h3,h4{font-weight:700}
 .card h4{margin-bottom:.4rem}
 .card p{color:#cbd5f5;font-size:.95rem}
 
-/* Social links */
-.social-links{text-align:center;margin-top:50px;margin-bottom:20px;}
-.social-icons{display:flex;justify-content:center;gap:40px;margin-top:20px;}
-.social-icon{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#e5f2ff;transition:0.3s ease;}
-.social-icon i{font-size:32px;margin-bottom:5px;transition:0.3s ease;}
-.social-icon span{font-size:0.9rem;color:#cbd5f5;}
-
-/* Brand Colors */
-.social-icon.instagram i{color:#E4405F;}
-.social-icon.twitter i{color:#000;}
-.social-icon.linkedin i{color:#0077B5;}
-.social-icon.youtube i{color:#FF0000;}
-.social-icon.telegram i{color:#0088CC;}
-
-.social-icon:hover i{transform:scale(1.2);}
-.social-icon.instagram:hover i{text-shadow:0 0 15px rgba(255,105,180,0.8);}
-.social-icon.twitter:hover i{text-shadow:0 0 12px rgba(255,255,255,0.5);}
-.social-icon.linkedin:hover i{text-shadow:0 0 12px rgba(0,119,181,0.8);}
-.social-icon.youtube:hover i{text-shadow:0 0 15px rgba(255,0,0,0.8);}
-.social-icon.telegram:hover i{text-shadow:0 0 15px rgba(0,136,204,0.8);}
+/* Timeline */
+.timeline-wrapper{
+  max-width:850px;
+  margin:40px auto 0 auto;
+  text-align:left;
+}
+.timeline{
+  position:relative;
+  margin-left:10px;
+  padding-left:20px;
+  border-left:2px solid rgba(34,197,94,0.5);
+  box-shadow:0 0 15px rgba(34,197,94,0.25);
+}
+.timeline-item{
+  position:relative;
+  margin-bottom:22px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:slideUp 0.7s forwards;
+}
+.timeline-item:nth-child(1){animation-delay:0.1s;}
+.timeline-item:nth-child(2){animation-delay:0.25s;}
+.timeline-item:nth-child(3){animation-delay:0.4s;}
+.timeline-dot{
+  position:absolute;
+  left:-11px;
+  top:4px;
+  width:14px;height:14px;
+  border-radius:999px;
+  background:radial-gradient(circle,#4ade80,#16a34a);
+  box-shadow:0 0 14px rgba(74,222,128,0.9);
+}
+.timeline-content{margin-left:18px;}
+.timeline-title{
+  font-size:1rem;
+  font-weight:600;
+  color:#e5e7eb;
+}
+.timeline-date{
+  font-size:0.8rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:#a5b4fc;
+}
+.timeline-text{
+  font-size:0.9rem;
+  color:#cbd5f5;
+  margin-top:4px;
+}
+@keyframes slideUp{
+  to {opacity:1;transform:translateY(0);}
+}
 
 /* Footer */
-.footer{padding:40px 0 10px 0;text-align:center;font-size:.9rem;color:#64748b}
+.footer{
+  padding:40px 0 10px 0;
+  text-align:center;
+  font-size:.9rem;
+  color:#64748b
+}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 """, unsafe_allow_html=True)
 
 # ---------------- Countdown helper ----------------
@@ -192,30 +228,94 @@ st.markdown("""
   <a href="#mvp" class="btn-primary">Launch Trading Lab</a>
 </section>
 """, unsafe_allow_html=True)
+
 countdown()
 
-# ---------------- About ----------------
+# ---------------- About Section ----------------
 st.markdown("""
 <section class="section" id="about">
   <h2>About VectorAlgoAI</h2>
-  <p>VectorAlgoAI was founded to bridge the gap between advanced Artificial Intelligence and everyday traders. 
-  Our mission is to make intelligent automation accessible, transparent, and personal for every trader in the world.</p>
+  <p>VectorAlgoAI was founded to make advanced Artificial Intelligence accessible to retail traders. 
+  We believe that AI shouldn’t be limited to institutions or coders — it should empower every trader to automate ideas, 
+  interpret data, and act with confidence.</p>
+  <p>Our platform bridges the gap between human intuition and machine precision — combining deep learning, 
+  fundamental news analysis, and technical signal modeling. 
+  Describe your idea in plain English, and VectorAlgoAI transforms it into a fully operational trading bot.</p>
 </section>
 """, unsafe_allow_html=True)
+
+# ---------------- Journey Timeline ----------------
+timeline_html = """
+<div class="timeline-wrapper">
+  <h3 style="margin-bottom:0.5rem;">Our Journey</h3>
+  <p style="color:#9ca3af;font-size:0.9rem;margin-bottom:1.2rem;">
+    From idea to live trading lab — focused on building for serious traders step by step.
+  </p>
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">Q4 2024</div>
+        <div class="timeline-title">Idea & Research</div>
+        <div class="timeline-text">
+          Praveen and Sandhya began exploring how AI could remove the friction between strategy design
+          and automation for retail traders, validating the problem across global trading communities.
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">2025</div>
+        <div class="timeline-title">MVP: Strategy-to-Bot Engine</div>
+        <div class="timeline-text">
+          The first VectorAlgoAI MVP was built — turning natural language strategies into structured configs,
+          running on live data with signal overlays and AI-powered prediction models.
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-date">2026</div>
+        <div class="timeline-title">Public Launch & Early Access</div>
+        <div class="timeline-text">
+          VectorAlgoAI launches globally, giving serious traders the tools to automate, optimize, 
+          and explain their strategies — with broker integration, backtesting, and live AI copilots.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+"""
+st.markdown(timeline_html, unsafe_allow_html=True)
 
 # ---------------- Services ----------------
 st.markdown("""
 <section class="section" id="services">
   <h2>Our Core Features</h2>
+  <p>Everything you need to go from idea → strategy → automation.</p>
   <div class="card-grid">
-    <div class="card"><h4>🧠 Strategy-to-Bot Engine</h4>
-      <p>Convert plain-English trading ideas into rule-based bots and executable strategies automatically.</p></div>
-    <div class="card"><h4>📈 Hybrid AI Signal Layer</h4>
-      <p>Combine ML models, indicators, and regime filters to generate adaptive market signals.</p></div>
-    <div class="card"><h4>📰 News Intelligence</h4>
-      <p>AI parses real-time news and macro events to align your strategy with sentiment and risk.</p></div>
-    <div class="card"><h4>🧩 Explainable Decisions</h4>
-      <p>Every signal includes reasoning — transparency and trust in your AI system.</p></div>
+    <div class="card">
+      <h4>🧠 Strategy-to-Bot Engine</h4>
+      <p>Convert plain-English ideas into rule-based bots and executable strategies automatically.</p>
+    </div>
+    <div class="card">
+      <h4>📈 Hybrid AI Signal Layer</h4>
+      <p>Combine ML models, indicators, and regime filters to generate adaptive signals.</p>
+    </div>
+    <div class="card">
+      <h4>📰 News Intelligence</h4>
+      <p>AI interprets market news and macro events to align your strategy with sentiment and volatility.</p>
+    </div>
+    <div class="card">
+      <h4>🧩 Explainable Decisions</h4>
+      <p>Every signal includes reasoning — transparency and trust built into the AI core.</p>
+    </div>
   </div>
 </section>
 """, unsafe_allow_html=True)
@@ -226,17 +326,19 @@ st.markdown("""
   <h2>Meet the Founders</h2>
   <div class="card-grid">
     <div class="card">
-      <h4>👨‍💻 Praveen Kumar</h4>
+      <h4>Praveen Kumar</h4>
       <p><strong>Founder & AI Architect</strong></p>
-      <p>Praveen Kumar is the technical architect and creator behind VectorAlgoAI. 
-      With deep expertise in Artificial Intelligence, quantitative trading, and neural networks, 
-      he brings 7+ years of experience building intelligent trading systems.</p>
+      <p>Praveen Kumar is the creator and technical architect behind VectorAlgoAI. 
+      With a deep background in AI, quantitative trading, and neural networks, 
+      he brings years of experience building intelligent trading systems. 
+      His goal is to democratize access to professional-grade AI trading automation.</p>
     </div>
     <div class="card">
-      <h4>👩‍💼 Sandhya Moni</h4>
+      <h4>Sandhya Moni</h4>
       <p><strong>Co-Founder & Product Strategist</strong></p>
-      <p>Sandhya Moni leads product strategy and user experience. 
-      Her background in digital product leadership ensures the platform remains focused on real trader workflows.</p>
+      <p>Sandhya Moni leads VectorAlgoAI’s product strategy and user experience. 
+      With experience in digital product leadership at Electrolux, 
+      she ensures every feature serves real trader workflows and business growth.</p>
     </div>
   </div>
 </section>
@@ -249,48 +351,32 @@ st.markdown("""
   <p>Prototype version of VectorAlgoAI’s interactive dashboard.</p>
 </section>
 """, unsafe_allow_html=True)
+
 run_mvp_dashboard()
 
 # ---------------- Contact ----------------
 st.markdown("""
 <section class="section" id="contact">
   <h2>Contact & Early Access</h2>
-  <p>We’d love to hear from you.</p>
+  <p>We’d love to hear from you. Reach out depending on what you need.</p>
   <div class="card-grid">
-    <div class="card"><h4>🚀 Early Access & Founder Chat</h4>
-      <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a></p></div>
-    <div class="card"><h4>📩 General Questions & Support</h4>
-      <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#38bdf8;">contact@vectoralgoai.com</a></p></div>
-    <div class="card"><h4>📚 Info & Documentation</h4>
-      <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a></p></div>
-  </div><br>
-  <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">Join Early Access</a>
-</section>
-""", unsafe_allow_html=True)
-
-# ---------------- Social Links ----------------
-st.markdown("""
-<section class="section">
-  <h2>Follow Us</h2>
-  <div class="social-links">
-    <div class="social-icons">
-      <a href="https://instagram.com/vectoralgoai" target="_blank" class="social-icon instagram">
-        <i class="fab fa-instagram"></i><span>Instagram</span>
-      </a>
-      <a href="https://twitter.com/vectoralgoai" target="_blank" class="social-icon twitter">
-        <i class="fab fa-x-twitter"></i><span>Twitter (X)</span>
-      </a>
-      <a href="https://linkedin.com/company/vectoralgoai" target="_blank" class="social-icon linkedin">
-        <i class="fab fa-linkedin"></i><span>LinkedIn</span>
-      </a>
-      <a href="https://youtube.com/@vectoralgoai" target="_blank" class="social-icon youtube">
-        <i class="fab fa-youtube"></i><span>YouTube</span>
-      </a>
-      <a href="https://t.me/vectoralgoai" target="_blank" class="social-icon telegram">
-        <i class="fab fa-telegram"></i><span>Telegram</span>
-      </a>
+    <div class="card">
+      <h4>🚀 Early Access & Founder Chat</h4>
+      <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a></p>
+    </div>
+    <div class="card">
+      <h4>📩 General Questions & Support</h4>
+      <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#38bdf8;">contact@vectoralgoai.com</a></p>
+    </div>
+    <div class="card">
+      <h4>📚 Info & Documentation</h4>
+      <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a></p>
     </div>
   </div>
+  <br>
+  <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">
+    Join Early Access
+  </a>
 </section>
 """, unsafe_allow_html=True)
 

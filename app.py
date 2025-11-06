@@ -138,19 +138,36 @@ h1,h2,h3,h4{font-weight:700}
   transition:0.3s ease;
 }
 .social-icon i{
-  font-size:30px;
+  font-size:32px;
   margin-bottom:5px;
-  color:#38bdf8;
-  text-shadow:0 0 10px rgba(34,211,238,0.8);
+  transition:0.3s ease;
 }
 .social-icon span{
   font-size:0.9rem;
   color:#cbd5f5;
 }
-.social-icon:hover i{
-  color:#22c55e;
+
+/* Brand-specific colors */
+.social-icon.instagram i{color:#E4405F;}
+.social-icon.twitter i{color:#000000;}
+.social-icon.linkedin i{color:#0077B5;}
+
+.social-icon.instagram:hover i{
+  background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
   transform:scale(1.2);
-  text-shadow:0 0 20px rgba(34,197,94,0.9);
+  text-shadow:0 0 15px rgba(255,105,180,0.8);
+}
+.social-icon.twitter:hover i{
+  color:#000;
+  transform:scale(1.2);
+  text-shadow:0 0 10px rgba(255,255,255,0.5);
+}
+.social-icon.linkedin:hover i{
+  color:#0077B5;
+  transform:scale(1.2);
+  text-shadow:0 0 12px rgba(0,119,181,0.8);
 }
 
 /* Footer */
@@ -218,15 +235,9 @@ countdown()
 st.markdown("""
 <section class="section" id="about">
   <h2>About VectorAlgoAI</h2>
-  <p>VectorAlgoAI was founded with a single goal — to bridge the gap between advanced Artificial Intelligence and everyday traders. 
+  <p>VectorAlgoAI was founded to bridge the gap between advanced Artificial Intelligence and everyday traders. 
   We believe AI shouldn’t be reserved for hedge funds and quant desks. 
   Our mission is to make intelligent automation accessible, transparent, and personal for every trader in the world.</p>
-  <p>Our journey began when we realized that traders waste countless hours manually testing strategies or coding bots that quickly become obsolete. 
-  By combining deep learning models, news sentiment analysis, and intuitive design, we built a platform that understands traders’ language — literally. 
-  You describe your idea, VectorAlgoAI builds the strategy, tests it, and explains the logic behind each trade.</p>
-  <p>We’re building the future of trading — one where AI doesn’t replace the trader, but empowers them with clarity, speed, and precision. 
-  Whether you’re a beginner experimenting with indicators or a professional fine-tuning risk parameters, 
-  VectorAlgoAI is your AI-powered copilot in the markets.</p>
 </section>
 """, unsafe_allow_html=True)
 
@@ -252,21 +263,19 @@ st.markdown("""
 st.markdown("""
 <section class="section" id="founders">
   <h2>Meet the Founders</h2>
-  <p>Driven by innovation, discipline, and vision — building the bridge between human intuition and machine intelligence.</p>
   <div class="card-grid">
     <div class="card">
       <h4>Praveen Kumar</h4>
       <p><strong>Founder & AI Architect</strong></p>
       <p>Praveen Kumar is the technical architect and creator behind VectorAlgoAI. 
-      With a deep background in Artificial Intelligence, quantitative trading, and neural network design, 
+      With deep expertise in Artificial Intelligence, quantitative trading, and neural networks, 
       he brings 7+ years of experience building intelligent trading systems.</p>
     </div>
     <div class="card">
       <h4>Sandhya Moni</h4>
       <p><strong>Co-Founder & Product Strategist</strong></p>
-      <p>Sandhya Moni leads VectorAlgoAI’s product and business strategy. 
-      With a background in digital product management and leadership at global firms like Electrolux, 
-      she ensures that every AI feature serves real trader workflows.</p>
+      <p>Sandhya Moni leads product strategy and user experience. 
+      Her background in digital product leadership ensures the platform remains focused on real trader workflows.</p>
     </div>
   </div>
 </section>
@@ -302,18 +311,18 @@ st.markdown("""
 st.markdown("""
 <section class="section">
   <h2>Follow Us</h2>
-  <p>Stay connected for updates, announcements, and exclusive early access.</p>
+  <p>Stay connected for updates, behind-the-scenes, and early access to AI trading innovations.</p>
   <div class="social-links">
     <div class="social-icons">
-      <a href="https://instagram.com/vectoralgoai" target="_blank" class="social-icon">
+      <a href="https://instagram.com/vectoralgoai" target="_blank" class="social-icon instagram">
         <i class="fab fa-instagram"></i>
         <span>Instagram</span>
       </a>
-      <a href="https://twitter.com/vectoralgoai" target="_blank" class="social-icon">
+      <a href="https://twitter.com/vectoralgoai" target="_blank" class="social-icon twitter">
         <i class="fab fa-x-twitter"></i>
         <span>Twitter (X)</span>
       </a>
-      <a href="https://linkedin.com/company/vectoralgoai" target="_blank" class="social-icon">
+      <a href="https://linkedin.com/company/vectoralgoai" target="_blank" class="social-icon linkedin">
         <i class="fab fa-linkedin"></i>
         <span>LinkedIn</span>
       </a>

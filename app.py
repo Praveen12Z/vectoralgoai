@@ -137,8 +137,8 @@ menu = st.sidebar.radio(
 
 st.sidebar.markdown("----")
 st.sidebar.markdown("**VectorAlgoAI**")
-st.sidebar.markdown("Built by **Praveen Kumar**  
-Strategic lead: **Sandhya Moni**")
+st.sidebar.markdown("**VectorAlgoAI**")
+st.sidebar.markdown("Built by **Praveen Kumar**  \nStrategic lead: **Sandhya Moni**")
 
 # ---------- UTIL ----------
 def get_countdown():
@@ -368,3 +368,4 @@ st.markdown(
     + " VectorAlgoAI · Built by Praveen Kumar · Strategy & Product by Sandhya Moni</div>",
     unsafe_allow_html=True,
 )
+

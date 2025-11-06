@@ -4,590 +4,236 @@ from mvp_dashboard import run_mvp_dashboard
 
 LAUNCH_DATE = datetime(2026, 3, 5, 0, 0, 0)
 
-# Basic page config
 st.set_page_config(
-    page_title="VectorAlgoAI – AI Trading SaaS",
-    page_icon="🧠",
+    page_title="VectorAlgoAI | AI Trading SaaS Platform",
+    page_icon="💹",
     layout="wide",
 )
 
-# ----------------------- GLOBAL STYLES -----------------------
-st.markdown(
-    """
-    <style>
-    /* Remove default padding */
-    .block-container {
-        padding-top: 1.5rem;
-        padding-bottom: 1.5rem;
-        max-width: 1200px;
-    }
+# ---------------- CSS ----------------
+st.markdown("""
+<style>
+body, .stApp {
+    background: radial-gradient(circle at 20% 20%, #001b2e 0%, #000814 90%) !important;
+    color: #f8fafc !important;
+    font-family: "Inter", sans-serif;
+}
+h1, h2, h3, h4 {font-weight: 700;}
 
-    /* Dark gradient background */
-    body, .stApp {
-        background: radial-gradient(circle at top left, #0f766e 0%, #020617 45%, #000000 100%) !important;
-        color: #e5e7eb;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+.navbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 70px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(14px);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 4%;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    z-index: 999;
+}
+.nav-logo {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #38bdf8;
+    letter-spacing: 0.02em;
+}
+.nav-menu a {
+    margin: 0 1rem;
+    text-decoration: none;
+    font-weight: 500;
+    color: #e2e8f0;
+    transition: 0.2s;
+}
+.nav-menu a:hover {
+    color: #22d3ee;
+}
+.hero {
+    text-align: center;
+    padding-top: 120px;
+    padding-bottom: 60px;
+}
+.hero h1 {
+    font-size: 3rem;
+    background: linear-gradient(90deg, #22d3ee, #a855f7, #22c55e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: hue 6s linear infinite;
+}
+@keyframes hue { from {filter:hue-rotate(0deg);} to {filter:hue-rotate(360deg);} }
+.hero p {
+    max-width: 700px;
+    margin: auto;
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+.btn-primary {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    padding: 0.75rem 1.6rem;
+    border-radius: 999px;
+    font-weight: 600;
+    color: #fff;
+    box-shadow: 0 0 25px rgba(34,197,94,0.4);
+    text-decoration: none;
+    transition: all 0.25s;
+}
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 45px rgba(34,197,94,0.7);
+}
+.section {
+    padding: 80px 10%;
+    text-align: center;
+}
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+}
+.card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(8px);
+    transition: 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 35px rgba(0,255,200,0.08);
+}
+.countdown {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.countdown-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 10px 14px;
+    min-width: 70px;
+}
+.countnum { font-size: 1.4rem; font-weight: 700; color: #22d3ee; }
+.countlbl { font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; }
+.footer {
+    padding: 40px 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+</style>
+""", unsafe_allow_html=True)
 
-    /* Sidebar */
-    section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #020617 0%, #020617 40%, #022c22 100%) !important;
-        border-right: 1px solid rgba(148, 163, 184, 0.25);
-    }
 
-    .sidebar-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #a5b4fc;
-    }
-
-    /* Hero */
-    .hero-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.25rem 0.9rem;
-        border-radius: 999px;
-        background: linear-gradient(90deg, #22c55e 0%, #22d3ee 100%);
-        color: #022c22;
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-    }
-
-    .hero-eyebrow {
-        font-size: 0.85rem;
-        color: #a5b4fc;
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        margin-top: 0.8rem;
-        margin-bottom: 0.2rem;
-    }
-
-    .hero-title {
-        font-size: 2.6rem;
-        font-weight: 800;
-        line-height: 1.05;
-        letter-spacing: -0.04em;
-        color: #f9fafb;
-    }
-
-    .hero-gradient-text {
-        background: linear-gradient(90deg, #22c55e, #a855f7, #38bdf8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-        color: #9ca3af;
-        margin-top: 0.8rem;
-        max-width: 32rem;
-    }
-
-    .hero-buttons {
-        margin-top: 1.4rem;
-        display: flex;
-        gap: 0.8rem;
-        flex-wrap: wrap;
-    }
-
-    .btn-primary {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.55rem 1.4rem;
-        border-radius: 999px;
-        background: radial-gradient(circle at 0% 0%, #22c55e 0%, #16a34a 45%, #15803d 100%);
-        color: #022c22;
-        font-size: 0.9rem;
-        font-weight: 700;
-        text-decoration: none;
-        box-shadow: 0 0 25px rgba(34, 197, 94, 0.45);
-        border: 1px solid rgba(74, 222, 128, 0.6);
-    }
-
-    .btn-secondary {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.55rem 1.4rem;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.8);
-        color: #e5e7eb;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-decoration: none;
-        border: 1px solid rgba(148, 163, 184, 0.6);
-    }
-
-    .btn-secondary span {
-        color: #22c55e;
-        margin-left: 0.4rem;
-    }
-
-    /* Countdown bar */
-    .countdown-wrapper {
-        margin-top: 1.6rem;
-        padding: 0.85rem 1.1rem;
-        border-radius: 999px;
-        border: 1px solid rgba(148, 163, 184, 0.4);
-        background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.2), rgba(15, 23, 42, 0.8));
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-    }
-
-    .countdown-label-main {
-        font-size: 0.9rem;
-        color: #e5e7eb;
-        font-weight: 600;
-    }
-
-    .countdown-chip {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.14em;
-        color: #a5b4fc;
-    }
-
-    .countdown-pill {
-        display: inline-flex;
-        padding: 0.25rem 0.65rem;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid rgba(148, 163, 184, 0.5);
-        font-size: 0.8rem;
-    }
-
-    .count-num {
-        font-weight: 700;
-        color: #f9fafb;
-        margin-right: 0.2rem;
-    }
-    .count-unit {
-        color: #9ca3af;
-        text-transform: uppercase;
-        font-size: 0.7rem;
-    }
-
-    /* Right hero card */
-    .hero-card {
-        border-radius: 1.5rem;
-        padding: 1.4rem 1.3rem;
-        background: radial-gradient(circle at top left, rgba(45, 212, 191, 0.25), rgba(15, 23, 42, 0.95));
-        border: 1px solid rgba(94, 234, 212, 0.4);
-        box-shadow: 0 26px 70px rgba(8, 47, 73, 0.9);
-        position: relative;
-        overflow: hidden;
-        min-height: 250px;
-    }
-
-    .hero-card-badge {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-        color: #a5b4fc;
-    }
-
-    .hero-card-title {
-        font-size: 1.2rem;
-        font-weight: 700;
-        margin-top: 0.4rem;
-        margin-bottom: 0.4rem;
-        color: #f9fafb;
-    }
-
-    .hero-card-text {
-        font-size: 0.85rem;
-        color: #d1d5db;
-        max-width: 16rem;
-    }
-
-    .hero-glow-orb {
-        position: absolute;
-        width: 160px;
-        height: 160px;
-        border-radius: 999px;
-        right: -40px;
-        bottom: -40px;
-        background: radial-gradient(circle, #22c55e 0%, #166534 40%, transparent 70%);
-        opacity: 0.95;
-        filter: blur(1px);
-    }
-
-    .hero-metric-pill {
-        position: absolute;
-        left: 1.1rem;
-        bottom: 1.1rem;
-        padding: 0.35rem 0.7rem;
-        border-radius: 999px;
-        background: rgba(15,23,42,0.9);
-        border: 1px solid rgba(148,163,184,0.55);
-        font-size: 0.75rem;
-        color: #e5e7eb;
-    }
-
-    .hero-metric-pill span {
-        color: #22c55e;
-        font-weight: 600;
-    }
-
-    /* Sections */
-    .section-title {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #f9fafb;
-        margin-bottom: 0.35rem;
-    }
-
-    .section-subtitle {
-        font-size: 0.95rem;
-        color: #9ca3af;
-        margin-bottom: 1.2rem;
-    }
-
-    .card {
-        padding: 1.2rem 1.3rem;
-        border-radius: 1.2rem;
-        background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.35), rgba(15, 23, 42, 0.96));
-        border: 1px solid rgba(148, 163, 184, 0.55);
-        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.95);
-        height: 100%;
-    }
-
-    .card-tag {
-        font-size: 0.75rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: #a5b4fc;
-        margin-bottom: 0.35rem;
-    }
-
-    .card-title {
-        font-size: 1.05rem;
-        font-weight: 600;
-        color: #e5e7eb;
-        margin-bottom: 0.4rem;
-    }
-
-    .card-text {
-        font-size: 0.9rem;
-        color: #cbd5f5;
-    }
-
-    .founder-name {
-        font-size: 1.05rem;
-        font-weight: 600;
-        color: #f9fafb;
-        margin-bottom: 0.2rem;
-    }
-
-    .founder-role {
-        font-size: 0.8rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: #a5b4fc;
-        margin-bottom: 0.4rem;
-    }
-
-    .footer {
-        margin-top: 2.8rem;
-        font-size: 0.8rem;
-        text-align: center;
-        color: #6b7280;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ----------------------- HELPERS -----------------------
-def get_countdown():
+# ---------------- Countdown ----------------
+def countdown():
     now = datetime.now()
     delta = LAUNCH_DATE - now
-    if delta.total_seconds() <= 0:
-        return None
+    if delta.total_seconds() < 0:
+        st.success("🚀 VectorAlgoAI has launched!")
+        return
     days = delta.days
-    hours, rem = divmod(delta.seconds, 3600)
-    minutes, seconds = divmod(rem, 60)
-    return days, hours, minutes, seconds
+    hrs, rem = divmod(delta.seconds, 3600)
+    mins, secs = divmod(rem, 60)
+    st.markdown("""
+    <div class='countdown'>
+        <div class='countdown-item'><div class='countnum'>{}</div><div class='countlbl'>Days</div></div>
+        <div class='countdown-item'><div class='countnum'>{}</div><div class='countlbl'>Hours</div></div>
+        <div class='countdown-item'><div class='countnum'>{}</div><div class='countlbl'>Mins</div></div>
+        <div class='countdown-item'><div class='countnum'>{}</div><div class='countlbl'>Secs</div></div>
+    </div>
+    """.format(days, hrs, mins, secs), unsafe_allow_html=True)
 
 
-# ----------------------- SIDEBAR NAV -----------------------
-st.sidebar.markdown("<div class='sidebar-title'>VectorAlgoAI</div>", unsafe_allow_html=True)
-st.sidebar.markdown("Built by **Praveen Kumar**  \nStrategic & product by **Sandhya Moni**")
+# ---------------- Navbar ----------------
+st.markdown("""
+<div class="navbar">
+  <div class="nav-logo">VectorAlgoAI</div>
+  <div class="nav-menu">
+    <a href="#home">Home</a>
+    <a href="#services">Services</a>
+    <a href="#founders">Founders</a>
+    <a href="#mvp">MVP</a>
+    <a href="#contact">Contact</a>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
-menu = st.sidebar.radio(
-    "Navigate",
-    ["Home", "About", "Services", "Founders", "Trading Lab (MVP)", "Contact"],
-    index=0,
-)
+# ---------------- Hero ----------------
+st.markdown("""
+<section class="hero" id="home">
+  <h1>Build AI-Driven Trading Bots. No Code. No Limits.</h1>
+  <p>VectorAlgoAI turns your trading ideas into executable AI strategies — blending indicators, machine learning, and news sentiment in one unified dashboard.</p>
+  <br>
+  <a href="#mvp" class="btn-primary">Launch Trading Lab</a>
+</section>
+""", unsafe_allow_html=True)
 
+countdown()
 
-# ----------------------- PAGES -----------------------
-if menu == "Home":
-    col_left, col_right = st.columns([1.6, 1.2])
+# ---------------- Services ----------------
+st.markdown("""
+<section class="section" id="services">
+  <h2>Our Core Features</h2>
+  <p>Everything you need to go from idea → strategy → automation.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🧠 Strategy-to-Bot Engine</h4>
+      <p>Convert plain-English trading ideas into rule-based bots and executable strategies automatically.</p>
+    </div>
+    <div class="card">
+      <h4>📈 Hybrid AI Signal Layer</h4>
+      <p>Combine LSTM, GPT sentiment, and technical indicators to generate adaptive market signals.</p>
+    </div>
+    <div class="card">
+      <h4>📰 News Intelligence</h4>
+      <p>AI parses real-time news to align your strategy with market sentiment and macro events.</p>
+    </div>
+    <div class="card">
+      <h4>🧩 Explainable Decisions</h4>
+      <p>Every signal includes reasoning — transparency and trust in your AI system.</p>
+    </div>
+  </div>
+</section>
+""", unsafe_allow_html=True)
 
-    with col_left:
-        st.markdown("<div class='hero-pill'>AI Trading SaaS · Launching Soon</div>", unsafe_allow_html=True)
-        st.markdown("<div class='hero-eyebrow'>Launching · 5 March 2026</div>", unsafe_allow_html=True)
-        st.markdown(
-            """
-            <div class="hero-title">
-                The <span class="hero-gradient-text">AI-native trading lab</span>  
-                for serious retail traders.
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            """
-            <div class="hero-subtitle">
-                Describe your strategy in plain English. VectorAlgoAI turns it into 
-                executable logic, AI-enhanced signals, and a live trading dashboard –
-                without writing a single line of code.
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+# ---------------- Founders ----------------
+st.markdown("""
+<section class="section" id="founders">
+  <h2>Meet the Founders</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Praveen Kumar</h4>
+      <p>Founder · AI & Trading Automation<br>Creator of VectorAlgoAI, building the bridge between AI and practical trading systems.</p>
+    </div>
+    <div class="card">
+      <h4>Sandhya Moni</h4>
+      <p>Co-Founder · Strategy & Product<br>Leads the business vision and product strategy, ensuring VectorAlgoAI empowers every trader.</p>
+    </div>
+  </div>
+</section>
+""", unsafe_allow_html=True)
 
-        st.markdown(
-            """
-            <div class="hero-buttons">
-                <a class="btn-primary" href="#mvp" onclick="window.location.reload(false);">
-                    Get early access
-                </a>
-                <a class="btn-secondary" href="#learn">
-                    Learn more <span>↗</span>
-                </a>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+# ---------------- MVP ----------------
+st.markdown("""
+<section class="section" id="mvp">
+  <h2>Live Trading Lab (MVP)</h2>
+  <p>Prototype version of VectorAlgoAI’s interactive dashboard.</p>
+</section>
+""", unsafe_allow_html=True)
+run_mvp_dashboard()
 
-        cd = get_countdown()
-        if cd is not None:
-            d, h, m, s = cd
-            st.markdown(
-                f"""
-                <div class="countdown-wrapper">
-                    <div>
-                        <div class="countdown-chip">Countdown to launch</div>
-                        <div class="countdown-label-main">
-                            VectorAlgoAI goes live on <strong>5 March 2026</strong>.
-                        </div>
-                    </div>
-                    <div class="countdown-pill">
-                        <span class="count-num">{d}</span><span class="count-unit">days</span>
-                    </div>
-                    <div class="countdown-pill">
-                        <span class="count-num">{h}</span><span class="count-unit">hrs</span>
-                    </div>
-                    <div class="countdown-pill">
-                        <span class="count-num">{m}</span><span class="count-unit">min</span>
-                    </div>
-                    <div class="countdown-pill">
-                        <span class="count-num">{s}</span><span class="count-unit">sec</span>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        else:
-            st.success("VectorAlgoAI has launched 🎉")
+# ---------------- Contact ----------------
+st.markdown("""
+<section class="section" id="contact">
+  <h2>Stay Connected</h2>
+  <p>We’re launching on <b>March 5, 2026</b>. Join our journey as we build the future of retail trading automation.</p>
+  <a href="mailto:hello@vectoralgoai.com" class="btn-primary">Join Early Access</a>
+</section>
+""", unsafe_allow_html=True)
 
-    with col_right:
-        st.markdown(
-            """
-            <div class="hero-card">
-                <div class="hero-card-badge">Live trading preview</div>
-                <div class="hero-card-title">AI-enhanced signal engine</div>
-                <div class="hero-card-text">
-                    Hybrid models combining price action, technical indicators, and
-                    macro news sentiment – designed to help you navigate volatility
-                    with conviction, not noise.
-                </div>
-                <div class="hero-metric-pill">
-                    Reimagining retail trading with <span>explainable AI</span>.
-                </div>
-                <div class="hero-glow-orb"></div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-elif menu == "About":
-    st.markdown('<div id="learn"></div>', unsafe_allow_html=True)
-    st.markdown("<div class='section-title'>About VectorAlgoAI</div>", unsafe_allow_html=True)
-    st.markdown(
-        "<div class='section-subtitle'>Built for traders who want quant-grade tooling without the quant-sized team.</div>",
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        """
-        VectorAlgoAI is a **strategy-to-bot platform** for retail traders and prop-firm traders.
-
-        Instead of wrestling with code, you describe your idea:
-
-        - *“Buy XAUUSD when London session breaks yesterday’s high with strong news flow.”*  
-        - *“Fade mean-reversion on EURUSD when volatility compresses near key levels.”*  
-
-        Our engine translates that into:
-        - structured strategy config,  
-        - execution-ready logic,  
-        - and a live dashboard that you can monitor, tweak, and scale.
-        """
-    )
-
-    st.markdown("### Our core principles")
-    st.markdown(
-        """
-        - **Explainability first** – every signal comes with a human-readable explanation.  
-        - **You in the loop** – the system learns from your behaviour and preferences.  
-        - **No black-box magic** – we combine ML, rules, and risk in a way you can actually trust.
-        """
-    )
-
-elif menu == "Services":
-    st.markdown("<div class='section-title'>What VectorAlgoAI will offer</div>", unsafe_allow_html=True)
-    st.markdown(
-        "<div class='section-subtitle'>From idea capture to execution, all in one AI-native workspace.</div>",
-        unsafe_allow_html=True,
-    )
-
-    c1, c2, c3 = st.columns(3)
-
-    with c1:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("<div class='card-tag'>Core Engine</div>", unsafe_allow_html=True)
-        st.markdown("<div class='card-title'>Strategy-to-Bot builder</div>", unsafe_allow_html=True)
-        st.markdown(
-            "<div class='card-text'>Turn natural-language strategy descriptions into structured rules, "
-            "backtest-ready configs, and a deployable execution bot – all inside a browser.</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with c2:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("<div class='card-tag'>AI Signal Layer</div>", unsafe_allow_html=True)
-        st.markdown("<div class='card-title'>Hybrid technical + ML</div>", unsafe_allow_html=True)
-        st.markdown(
-            "<div class='card-text'>Instrument-specific classifiers and time-series models combined with "
-            "indicators, regime detection, and risk overlays to produce interpretable signals.</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with c3:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("<div class='card-tag'>News & Macro</div>", unsafe_allow_html=True)
-        st.markdown("<div class='card-title'>Sentiment-aware trading</div>", unsafe_allow_html=True)
-        st.markdown(
-            "<div class='card-text'>Headline feeds and economic calendars are summarised by GPT-style models, "
-            "then aligned with your strategy so you can see when fundamentals confirm or fight your signals.</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("")
-    c4, c5 = st.columns(2)
-
-    with c4:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("<div class='card-tag'>Onboarding</div>", unsafe_allow_html=True)
-        st.markdown("<div class='card-title'>AI Strategy Wizard</div>", unsafe_allow_html=True)
-        st.markdown(
-            "<div class='card-text'>For traders who are still shaping their edge, an interactive wizard "
-            "asks about risk tolerance, markets, and style – then proposes a starting framework you can refine.</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with c5:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("<div class='card-tag'>Future</div>", unsafe_allow_html=True)
-        st.markdown("<div class='card-title'>Prop-firm & API integrations</div>", unsafe_allow_html=True)
-        st.markdown(
-            "<div class='card-text'>Long-term, VectorAlgoAI aims to plug into prop-firm accounts and provide "
-            "an API layer so advanced users and teams can build on top of the platform.</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-elif menu == "Founders":
-    st.markdown("<div class='section-title'>Founders</div>", unsafe_allow_html=True)
-    st.markdown(
-        "<div class='section-subtitle'>Trading, AI, and product – aligned around one mission: "
-        "give retail traders serious tools.</div>",
-        unsafe_allow_html=True,
-    )
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("<div class='founder-name'>Praveen Kumar</div>", unsafe_allow_html=True)
-        st.markdown("<div class='founder-role'>Founder · AI & Trading Automation</div>", unsafe_allow_html=True)
-        st.markdown(
-            "<div class='card-text'>Praveen blends a background in Artificial Intelligence with years of live "
-            "trading experience. VectorAlgoAI started as his attempt to build the kind of explainable, "
-            "hybrid AI tools he wished he had when trading discretionary and systematic strategies.</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with c2:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
-        st.markdown("<div class='founder-name'>Sandhya Moni</div>", unsafe_allow_html=True)
-        st.markdown("<div class='founder-role'>Co-Founder · Strategy & Product</div>", unsafe_allow_html=True)
-        st.markdown(
-            "<div class='card-text'>Sandhya leads the product and business side of VectorAlgoAI. "
-            "With a background in digital product ownership and strategy, she ensures the platform stays anchored "
-            "to real trader workflows, clear UX, and a sustainable SaaS model.</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-elif menu == "Trading Lab (MVP)":
-    st.markdown("<div id='mvp'></div>", unsafe_allow_html=True)
-    st.markdown("<div class='section-title'>Trading Lab (MVP)</div>", unsafe_allow_html=True)
-    st.markdown(
-        "<div class='section-subtitle'>This is the live prototype of the VectorAlgoAI dashboard – "
-        "where strategy configs, signals, and charts come together.</div>",
-        unsafe_allow_html=True,
-    )
-    run_mvp_dashboard()
-
-elif menu == "Contact":
-    st.markdown("<div class='section-title'>Stay in the loop</div>", unsafe_allow_html=True)
-    st.markdown(
-        "<div class='section-subtitle'>We’re building VectorAlgoAI in public. "
-        "Early supporters will get first access when we open the doors.</div>",
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        """
-        For now, this is a lightweight contact section.
-
-        In the next iterations we’ll add:
-
-        - Email capture for an **early-access waitlist**  
-        - A Telegram / Discord community for feedback and roadmap voting  
-        - A simple form so you can tell us about your **current trading setup** and tools
-        """
-    )
-
-    st.info("You can add a real email / newsletter integration here later using services like Mailchimp or SendGrid.")
-
-# ----------------------- FOOTER -----------------------
-st.markdown(
-    f"<div class='footer'>© {datetime.now().year} VectorAlgoAI · Built by Praveen Kumar · "
-    "Strategy & Product by Sandhya Moni</div>",
-    unsafe_allow_html=True,
-)
+st.markdown(f"""
+<div class="footer">
+© {datetime.now().year} VectorAlgoAI · Built by Praveen Kumar · Strategy & Product by Sandhya Moni
+</div>
+""", unsafe_allow_html=True)

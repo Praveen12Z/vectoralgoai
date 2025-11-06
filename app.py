@@ -16,168 +16,227 @@ st.markdown("""
 header[data-testid="stHeader"] {display:none;}
 #MainMenu, footer {visibility:hidden;}
 
-.block-container {padding-top:90px!important; padding-bottom:40px!important;}
+.block-container {
+  padding-top:90px!important;
+  padding-bottom:40px!important;
+}
+
+/* Base background + typography */
 body,.stApp {
-  background:radial-gradient(circle at 20% 20%,#001b2e 0%,#000814 90%)!important;
-  color:#f8fafc!important;
+  background:radial-gradient(circle at 10% 0%,#020617 0%,#020617 40%,#000814 100%)!important;
+  color:#e5e7eb!important;
   font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
-h1,h2,h3,h4{font-weight:700}
+h1,h2,h3,h4{font-weight:700;color:#f9fafb}
+p{font-size:0.95rem;line-height:1.6}
+
+/* Container for readable width */
+.section-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
 
 /* Navbar */
 .navbar{
   position:fixed;top:0;left:0;right:0;height:64px;
-  background:rgba(3,7,18,0.85);backdrop-filter:blur(18px);
+  background:rgba(2,6,23,0.96);
+  backdrop-filter:blur(16px);
   display:flex;justify-content:space-between;align-items:center;
-  padding:0 5%;border-bottom:1px solid rgba(148,163,184,0.35);z-index:9999
+  padding:0 5%;
+  border-bottom:1px solid rgba(148,163,184,0.25);
+  z-index:9999;
 }
 .nav-logo{
   display:flex;align-items:center;gap:.5rem;
-  font-weight:700;font-size:1.15rem;color:#e5f2ff;letter-spacing:.04em
+  font-weight:700;font-size:1.05rem;color:#e5f2ff;letter-spacing:.04em;
 }
 .nav-logo-mark{
-  width:22px;height:22px;border-radius:7px;
-  background:conic-gradient(from 160deg,#22d3ee,#a855f7,#22c55e,#22d3ee);
-  box-shadow:0 0 18px rgba(56,189,248,0.7)
+  width:20px;height:20px;border-radius:6px;
+  background:linear-gradient(135deg,#06b6d4,#22c55e);
 }
 .nav-logo span:last-child{
-  background:linear-gradient(90deg,#38bdf8,#22c55e);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent
+  background:linear-gradient(90deg,#e5e7eb,#cbd5f5);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 .nav-menu a{
-  margin:0 .7rem;text-decoration:none;font-weight:500;font-size:.95rem;
-  color:#cbd5f5;transition:.18s ease
+  margin:0 .7rem;text-decoration:none;font-weight:500;font-size:.9rem;
+  color:#cbd5f5;transition:.18s ease;
 }
-.nav-menu a:hover{color:#22d3ee}
+.nav-menu a:hover{color:#06b6d4}
 
 /* Hero */
-.hero{text-align:center;padding-top:10px;padding-bottom:60px}
+.hero{
+  text-align:center;
+  padding-top:10px;
+  padding-bottom:60px;
+}
 .hero h1{
-  font-size:3rem;line-height:1.15;margin-bottom:.7rem;
-  background:linear-gradient(90deg,#22d3ee,#a855f7,#22c55e);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent
+  font-size:2.7rem;
+  line-height:1.15;
+  margin-bottom:.7rem;
+  background:linear-gradient(90deg,#e5e7eb,#cbd5f5);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 .hero p{
-  max-width:700px;margin:auto;color:#94a3b8;font-size:1.05rem
+  max-width:640px;
+  margin:0 auto;
+  color:#9ca3af;
+  font-size:1rem;
 }
 
-/* Launch box + pulse */
-@keyframes pulseGlow{
-  0%{box-shadow:0 0 20px rgba(34,197,94,.6),inset 0 0 12px rgba(16,185,129,.25)}
-  50%{box-shadow:0 0 30px rgba(34,197,94,.9),inset 0 0 14px rgba(16,185,129,.4)}
-  100%{box-shadow:0 0 20px rgba(34,197,94,.6),inset 0 0 12px rgba(16,185,129,.25)}
-}
+/* Launch badge (more subtle) */
 .launch-box{
-  display:inline-block;margin-top:20px;padding:12px 30px;border-radius:16px;
-  background:rgba(16,185,129,.08);border:1px solid rgba(34,197,94,.45);
-  color:#a7f3d0;font-size:1.2rem;font-weight:600;letter-spacing:.04em;
-  text-align:center;text-shadow:0 0 8px rgba(52,211,153,.5);
-  backdrop-filter:blur(6px);animation:pulseGlow 2.8s infinite ease-in-out
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:18px;
+  padding:8px 18px;
+  border-radius:999px;
+  background:rgba(15,23,42,0.9);
+  border:1px solid rgba(148,163,184,0.5);
+  color:#e5e7eb;
+  font-size:0.9rem;
+  font-weight:500;
 }
-.launch-box span{color:#22c55e;font-weight:700}
+.launch-box span{
+  color:#22c55e;
+  font-weight:600;
+}
 
-/* Countdown glow */
-.countdown-wrapper{margin-top:26px;animation:pulseGlow 3s infinite ease-in-out}
-.countdown{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.countdown-item{
-  background:rgba(15,23,42,.85);border-radius:12px;padding:10px 14px;
-  min-width:70px;border:1px solid rgba(34,197,94,.45)
+/* Countdown (simple, no glow) */
+.countdown-wrapper{
+  margin-top:24px;
 }
-.countnum{font-size:1.4rem;font-weight:700;color:#22d3ee}
-.countlbl{font-size:.75rem;color:#9ca3af;text-transform:uppercase}
+.countdown{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.countdown-item{
+  background:#020617;
+  border-radius:10px;
+  padding:10px 14px;
+  min-width:70px;
+  border:1px solid rgba(51,65,85,0.9);
+}
+.countnum{font-size:1.25rem;font-weight:700;color:#e5e7eb;}
+.countlbl{font-size:.7rem;color:#9ca3af;text-transform:uppercase;}
 
 /* Buttons */
 .btn-primary{
-  background:radial-gradient(circle at 0% 0%,#4ade80,#16a34a);
-  padding:.75rem 1.7rem;border-radius:999px;font-weight:600;color:#022c22;
-  box-shadow:0 0 26px rgba(34,197,94,.55);text-decoration:none;display:inline-block;
-  transition:all .25s
+  background:linear-gradient(135deg,#06b6d4,#22c55e);
+  padding:.7rem 1.6rem;
+  border-radius:999px;
+  font-weight:600;
+  color:#022c22;
+  box-shadow:0 10px 30px rgba(15,118,110,0.4);
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-size:0.95rem;
+  transition:all .2s;
 }
 .btn-primary:hover{
-  transform:translateY(-1px) scale(1.04);
-  box-shadow:0 0 40px rgba(34,197,94,.9)
+  transform:translateY(-1px);
+  box-shadow:0 14px 40px rgba(15,118,110,0.6);
 }
 
 /* Sections */
-.section{padding:70px 8% 0 8%;text-align:center}
-.section h2{font-size:2rem;margin-bottom:.4rem}
-.section p{color:#94a3b8}
+.section{
+  padding:70px 8% 0 8%;
+  text-align:center;
+}
+.section h2{
+  font-size:2rem;
+  margin-bottom:.6rem;
+}
+.section p.section-lead{
+  color:#9ca3af;
+  max-width:720px;
+  margin:0.2rem auto 0 auto;
+  font-size:0.95rem;
+}
 
 /* Cards */
 .card-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:24px;margin-top:40px
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:22px;
+  margin-top:32px;
 }
 .card{
-  background:rgba(15,23,42,.75);border:1px solid rgba(148,163,184,.45);
-  border-radius:20px;padding:22px;backdrop-filter:blur(12px);
-  box-shadow:0 18px 45px rgba(15,23,42,.9);transition:.25s ease
+  background:rgba(15,23,42,0.85);
+  border:1px solid rgba(30,64,175,0.45);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 14px 30px rgba(15,23,42,0.85);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
-.card:hover{transform:translateY(-5px);box-shadow:0 22px 55px rgba(34,197,94,.25)}
-.card h4{margin-bottom:.4rem}
-.card p{color:#cbd5f5;font-size:.95rem}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 18px 40px rgba(15,23,42,0.95);
+  border-color:rgba(37,99,235,0.7);
+}
+.card h4{margin-bottom:.3rem;font-size:1rem;}
+.card p{color:#cbd5f5;font-size:.9rem;}
 
-/* Timeline */
-.timeline-wrapper{
-  max-width:850px;
-  margin:40px auto 0 auto;
-  text-align:left;
+/* Social links */
+.social-links{text-align:center;margin-top:50px;margin-bottom:20px;}
+.social-icons{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:28px;
+  margin-top:18px;
 }
-.timeline{
-  position:relative;
-  margin-left:10px;
-  padding-left:20px;
-  border-left:2px solid rgba(34,197,94,0.5);
-  box-shadow:0 0 15px rgba(34,197,94,0.25);
+.social-icon{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:#e5f2ff;
+  transition:0.25s ease;
 }
-.timeline-item{
-  position:relative;
-  margin-bottom:22px;
-  opacity:0;
-  transform:translateY(10px);
-  animation:slideUp 0.7s forwards;
+.social-icon i{
+  font-size:26px;
+  margin-bottom:4px;
+  transition:0.25s ease;
 }
-.timeline-item:nth-child(1){animation-delay:0.1s;}
-.timeline-item:nth-child(2){animation-delay:0.25s;}
-.timeline-item:nth-child(3){animation-delay:0.4s;}
-.timeline-dot{
-  position:absolute;
-  left:-11px;
-  top:4px;
-  width:14px;height:14px;
-  border-radius:999px;
-  background:radial-gradient(circle,#4ade80,#16a34a);
-  box-shadow:0 0 14px rgba(74,222,128,0.9);
-}
-.timeline-content{margin-left:18px;}
-.timeline-title{
-  font-size:1rem;
-  font-weight:600;
-  color:#e5e7eb;
-}
-.timeline-date{
-  font-size:0.8rem;
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-  color:#a5b4fc;
-}
-.timeline-text{
-  font-size:0.9rem;
+.social-icon span{
+  font-size:0.85rem;
   color:#cbd5f5;
-  margin-top:4px;
 }
-@keyframes slideUp{
-  to {opacity:1;transform:translateY(0);}
-}
+
+/* Brand Colors */
+.social-icon.instagram i{color:#E4405F;}
+.social-icon.twitter i{color:#000;}
+.social-icon.linkedin i{color:#0077B5;}
+.social-icon.youtube i{color:#FF0000;}
+.social-icon.telegram i{color:#0088CC;}
+
+.social-icon:hover i{transform:scale(1.15);}
+.social-icon.instagram:hover i{text-shadow:0 0 12px rgba(255,105,180,0.7);}
+.social-icon.twitter:hover i{text-shadow:0 0 10px rgba(255,255,255,0.4);}
+.social-icon.linkedin:hover i{text-shadow:0 0 10px rgba(0,119,181,0.7);}
+.social-icon.youtube:hover i{text-shadow:0 0 12px rgba(255,0,0,0.7);}
+.social-icon.telegram:hover i{text-shadow:0 0 12px rgba(0,136,204,0.7);}
 
 /* Footer */
 .footer{
   padding:40px 0 10px 0;
   text-align:center;
-  font-size:.9rem;
-  color:#64748b
+  font-size:.85rem;
+  color:#6b7280;
+  border-top:1px solid rgba(31,41,55,0.9);
+  margin-top:40px;
 }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 """, unsafe_allow_html=True)
 
 # ---------------- Countdown helper ----------------
@@ -222,99 +281,64 @@ st.markdown("""
 st.markdown("""
 <section class="hero" id="home">
   <h1>Build AI-Driven Trading Bots. No Code. No Limits.</h1>
-  <p>VectorAlgoAI turns your trading ideas into executable AI strategies — blending indicators, machine learning, and news sentiment in one unified dashboard.</p>
-  <div class="launch-box">🚀 Launches on <span>5 March 2026</span></div>
+  <p>VectorAlgoAI helps traders design, test, and automate strategies using AI — without writing a single line of code.</p>
+  <div class="launch-box">
+    <span>🚀 Launches on 5 March 2026</span>
+  </div>
   <br><br>
-  <a href="#mvp" class="btn-primary">Launch Trading Lab</a>
+  <a href="#mvp" class="btn-primary">
+    <span>Open Live Trading Lab</span>
+  </a>
 </section>
 """, unsafe_allow_html=True)
-
 countdown()
 
-# ---------------- About Section ----------------
+# ---------------- About ----------------
 st.markdown("""
 <section class="section" id="about">
-  <h2>About VectorAlgoAI</h2>
-  <p>VectorAlgoAI was founded to make advanced Artificial Intelligence accessible to retail traders. 
-  We believe that AI shouldn’t be limited to institutions or coders — it should empower every trader to automate ideas, 
-  interpret data, and act with confidence.</p>
-  <p>Our platform bridges the gap between human intuition and machine precision — combining deep learning, 
-  fundamental news analysis, and technical signal modeling. 
-  Describe your idea in plain English, and VectorAlgoAI transforms it into a fully operational trading bot.</p>
+  <div class="section-inner">
+    <h2>About VectorAlgoAI</h2>
+    <p class="section-lead">
+      VectorAlgoAI was created to bring institutional-grade AI trading tools to serious retail traders and independent quants.
+    </p>
+    <br>
+    <p>
+      Most traders either spend months learning to code or end up relying on rigid black-box bots. We believe there is a better way:
+      a platform where you describe the strategy, and the system helps you structure it, test it, and refine it – with full transparency
+      into the logic and risk behind every decision.
+    </p>
+    <p>
+      VectorAlgoAI combines indicator logic, machine learning models, and news context into a single workflow designed for power users.
+      Our goal is not to replace the trader, but to remove the friction between idea and execution – so you can spend more time thinking
+      about edge, not debugging code.
+    </p>
+  </div>
 </section>
 """, unsafe_allow_html=True)
-
-# ---------------- Journey Timeline ----------------
-timeline_html = """
-<div class="timeline-wrapper">
-  <h3 style="margin-bottom:0.5rem;">Our Journey</h3>
-  <p style="color:#9ca3af;font-size:0.9rem;margin-bottom:1.2rem;">
-    From idea to live trading lab — focused on building for serious traders step by step.
-  </p>
-  <div class="timeline">
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <div class="timeline-content">
-        <div class="timeline-date">Q4 2024</div>
-        <div class="timeline-title">Idea & Research</div>
-        <div class="timeline-text">
-          Praveen and Sandhya began exploring how AI could remove the friction between strategy design
-          and automation for retail traders, validating the problem across global trading communities.
-        </div>
-      </div>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <div class="timeline-content">
-        <div class="timeline-date">2025</div>
-        <div class="timeline-title">MVP: Strategy-to-Bot Engine</div>
-        <div class="timeline-text">
-          The first VectorAlgoAI MVP was built — turning natural language strategies into structured configs,
-          running on live data with signal overlays and AI-powered prediction models.
-        </div>
-      </div>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <div class="timeline-content">
-        <div class="timeline-date">2026</div>
-        <div class="timeline-title">Public Launch & Early Access</div>
-        <div class="timeline-text">
-          VectorAlgoAI launches globally, giving serious traders the tools to automate, optimize, 
-          and explain their strategies — with broker integration, backtesting, and live AI copilots.
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-"""
-st.markdown(timeline_html, unsafe_allow_html=True)
 
 # ---------------- Services ----------------
 st.markdown("""
 <section class="section" id="services">
-  <h2>Our Core Features</h2>
-  <p>Everything you need to go from idea → strategy → automation.</p>
-  <div class="card-grid">
-    <div class="card">
-      <h4>🧠 Strategy-to-Bot Engine</h4>
-      <p>Convert plain-English ideas into rule-based bots and executable strategies automatically.</p>
-    </div>
-    <div class="card">
-      <h4>📈 Hybrid AI Signal Layer</h4>
-      <p>Combine ML models, indicators, and regime filters to generate adaptive signals.</p>
-    </div>
-    <div class="card">
-      <h4>📰 News Intelligence</h4>
-      <p>AI interprets market news and macro events to align your strategy with sentiment and volatility.</p>
-    </div>
-    <div class="card">
-      <h4>🧩 Explainable Decisions</h4>
-      <p>Every signal includes reasoning — transparency and trust built into the AI core.</p>
+  <div class="section-inner">
+    <h2>Our Core Features</h2>
+    <p class="section-lead">Everything you need to go from idea → strategy → automation.</p>
+    <div class="card-grid">
+      <div class="card">
+        <h4>🧠 Strategy-to-Bot Engine</h4>
+        <p>Describe your setup in plain English and generate structured, machine-readable strategy configs ready to test and automate.</p>
+      </div>
+      <div class="card">
+        <h4>📈 Hybrid AI Signal Layer</h4>
+        <p>Blend indicators, price-action logic, and ML signals to adapt to changing market regimes instead of static rules.</p>
+      </div>
+      <div class="card">
+        <h4>📰 Market & News Context</h4>
+        <p>Incorporate macro events and sentiment into your strategy so you’re not trading in isolation from the real world.</p>
+      </div>
+      <div class="card">
+        <h4>🧩 Explainable Decisions</h4>
+        <p>See why a signal fired, what rules were met, and how risk was calculated – no opaque black boxes.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -323,22 +347,28 @@ st.markdown("""
 # ---------------- Founders ----------------
 st.markdown("""
 <section class="section" id="founders">
-  <h2>Meet the Founders</h2>
-  <div class="card-grid">
-    <div class="card">
-      <h4>Praveen Kumar</h4>
-      <p><strong>Founder & AI Architect</strong></p>
-      <p>Praveen Kumar is the creator and technical architect behind VectorAlgoAI. 
-      With a deep background in AI, quantitative trading, and neural networks, 
-      he brings years of experience building intelligent trading systems. 
-      His goal is to democratize access to professional-grade AI trading automation.</p>
-    </div>
-    <div class="card">
-      <h4>Sandhya Moni</h4>
-      <p><strong>Co-Founder & Product Strategist</strong></p>
-      <p>Sandhya Moni leads VectorAlgoAI’s product strategy and user experience. 
-      With experience in digital product leadership at Electrolux, 
-      she ensures every feature serves real trader workflows and business growth.</p>
+  <div class="section-inner">
+    <h2>Meet the Founders</h2>
+    <p class="section-lead">Product, AI, and trading – aligned around one mission: empower serious traders with real tools.</p>
+    <div class="card-grid">
+      <div class="card">
+        <h4>👨‍💻 Praveen Kumar</h4>
+        <p><strong>Founder &amp; AI Architect</strong></p>
+        <p>
+          Praveen Kumar is the technical architect behind VectorAlgoAI. With deep experience in AI, quantitative trading,
+          and neural network design, he has spent years building and testing algorithmic systems in real-market conditions.
+          VectorAlgoAI is his attempt to compress that experience into a platform traders can actually use.
+        </p>
+      </div>
+      <div class="card">
+        <h4>👩‍💼 Sandhya Moni</h4>
+        <p><strong>Co-Founder &amp; Product Strategist</strong></p>
+        <p>
+          Sandhya Moni leads product and go-to-market. Drawing on her background in digital product leadership at global
+          brands like Electrolux, she ensures that the platform stays grounded in real workflows, clean UX, and long-term
+          customer value – not just features for the sake of features.
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -347,43 +377,75 @@ st.markdown("""
 # ---------------- MVP ----------------
 st.markdown("""
 <section class="section" id="mvp">
-  <h2>Live Trading Lab (MVP)</h2>
-  <p>Prototype version of VectorAlgoAI’s interactive dashboard.</p>
+  <div class="section-inner">
+    <h2>Live Trading Lab (MVP)</h2>
+    <p class="section-lead">Early version of VectorAlgoAI’s interactive strategy-to-bot engine.</p>
+  </div>
 </section>
 """, unsafe_allow_html=True)
-
 run_mvp_dashboard()
 
 # ---------------- Contact ----------------
 st.markdown("""
 <section class="section" id="contact">
-  <h2>Contact & Early Access</h2>
-  <p>We’d love to hear from you. Reach out depending on what you need.</p>
-  <div class="card-grid">
-    <div class="card">
-      <h4>🚀 Early Access & Founder Chat</h4>
-      <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a></p>
+  <div class="section-inner">
+    <h2>Contact &amp; Early Access</h2>
+    <p class="section-lead">We’re currently onboarding a small group of serious traders and early design partners.</p>
+    <div class="card-grid">
+      <div class="card">
+        <h4>🚀 Early Access &amp; Founder Chat</h4>
+        <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#67e8f9;">founder@vectoralgoai.com</a></p>
+      </div>
+      <div class="card">
+        <h4>📩 General Questions &amp; Support</h4>
+        <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#67e8f9;">contact@vectoralgoai.com</a></p>
+      </div>
+      <div class="card">
+        <h4>📚 Info &amp; Documentation</h4>
+        <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#67e8f9;">info@vectoralgoai.com</a></p>
+      </div>
     </div>
-    <div class="card">
-      <h4>📩 General Questions & Support</h4>
-      <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#38bdf8;">contact@vectoralgoai.com</a></p>
-    </div>
-    <div class="card">
-      <h4>📚 Info & Documentation</h4>
-      <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a></p>
+    <br>
+    <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">
+      Request Early Access
+    </a>
+  </div>
+</section>
+""", unsafe_allow_html=True)
+
+# ---------------- Social Links ----------------
+st.markdown("""
+<section class="section">
+  <div class="section-inner">
+    <h2>Follow Us</h2>
+    <p class="section-lead">Stay close to the roadmap, launch updates, and deep-dive content.</p>
+    <div class="social-links">
+      <div class="social-icons">
+        <a href="https://instagram.com/vectoralgoai" target="_blank" class="social-icon instagram">
+          <i class="fab fa-instagram"></i><span>Instagram</span>
+        </a>
+        <a href="https://twitter.com/vectoralgoai" target="_blank" class="social-icon twitter">
+          <i class="fab fa-x-twitter"></i><span>Twitter (X)</span>
+        </a>
+        <a href="https://linkedin.com/company/vectoralgoai" target="_blank" class="social-icon linkedin">
+          <i class="fab fa-linkedin"></i><span>LinkedIn</span>
+        </a>
+        <a href="https://youtube.com/@vectoralgoai" target="_blank" class="social-icon youtube">
+          <i class="fab fa-youtube"></i><span>YouTube</span>
+        </a>
+        <a href="https://t.me/vectoralgoai" target="_blank" class="social-icon telegram">
+          <i class="fab fa-telegram"></i><span>Telegram</span>
+        </a>
+      </div>
     </div>
   </div>
-  <br>
-  <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">
-    Join Early Access
-  </a>
 </section>
 """, unsafe_allow_html=True)
 
 # ---------------- Footer ----------------
 st.markdown(f"""
 <div class="footer">
-© {datetime.now().year} VectorAlgoAI · Built by Praveen Kumar · Strategy & Product by Sandhya Moni ·
+© {datetime.now().year} VectorAlgoAI · Built by Praveen Kumar · Strategy &amp; Product by Sandhya Moni ·
 Contact: founder@vectoralgoai.com · contact@vectoralgoai.com · info@vectoralgoai.com
 </div>
 """, unsafe_allow_html=True)

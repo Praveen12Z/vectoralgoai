@@ -18,7 +18,7 @@ header[data-testid="stHeader"] {display: none;}
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 
-/* Main container padding (because we removed header) */
+/* Main container padding */
 .block-container {
     padding-top: 90px !important;
     padding-bottom: 40px !important;
@@ -69,9 +69,7 @@ h1, h2, h3, h4 {font-weight: 700;}
     color: #cbd5f5;
     transition: 0.18s ease;
 }
-.nav-menu a:hover {
-    color: #22d3ee;
-}
+.nav-menu a:hover { color: #22d3ee; }
 
 /* HERO */
 .hero {
@@ -93,13 +91,51 @@ h1, h2, h3, h4 {font-weight: 700;}
     color: #94a3b8;
     font-size: 1.05rem;
 }
-.hero-launch-text {
-    margin-top: 0.6rem;
-    font-size: 0.9rem;
-    color: #a5b4fc;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+
+/* --- LAUNCH DATE BOX (Style C) --- */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 20px rgba(34,197,94,0.6), inset 0 0 12px rgba(16,185,129,0.25); }
+  50% { box-shadow: 0 0 30px rgba(34,197,94,0.9), inset 0 0 14px rgba(16,185,129,0.4); }
+  100% { box-shadow: 0 0 20px rgba(34,197,94,0.6), inset 0 0 12px rgba(16,185,129,0.25); }
 }
+.launch-box {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 30px;
+    border-radius: 16px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(34,197,94,0.45);
+    color: #a7f3d0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-shadow: 0 0 8px rgba(52,211,153,0.5);
+    backdrop-filter: blur(6px);
+    animation: pulseGlow 2.8s infinite ease-in-out;
+}
+.launch-box span { color: #22c55e; font-weight: 700; }
+
+/* COUNTDOWN - GLOW STYLE */
+.countdown-wrapper {
+    margin-top: 26px;
+    animation: pulseGlow 3s infinite ease-in-out;
+}
+.countdown {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.countdown-item {
+    background: rgba(15,23,42,0.85);
+    border-radius: 12px;
+    padding: 10px 14px;
+    min-width: 70px;
+    border: 1px solid rgba(34,197,94,0.45);
+}
+.countnum { font-size: 1.4rem; font-weight: 700; color: #22d3ee; }
+.countlbl { font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; }
 
 /* BUTTONS */
 .btn-primary {
@@ -127,9 +163,7 @@ h1, h2, h3, h4 {font-weight: 700;}
     font-size: 2rem;
     margin-bottom: 0.4rem;
 }
-.section p {
-    color: #94a3b8;
-}
+.section p { color: #94a3b8; }
 
 /* FEATURE CARDS */
 .card-grid {
@@ -151,38 +185,8 @@ h1, h2, h3, h4 {font-weight: 700;}
     transform: translateY(-5px);
     box-shadow: 0 22px 55px rgba(34,197,94,0.25);
 }
-.card h4 {
-    margin-bottom: 0.4rem;
-}
-.card p {
-    color: #cbd5f5;
-    font-size: 0.95rem;
-}
-
-/* COUNTDOWN */
-.countdown-wrapper {
-    margin-top: 26px;
-}
-.countdown-label {
-    font-size: 0.9rem;
-    color: #e5e7eb;
-    margin-bottom: 0.4rem;
-}
-.countdown {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.countdown-item {
-    background: rgba(15,23,42,0.85);
-    border-radius: 12px;
-    padding: 10px 14px;
-    min-width: 70px;
-    border: 1px solid rgba(148,163,184,0.45);
-}
-.countnum { font-size: 1.4rem; font-weight: 700; color: #22d3ee; }
-.countlbl { font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; }
+.card h4 { margin-bottom: 0.4rem; }
+.card p { color: #cbd5f5; font-size: 0.95rem; }
 
 /* FOOTER */
 .footer {
@@ -198,11 +202,7 @@ h1, h2, h3, h4 {font-weight: 700;}
 def countdown():
     now = datetime.now()
     delta = LAUNCH_DATE - now
-    st.markdown(
-        "<div class='countdown-wrapper'>"
-        "<div class='countdown-label'>Launches on <strong>5 March 2026</strong></div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown("<div class='countdown-wrapper'>", unsafe_allow_html=True)
     if delta.total_seconds() < 0:
         st.markdown("</div>", unsafe_allow_html=True)
         st.success("🚀 VectorAlgoAI has launched!")
@@ -210,15 +210,15 @@ def countdown():
     days = delta.days
     hrs, rem = divmod(delta.seconds, 3600)
     mins, secs = divmod(rem, 60)
-    st.markdown("""
+    st.markdown(f"""
     <div class='countdown'>
-        <div class='countdown-item'><div class='countnum'>{}</div><div class='countlbl'>Days</div></div>
-        <div class='countdown-item'><div class='countnum'>{}</div><div class='countlbl'>Hours</div></div>
-        <div class='countdown-item'><div class='countnum'>{}</div><div class='countlbl'>Mins</div></div>
-        <div class='countdown-item'><div class='countnum'>{}</div><div class='countlbl'>Secs</div></div>
+        <div class='countdown-item'><div class='countnum'>{days}</div><div class='countlbl'>Days</div></div>
+        <div class='countdown-item'><div class='countnum'>{hrs}</div><div class='countlbl'>Hours</div></div>
+        <div class='countdown-item'><div class='countnum'>{mins}</div><div class='countlbl'>Mins</div></div>
+        <div class='countdown-item'><div class='countnum'>{secs}</div><div class='countlbl'>Secs</div></div>
     </div>
     </div>
-    """.format(days, hrs, mins, secs), unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 # ---------------- Navbar ----------------
 st.markdown("""
@@ -242,9 +242,9 @@ st.markdown("""
 <section class="hero" id="home">
   <h1>Build AI-Driven Trading Bots. No Code. No Limits.</h1>
   <p>VectorAlgoAI turns your trading ideas into executable AI strategies — blending indicators, machine learning, and news sentiment in one unified dashboard.</p>
-  <br>
+  <div class="launch-box">🚀 Launches on <span>5 March 2026</span></div>
+  <br><br>
   <a href="#mvp" class="btn-primary">Launch Trading Lab</a>
-  <div class="hero-launch-text">Official launch · 5 March 2026</div>
 </section>
 """, unsafe_allow_html=True)
 
@@ -280,15 +280,17 @@ st.markdown("""
 st.markdown("""
 <section class="section" id="founders">
   <h2>Meet the Founders</h2>
-  <p>Trading, AI, and product – aligned around one mission: empower serious retail traders.</p>
+  <p>Driven by innovation, discipline, and vision — building the bridge between human intuition and machine intelligence.</p>
   <div class="card-grid">
     <div class="card">
       <h4>Praveen Kumar</h4>
-      <p>Founder · AI & Trading Automation<br>Creator of VectorAlgoAI, building the bridge between practical trading and modern AI.</p>
+      <p><strong>Founder & AI Architect</strong></p>
+      <p>Praveen Kumar is the technical architect and creator behind VectorAlgoAI. With a deep background in Artificial Intelligence, quantitative trading, and neural network design, he brings 7+ years of experience building intelligent trading systems. His vision is to democratize access to AI-driven trading automation — empowering every trader, regardless of coding skill, to build institutional-grade systems.</p>
     </div>
     <div class="card">
       <h4>Sandhya Moni</h4>
-      <p>Co-Founder · Strategy & Product<br>Leads the business vision and product experience so the platform fits real trader workflows.</p>
+      <p><strong>Co-Founder & Product Strategist</strong></p>
+      <p>Sandhya Moni leads VectorAlgoAI’s product and business strategy. With a background in digital product management and leadership at global firms like Electrolux, she ensures that every AI feature serves real trader workflows. Her strategic mindset shapes the platform’s user experience, growth, and brand direction.</p>
     </div>
   </div>
 </section>
@@ -311,18 +313,15 @@ st.markdown("""
   <div class="card-grid">
     <div class="card">
       <h4>🚀 Early Access & Founder Chat</h4>
-      <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a><br>
-      Use this to request early access, share your trading setup, or talk directly with the founder about the roadmap.</p>
+      <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a></p>
     </div>
     <div class="card">
       <h4>📩 General Questions & Support</h4>
-      <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#38bdf8;">contact@vectoralgoai.com</a><br>
-      For general inquiries, collaborations, or support once the platform is live.</p>
+      <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#38bdf8;">contact@vectoralgoai.com</a></p>
     </div>
     <div class="card">
       <h4>📚 Info & Documentation</h4>
-      <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a><br>
-      For documentation, press material, or anything related to how VectorAlgoAI works under the hood.</p>
+      <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a></p>
     </div>
   </div>
   <br>
@@ -339,5 +338,3 @@ st.markdown(f"""
 Contact: founder@vectoralgoai.com · contact@vectoralgoai.com · info@vectoralgoai.com
 </div>
 """, unsafe_allow_html=True)
-
-

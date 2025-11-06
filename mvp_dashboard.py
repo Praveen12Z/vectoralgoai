@@ -7,11 +7,6 @@ import pandas as pd
 import streamlit as st
 import yaml
 import joblib
-def run_mvp_dashboard():
-    # paste your full MVP code here
-    # Example:
-    st.title("VectorAlgoAI Trading Dashboard")
-    # ... rest of your original Streamlit app ...
 
 # Optional: OpenAI for GPT parsing
 try:
@@ -60,6 +55,7 @@ def get_openai_client():
 def call_gpt_strategy_parser(prompt: str) -> dict:
     client = get_openai_client()
     if client is None:
+        # fallback static config
         return {
             "meta": {
                 "name": "EMA Crossover Strategy",
@@ -172,9 +168,6 @@ def symbol_to_yf_ticker(symbol: str) -> str:
 
 
 def load_eurusd_1h_from_csv(path: str) -> pd.DataFrame:
-    """
-    Use the same EURUSD 1h CSV we used for training (data/eurusd_1h.csv).
-    """
     if not os.path.exists(path):
         raise FileNotFoundError(f"EURUSD csv not found: {path}")
 
@@ -200,14 +193,6 @@ def load_eurusd_1h_from_csv(path: str) -> pd.DataFrame:
 
 
 def load_price_data(symbol: str = "EURUSD", timeframe: str = "1h", n_points: int = 300):
-    """
-    Returns (df, source_description)
-
-    For EURUSD 1h:
-      - Use local CSV data/eurusd_1h.csv if available.
-    Otherwise:
-      - Try yfinance, fall back to dummy data.
-    """
     sym = symbol.strip().upper() if symbol else "EURUSD"
     tf = normalize_timeframe(timeframe)
 
@@ -297,10 +282,6 @@ def extract_indicator_config(cfg: dict):
 
 
 def extract_bollinger_config(cfg: dict):
-    """
-    Look for any indicator that looks like Bollinger Bands.
-    Returns (has_bollinger, period, std_dev).
-    """
     indicators = cfg.get("indicators", {})
     period = 20
     std_dev = 2.0
@@ -335,16 +316,10 @@ def extract_bollinger_config(cfg: dict):
 
 
 def add_signals_from_config(df: pd.DataFrame, cfg: dict):
-    """
-    Two modes:
-      - If Bollinger Bands are present in config -> use BB signals.
-      - Else -> use EMA crossover + RSI (previous behaviour).
-    """
     df = df.copy()
     has_bb, bb_period, bb_std = extract_bollinger_config(cfg)
 
     if has_bb:
-        # --- Bollinger mode ---
         close = df["close"]
         mid = close.rolling(bb_period, min_periods=bb_period).mean()
         std = close.rolling(bb_period, min_periods=bb_period).std()
@@ -356,12 +331,10 @@ def add_signals_from_config(df: pd.DataFrame, cfg: dict):
         df["bb_lower"] = lower
 
         df["signal"] = 0
-        # Long when price crosses below lower band
         df.loc[
             (df["close"] < df["bb_lower"]) & (df["close"].shift(1) >= df["bb_lower"].shift(1)),
             "signal",
         ] = 1
-        # Short when price crosses above upper band
         df.loc[
             (df["close"] > df["bb_upper"]) & (df["close"].shift(1) <= df["bb_upper"].shift(1)),
             "signal",
@@ -373,7 +346,6 @@ def add_signals_from_config(df: pd.DataFrame, cfg: dict):
         )
         return df, desc
 
-    # --- Default EMA/RSI mode ---
     ema_fast_p, ema_slow_p, rsi_p = extract_indicator_config(cfg)
 
     df["ema_fast"] = df["close"].ewm(span=ema_fast_p, adjust=False).mean()
@@ -484,15 +456,10 @@ def config_to_yaml(config: dict) -> str:
     return yaml.safe_dump(config, sort_keys=False, allow_unicode=True)
 
 
-# ---------------- STREAMLIT UI ---------------- #
+# ---------------- STREAMLIT DASHBOARD ENTRY ---------------- #
 
-def main():
-    st.set_page_config(
-        page_title="VectorAlgoAI – MVP",
-        page_icon="📈",
-        layout="wide",
-    )
-
+def run_mvp_dashboard():
+    """Called from app.py to render the full MVP dashboard inside the landing page."""
     st.title("📈 VectorAlgoAI – Strategy-to-Bot MVP")
     st.caption("Built by Praveen Kumar – AI-powered trading bot generator (v0.4)")
 
@@ -642,7 +609,6 @@ def main():
                 )
             )
 
-            # Plot EMAs if present
             if "ema_fast" in plot_df.columns:
                 fig.add_trace(
                     go.Scatter(
@@ -662,7 +628,6 @@ def main():
                     )
                 )
 
-            # Plot Bollinger bands if present
             if "bb_upper" in plot_df.columns:
                 fig.add_trace(
                     go.Scatter(
@@ -789,7 +754,3 @@ def main():
                 summary_lines.append(notes)
 
             st.markdown("\n".join(summary_lines))
-
-
-if __name__ == "__main__":
-    main()

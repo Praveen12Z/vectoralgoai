@@ -1,22 +1,3 @@
-Nice, this is coming together really well now 👌
-
-I’ve updated the page so that:
-
-1. **Launch date is shown clearly together with the countdown** (“Launches on 5 March 2026”).
-2. There’s a proper **Contact section** with all three emails:
-
-   * `founder@vectoralgoai.com` (early access / founder)
-   * `contact@vectoralgoai.com` (general queries)
-   * `info@vectoralgoai.com` (info / docs)
-3. The **“Join Early Access”** button now emails `founder@vectoralgoai.com`.
-
-Below is the full, updated `app.py`. You can replace your current one with this.
-
----
-
-### 🔁 Updated `app.py` (with launch date + full contact page)
-
-```python
 import streamlit as st
 from datetime import datetime
 from mvp_dashboard import run_mvp_dashboard
@@ -368,3 +349,4 @@ Once you paste this into `app.py`, commit, push, and redeploy:
 * The **Contact** section will have three clear cards plus the **Join Early Access** button sending to `founder@vectoralgoai.com`.
 
 If you want to tweak wording or which email is used where, tell me and I’ll adjust copy + links.
+

@@ -117,6 +117,42 @@ h1,h2,h3,h4{font-weight:700}
 .card h4{margin-bottom:.4rem}
 .card p{color:#cbd5f5;font-size:.95rem}
 
+/* Social links */
+.social-links{
+  text-align:center;
+  margin-top:50px;
+  margin-bottom:20px;
+}
+.social-icons{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin-top:20px;
+}
+.social-icon{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:#e5f2ff;
+  transition:0.3s ease;
+}
+.social-icon i{
+  font-size:30px;
+  margin-bottom:5px;
+  color:#38bdf8;
+  text-shadow:0 0 10px rgba(34,211,238,0.8);
+}
+.social-icon span{
+  font-size:0.9rem;
+  color:#cbd5f5;
+}
+.social-icon:hover i{
+  color:#22c55e;
+  transform:scale(1.2);
+  text-shadow:0 0 20px rgba(34,197,94,0.9);
+}
+
 /* Footer */
 .footer{
   padding:40px 0 10px 0;
@@ -125,6 +161,7 @@ h1,h2,h3,h4{font-weight:700}
   color:#64748b
 }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 """, unsafe_allow_html=True)
 
 # ---------------- Countdown helper ----------------
@@ -222,17 +259,14 @@ st.markdown("""
       <p><strong>Founder & AI Architect</strong></p>
       <p>Praveen Kumar is the technical architect and creator behind VectorAlgoAI. 
       With a deep background in Artificial Intelligence, quantitative trading, and neural network design, 
-      he brings 7+ years of experience building intelligent trading systems. 
-      His vision is to democratize access to AI-driven trading automation — empowering every trader, regardless of coding skill, 
-      to build institutional-grade systems.</p>
+      he brings 7+ years of experience building intelligent trading systems.</p>
     </div>
     <div class="card">
       <h4>Sandhya Moni</h4>
       <p><strong>Co-Founder & Product Strategist</strong></p>
       <p>Sandhya Moni leads VectorAlgoAI’s product and business strategy. 
       With a background in digital product management and leadership at global firms like Electrolux, 
-      she ensures that every AI feature serves real trader workflows. 
-      Her strategic mindset shapes the platform’s user experience, growth, and brand direction.</p>
+      she ensures that every AI feature serves real trader workflows.</p>
     </div>
   </div>
 </section>
@@ -261,6 +295,30 @@ st.markdown("""
       <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a></p></div>
   </div><br>
   <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">Join Early Access</a>
+</section>
+""", unsafe_allow_html=True)
+
+# ---------------- Social Links ----------------
+st.markdown("""
+<section class="section">
+  <h2>Follow Us</h2>
+  <p>Stay connected for updates, announcements, and exclusive early access.</p>
+  <div class="social-links">
+    <div class="social-icons">
+      <a href="https://instagram.com/vectoralgoai" target="_blank" class="social-icon">
+        <i class="fab fa-instagram"></i>
+        <span>Instagram</span>
+      </a>
+      <a href="https://twitter.com/vectoralgoai" target="_blank" class="social-icon">
+        <i class="fab fa-x-twitter"></i>
+        <span>Twitter (X)</span>
+      </a>
+      <a href="https://linkedin.com/company/vectoralgoai" target="_blank" class="social-icon">
+        <i class="fab fa-linkedin"></i>
+        <span>LinkedIn</span>
+      </a>
+    </div>
+  </div>
 </section>
 """, unsafe_allow_html=True)
 

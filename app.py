@@ -1,794 +1,370 @@
+import streamlit as st
+from mvp_dashboard import run_mvp_dashboard
 
-import os
-import textwrap
 from datetime import datetime
 
-import numpy as np
-import pandas as pd
-import streamlit as st
+# ---------- CONFIG ----------
+LAUNCH_DATE = datetime(2026, 3, 5, 0, 0, 0)  # 5 March 2026
 
-import yaml
-import joblib
+st.set_page_config(
+    page_title="VectorAlgoAI",
+    page_icon="🔷",
+    layout="wide"
+)
 
-# Optional: OpenAI for GPT parsing
-try:
-    from openai import OpenAI
-    OPENAI_AVAILABLE = True
-except ImportError:
-    OPENAI_AVAILABLE = False
-    OpenAI = None  # type: ignore
+# ---------- STYLE ----------
+st.markdown(
+    """
+    <style>
+    /* Global */
+    body {
+        background-color: #f5f7fb;
+        color: #111827;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-# Optional: yfinance for real market data
-try:
-    import yfinance as yf
-    YFIN_AVAILABLE = True
-except ImportError:
-    YFIN_AVAILABLE = False
-    yf = None  # type: ignore
+    .main {
+        padding-top: 1rem;
+    }
 
+    /* Hero section */
+    .hero-title {
+        font-size: 2.6rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.1;
+    }
 
-APP_TITLE = "VectorAlgoAI – Strategy-to-Bot MVP"
-DEFAULT_INSTRUCTIONS = """Example:
-"I want to trade EURUSD on the 15-minute timeframe. 
-Use a 50/200 EMA crossover: buy when 50 EMA crosses above 200 EMA and price is above RSI 50.
-Risk 1% per trade, SL at last swing low, TP 2R."
-"""
+    .hero-subtitle {
+        font-size: 1.1rem;
+        color: #4b5563;
+        margin-top: 0.8rem;
+    }
 
+    .pill {
+        display: inline-block;
+        padding: 0.25rem 0.9rem;
+        border-radius: 999px;
+        background: #e0f2fe;
+        color: #0369a1;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
 
-# ---------------- OPENAI UTILS ---------------- #
+    .countdown-box {
+        padding: 1rem 1.4rem;
+        border-radius: 1rem;
+        background: white;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
+        border: 1px solid #e5e7eb;
+    }
 
-def get_openai_client():
-    if not OPENAI_AVAILABLE:
+    .countdown-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .countdown-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        letter-spacing: 0.06em;
+    }
+
+    /* Section titles */
+    .section-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+        color: #0f172a;
+    }
+
+    .section-subtitle {
+        font-size: 0.95rem;
+        color: #6b7280;
+        margin-bottom: 1.2rem;
+    }
+
+    /* Cards */
+    .card {
+        padding: 1.1rem 1.2rem;
+        border-radius: 1rem;
+        background: white;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+        height: 100%;
+    }
+    .card-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        color: #111827;
+    }
+    .card-tag {
+        font-size: 0.8rem;
+        color: #2563eb;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.4rem;
+    }
+    .card-text {
+        font-size: 0.9rem;
+        color: #4b5563;
+    }
+
+    /* Footer */
+    .footer {
+        margin-top: 2.5rem;
+        font-size: 0.8rem;
+        color: #9ca3af;
+        text-align: center;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# ---------- NAVIGATION ----------
+menu = st.sidebar.radio(
+    "Navigate",
+    ["Home", "About", "Services", "Founders","Trading Lab (MVP)", "Contact"],
+    index=0
+)
+
+st.sidebar.markdown("----")
+st.sidebar.markdown("**VectorAlgoAI**")
+st.sidebar.markdown("Built by **Praveen Kumar**  
+Strategic lead: **Sandhya Moni**")
+
+# ---------- UTIL ----------
+def get_countdown():
+    now = datetime.now()
+    delta = LAUNCH_DATE - now
+    if delta.total_seconds() <= 0:
         return None
-
-    api_key = None
-    ui_key = st.session_state.get("openai_api_key", "").strip()
-    if ui_key:
-        api_key = ui_key
-    if api_key is None:
-        env_key = os.getenv("OPENAI_API_KEY", "").strip()
-        if env_key:
-            api_key = env_key
-    if not api_key:
-        return None
-    return OpenAI(api_key=api_key)
+    days = delta.days
+    hours, rem = divmod(delta.seconds, 3600)
+    minutes, seconds = divmod(rem, 60)
+    return days, hours, minutes, seconds
 
 
-def call_gpt_strategy_parser(prompt: str) -> dict:
-    client = get_openai_client()
-    if client is None:
-        return {
-            "meta": {
-                "name": "EMA Crossover Strategy",
-                "created_at": datetime.utcnow().isoformat() + "Z",
-                "version": "0.1.0",
-            },
-            "market": {"symbol": "EURUSD", "timeframe": "1h"},
-            "indicators": [
-                {"name": "ema_fast", "type": "EMA", "period": 50, "source": "close"},
-                {"name": "ema_slow", "type": "EMA", "period": 200, "source": "close"},
-                {"name": "rsi", "type": "RSI", "period": 14, "source": "close"},
-            ],
-            "entry_rules": [
-                "go_long when ema_fast crosses_above ema_slow and rsi > 50",
-            ],
-            "exit_rules": [
-                "close_long when ema_fast crosses_below ema_slow or rsi < 45",
-            ],
-            "risk": {
-                "per_trade_risk_pct": 1.0,
-                "take_profit_r_multiple": 2.0,
-                "stop_loss": "last_swing_low",
-            },
-            "notes": "Fallback static config used because OpenAI client or API key is not configured.",
-        }
-
-    system_msg = (
-        "You are a trading strategy compiler for VectorAlgoAI. "
-        "Convert the user's natural language strategy into a STRICT JSON config. "
-        "Keys to include: meta, market, indicators, entry_rules, exit_rules, risk, notes. "
-        "Output ONLY JSON. Do NOT wrap it in markdown, code fences, or explanations."
+# ---------- PAGES ----------
+if menu == "Home":
+    # HERO
+    st.markdown("<span class='pill'>Launching Soon · 5 March 2026</span>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='hero-title'>VectorAlgoAI</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='hero-subtitle'>Describe your trading idea in plain English. "
+        "VectorAlgoAI turns it into an AI-driven strategy, a working trading bot, "
+        "and a clean dashboard — no code, no installs.</div>",
+        unsafe_allow_html=True,
     )
 
-    user_msg = f"User strategy description:\n{prompt}"
-
-    completion = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        messages=[
-            {"role": "system", "content": system_msg},
-            {"role": "user", "content": user_msg},
-        ],
-        temperature=0.2,
-    )
-
-    raw = completion.choices[0].message.content or ""
-
-    import json, re
-
-    text = raw.strip()
-    match = re.search(r"\{.*\}", text, re.DOTALL)
-    json_str = match.group(0) if match else text
-
-    try:
-        cfg = json.loads(json_str)
-        meta = cfg.setdefault("meta", {})
-        meta.setdefault("name", "VectorAlgoAI Strategy")
-        meta.setdefault("created_at", datetime.utcnow().isoformat() + "Z")
-        meta.setdefault("version", "0.1.0")
-        return cfg
-    except Exception:
-        return {
-            "meta": {
-                "name": "Parsed Strategy (fallback JSON)",
-                "created_at": datetime.utcnow().isoformat() + "Z",
-                "version": "0.1.0",
-            },
-            "raw_model_output": raw,
-            "notes": "Model response could not be parsed as JSON; raw content is included here.",
-        }
-
-
-# ---------------- DATA UTILS ---------------- #
-
-def generate_dummy_price_data(n_points: int = 300) -> pd.DataFrame:
-    np.random.seed(42)
-    returns = np.random.normal(loc=0.0, scale=0.3, size=n_points)
-    price = 100 + np.cumsum(returns)
-    idx = pd.date_range(end=pd.Timestamp.utcnow(), periods=n_points, freq="60min")
-    df = pd.DataFrame({"close": price}, index=idx)
-    df["open"] = df["close"].shift(1).fillna(df["close"])
-    df["high"] = df[["open", "close"]].max(axis=1) + np.random.uniform(0, 0.2, size=n_points)
-    df["low"] = df[["open", "close"]].min(axis=1) - np.random.uniform(0, 0.2, size=n_points)
-    return df
-
-
-def normalize_timeframe(tf: str) -> str:
-    if not tf:
-        return "1h"
-    tf = tf.strip().lower()
-    if tf in ("m15", "15m", "15"):
-        return "15m"
-    if tf in ("m5", "5m", "5"):
-        return "5m"
-    if tf in ("h1", "1h", "60m"):
-        return "1h"
-    if tf in ("h4", "4h", "240m"):
-        return "4h"
-    if tf in ("d1", "1d", "day", "daily"):
-        return "1d"
-    return tf
-
-
-def symbol_to_yf_ticker(symbol: str) -> str:
-    if not symbol:
-        return "EURUSD=X"
-    s = symbol.strip().upper()
-    if len(s) == 6 and s.isalpha():
-        return s + "=X"
-    return s
-
-
-def load_eurusd_1h_from_csv(path: str) -> pd.DataFrame:
-    """
-    Use the same EURUSD 1h CSV we used for training (data/eurusd_1h.csv).
-    """
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"EURUSD csv not found: {path}")
-
-    df = pd.read_csv(path)
-    df = df[~df["Price"].isin(["Ticker", "datetime"])].copy()
-    df["datetime"] = pd.to_datetime(df["Price"])
-    df.set_index("datetime", inplace=True)
-    df.drop(columns=["Price"], inplace=True)
-
-    for c in ["Close", "High", "Low", "Open", "Volume"]:
-        if c in df.columns:
-            df[c] = pd.to_numeric(df[c], errors="coerce")
-
-    df = df.dropna(subset=["Close"])
-    df.sort_index(inplace=True)
-
-    out = df[["Open", "High", "Low", "Close"]].copy()
-    out.rename(
-        columns={"Open": "open", "High": "high", "Low": "low", "Close": "close"},
-        inplace=True,
-    )
-    return out
-
-
-def load_price_data(symbol: str = "EURUSD", timeframe: str = "1h", n_points: int = 300):
-    """
-    Returns (df, source_description)
-
-    For EURUSD 1h:
-      - Use local CSV data/eurusd_1h.csv if available.
-    Otherwise:
-      - Try yfinance, fall back to dummy data.
-    """
-    sym = symbol.strip().upper() if symbol else "EURUSD"
-    tf = normalize_timeframe(timeframe)
-
-    if sym == "EURUSD" and tf == "1h":
-        csv_path = os.path.join("data", "eurusd_1h.csv")
-        if os.path.exists(csv_path):
-            try:
-                df = load_eurusd_1h_from_csv(csv_path)
-                df = df.tail(n_points)
-                return df, f"file: {csv_path} (local EURUSD 1h data)"
-            except Exception as e:
-                return generate_dummy_price_data(n_points), f"dummy: error reading {csv_path} -> {e}"
-
-    if not YFIN_AVAILABLE:
-        return generate_dummy_price_data(n_points), "dummy: yfinance not installed"
-
-    yf_symbol = symbol_to_yf_ticker(symbol)
-
-    if tf == "5m":
-        interval, period = "5m", "5d"
-    elif tf == "15m":
-        interval, period = "15m", "7d"
-    elif tf == "1h":
-        interval, period = "60m", "730d"
-    elif tf == "4h":
-        interval, period = "60m", "730d"
-    else:
-        interval, period = "1d", "5y"
-
-    try:
-        data = yf.download(yf_symbol, period=period, interval=interval, progress=False)
-        if data.empty:
-            return generate_dummy_price_data(n_points), f"dummy: empty download for {yf_symbol} ({interval}, {period})"
-
-        df = data[["Open", "High", "Low", "Close"]].copy()
-        df.rename(
-            columns={"Open": "open", "High": "high", "Low": "low", "Close": "close"},
-            inplace=True,
-        )
-        df.index = pd.to_datetime(df.index)
-        df = df.tail(n_points)
-        return df, f"real: {yf_symbol} ({interval}, {period})"
-    except Exception as e:
-        return generate_dummy_price_data(n_points), f"dummy: error downloading {yf_symbol} -> {e.__class__.__name__}"
-
-
-# ---------------- STRATEGY INDICATOR LOGIC ---------------- #
-
-def extract_indicator_config(cfg: dict):
-    ema_fast = 20
-    ema_slow = 50
-    rsi_period = 14
-
-    indicators = cfg.get("indicators", {})
-
-    if isinstance(indicators, dict):
-        for name, spec in indicators.items():
-            t = str(spec.get("type", "")).upper()
-            length = spec.get("length") or spec.get("period")
-            if t == "EMA":
-                if "fast" in name.lower() and length:
-                    ema_fast = int(length)
-                elif "slow" in name.lower() and length:
-                    ema_slow = int(length)
-            if t == "RSI" and length:
-                rsi_period = int(length)
-    elif isinstance(indicators, list):
-        ema_candidates = []
-        for spec in indicators:
-            t = str(spec.get("type", "")).upper()
-            period = spec.get("period") or spec.get("length")
-            if t == "EMA" and period:
-                ema_candidates.append(int(period))
-            if t == "RSI" and period:
-                rsi_period = int(period)
-        if len(ema_candidates) >= 2:
-            ema_candidates = sorted(set(ema_candidates))
-            ema_fast = ema_candidates[0]
-            ema_slow = ema_candidates[-1]
-        elif len(ema_candidates) == 1:
-            ema_fast = ema_candidates[0]
-
-    if ema_fast >= ema_slow:
-        ema_fast, ema_slow = min(ema_fast, ema_slow), max(ema_fast, ema_slow)
-
-    return ema_fast, ema_slow, rsi_period
-
-
-def extract_bollinger_config(cfg: dict):
-    """
-    Look for any indicator that looks like Bollinger Bands.
-    Returns (has_bollinger, period, std_dev).
-    """
-    indicators = cfg.get("indicators", {})
-    period = 20
-    std_dev = 2.0
-    has_bb = False
-
-    def check_spec(name, spec):
-        nonlocal has_bb, period, std_dev
-        t = str(spec.get("type", "")).upper()
-        nm = str(name).lower()
-        if (
-            "bollinger" in nm
-            or "bbands" in nm
-            or t in ("BOLLINGER", "BOLLINGER_BANDS", "BBANDS", "BB")
-        ):
-            has_bb = True
-            per = spec.get("period") or spec.get("length") or spec.get("window")
-            if per:
-                period = int(per)
-            sd = spec.get("std_dev") or spec.get("std") or spec.get("deviation")
-            if sd:
-                std_dev = float(sd)
-
-    if isinstance(indicators, dict):
-        for name, spec in indicators.items():
-            check_spec(name, spec)
-    elif isinstance(indicators, list):
-        for spec in indicators:
-            name = spec.get("name", "")
-            check_spec(name, spec)
-
-    return has_bb, period, std_dev
-
-
-def add_signals_from_config(df: pd.DataFrame, cfg: dict):
-    """
-    Two modes:
-      - If Bollinger Bands are present in config -> use BB signals.
-      - Else -> use EMA crossover + RSI (previous behaviour).
-    """
-    df = df.copy()
-    has_bb, bb_period, bb_std = extract_bollinger_config(cfg)
-
-    if has_bb:
-        # --- Bollinger mode ---
-        close = df["close"]
-        mid = close.rolling(bb_period, min_periods=bb_period).mean()
-        std = close.rolling(bb_period, min_periods=bb_period).std()
-        upper = mid + bb_std * std
-        lower = mid - bb_std * std
-
-        df["bb_mid"] = mid
-        df["bb_upper"] = upper
-        df["bb_lower"] = lower
-
-        df["signal"] = 0
-        # Long when price crosses below lower band
-        df.loc[
-            (df["close"] < df["bb_lower"]) & (df["close"].shift(1) >= df["bb_lower"].shift(1)),
-            "signal",
-        ] = 1
-        # Short when price crosses above upper band
-        df.loc[
-            (df["close"] > df["bb_upper"]) & (df["close"].shift(1) <= df["bb_upper"].shift(1)),
-            "signal",
-        ] = -1
-
-        desc = (
-            f"Signals generated using Bollinger Bands({bb_period}, {bb_std}σ): "
-            f"long when price crosses below the lower band, short when price crosses above the upper band."
-        )
-        return df, desc
-
-    # --- Default EMA/RSI mode ---
-    ema_fast_p, ema_slow_p, rsi_p = extract_indicator_config(cfg)
-
-    df["ema_fast"] = df["close"].ewm(span=ema_fast_p, adjust=False).mean()
-    df["ema_slow"] = df["close"].ewm(span=ema_slow_p, adjust=False).mean()
-
-    delta = df["close"].diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    window = rsi_p
-    avg_gain = gain.rolling(window=window, min_periods=window).mean()
-    avg_loss = loss.rolling(window=window, min_periods=window).mean()
-    rs = avg_gain / (avg_loss + 1e-9)
-    df["rsi"] = 100 - (100 / (1 + rs))
-
-    df["signal"] = 0
-    df.loc[
-        (df["ema_fast"] > df["ema_slow"])
-        & (df["ema_fast"].shift(1) <= df["ema_slow"].shift(1))
-        & (df["rsi"] > 50),
-        "signal",
-    ] = 1
-    df.loc[
-        (df["ema_fast"] < df["ema_slow"])
-        & (df["ema_fast"].shift(1) >= df["ema_slow"].shift(1))
-        & (df["rsi"] < 50),
-        "signal",
-    ] = -1
-
-    desc = (
-        f"Signals generated using EMA({ema_fast_p}) / EMA({ema_slow_p}) crossover "
-        f"with RSI({rsi_p}) > 50 for longs and < 50 for shorts."
-    )
-    return df, desc
-
-
-# ---------------- ML MODEL (EURUSD 1H) ---------------- #
-
-def load_ml_model(symbol: str, timeframe: str):
-    tf = normalize_timeframe(timeframe)
-    sym = symbol.strip().upper() if symbol else ""
-    if sym != "EURUSD" or tf != "1h":
-        return None
-    model_path = os.path.join("models", "eurusd_1h_clf.pkl")
-    if not os.path.exists(model_path):
-        return None
-    bundle = joblib.load(model_path)
-    return bundle
-
-
-def compute_model_features(close: pd.Series) -> pd.DataFrame:
-    close = close.astype(float)
-    feat = pd.DataFrame(index=close.index)
-    feat["close"] = close
-
-    feat["ret_1"] = close.pct_change(1)
-    feat["ret_3"] = close.pct_change(3)
-    feat["ret_6"] = close.pct_change(6)
-
-    feat["ema_10"] = close.ewm(span=10, adjust=False).mean()
-    feat["ema_20"] = close.ewm(span=20, adjust=False).mean()
-    feat["ema_50"] = close.ewm(span=50, adjust=False).mean()
-
-    delta = close.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    window = 14
-    avg_gain = gain.rolling(window=window, min_periods=window).mean()
-    avg_loss = loss.rolling(window=window, min_periods=window).mean()
-    rs = avg_gain / (avg_loss + 1e-9)
-    feat["rsi_14"] = 100 - (100 / (1 + rs))
-
-    feat["vol_20"] = feat["ret_1"].rolling(window=20, min_periods=20).std()
-
-    feat = feat.dropna()
-    return feat
-
-
-def get_ml_predictions(symbol: str, timeframe: str, df: pd.DataFrame):
-    bundle = load_ml_model(symbol, timeframe)
-    if bundle is None:
-        return df, None, "No ML model available for this symbol/timeframe yet."
-
-    model = bundle["model"]
-    feature_names = bundle.get(
-        "feature_names",
-        ["ret_1", "ret_3", "ret_6", "ema_10", "ema_20", "ema_50", "rsi_14", "vol_20"],
-    )
-
-    feat = compute_model_features(df["close"])
-    if feat.empty:
-        return df, None, "Not enough data to compute AI features."
-
-    X = feat[feature_names].values
-    probs = model.predict_proba(X)[:, 1]
-    prob_series = pd.Series(probs, index=feat.index, name="ai_prob_up")
-
-    df_ai = df.copy()
-    df_ai["ai_prob_up"] = prob_series.reindex(df_ai.index)
-
-    desc = (
-        "AI model (RandomForest) trained on EURUSD 1h predicting the probability "
-        "that the NEXT 1h candle closes higher than the current close."
-    )
-    return df_ai, prob_series, desc
-
-
-def config_to_yaml(config: dict) -> str:
-    return yaml.safe_dump(config, sort_keys=False, allow_unicode=True)
-
-
-# ---------------- STREAMLIT UI ---------------- #
-
-def main():
-    st.set_page_config(
-        page_title="VectorAlgoAI – MVP",
-        page_icon="📈",
-        layout="wide",
-    )
-
-    st.title("📈 VectorAlgoAI – Strategy-to-Bot MVP")
-    st.caption("Built by Praveen Kumar – AI-powered trading bot generator (v0.4)")
-
-    with st.sidebar:
-        st.header("⚙️ Settings")
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        st.write("")
+        st.write("")
+        st.markdown("### Why we’re building this")
         st.markdown(
             """
-            - Step 1: Describe your strategy in plain English  
-            - Step 2: Paste an OpenAI API key (optional)  
-            - Step 3: Click **Generate Bot**  
-            - Step 4: See REAL data + config-driven signals  
-            - Step 5: AI probability overlay for EURUSD 1h  
+            - 🧠 **From idea to bot** – Traders explain their logic in natural language; the platform builds the rules & code.  
+            - 🤖 **AI-driven execution** – ML models, technicals, and news sentiment combined into one engine.  
+            - 📊 **No-code dashboard** – Trade, monitor, and debug your strategies in a clean web interface.  
+            
+            > Our goal is simple: give retail traders the kind of tools only quant firms usually have.
             """
         )
-        st.divider()
+        st.button("🚀 Join early access (coming soon)", disabled=True)
 
-        default_key = st.session_state.get("openai_api_key", "")
-        api_key_ui = st.text_input(
-            "🔑 OpenAI API key (optional)",
-            value=default_key,
-            type="password",
-            help="Paste your OpenAI key here. It stays only in this session.",
-        )
-        st.session_state["openai_api_key"] = api_key_ui.strip()
-
-        client = get_openai_client()
-
-        key_source = None
-        if api_key_ui.strip():
-            key_source = "ui"
-        elif os.getenv("OPENAI_API_KEY", "").strip():
-            key_source = "env"
-
-        if not OPENAI_AVAILABLE:
-            status_text = "❌ openai package not installed (using offline fallback)"
+    with col2:
+        st.markdown("#### Launch Countdown")
+        cd = get_countdown()
+        if cd is None:
+            st.success("VectorAlgoAI has launched 🎉")
         else:
-            if client and key_source == "ui":
-                status_text = "✅ using key from input field"
-            elif client and key_source == "env":
-                status_text = "✅ using key from environment"
-            else:
-                status_text = "⚠️ no API key set (using offline fallback)"
+            days, hours, minutes, seconds = cd
+            st.markdown("<div class='countdown-box'>", unsafe_allow_html=True)
+            c1, c2 = st.columns(2)
+            c3, c4 = st.columns(2)
 
-        st.markdown(f"OpenAI status: {status_text}")
+            c1.markdown(f"<div class='countdown-number'>{days}</div>"
+                        "<div class='countdown-label'>Days</div>", unsafe_allow_html=True)
+            c2.markdown(f"<div class='countdown-number'>{hours}</div>"
+                        "<div class='countdown-label'>Hours</div>", unsafe_allow_html=True)
+            c3.markdown(f"<div class='countdown-number'>{minutes}</div>"
+                        "<div class='countdown-label'>Minutes</div>", unsafe_allow_html=True)
+            c4.markdown(f"<div class='countdown-number'>{seconds}</div>"
+                        "<div class='countdown-label'>Seconds</div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-        if not client:
-            st.info(
-                "You can paste your OpenAI API key above to enable real GPT parsing. "
-                "Without it, the app uses a built-in fallback template.",
-                icon="💡",
-            )
+elif menu == "About":
+    st.markdown("<div class='section-title'>About VectorAlgoAI</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-subtitle'>A next-generation trading lab for serious retail traders.</div>",
+        unsafe_allow_html=True,
+    )
 
-        if not YFIN_AVAILABLE:
-            st.warning(
-                "yfinance is not installed – chart will use dummy random data for non-EURUSD/1h.",
-                icon="📦",
-            )
+    st.markdown(
+        """
+        VectorAlgoAI is being built as a **strategy-to-bot platform**.
 
-        st.divider()
-        st.subheader("🧠 AI Options")
-        ai_filter_enabled = st.checkbox(
-            "Enable AI filter (EURUSD 1h only for now)",
-            value=False,
-            help="When ON, strategy signals will be filtered by the EURUSD 1h ML model (if available).",
-        )
+        Instead of writing code, traders describe what they want:
+        *entries, exits, risk rules, indicators, and even how the bot should react to news*.
 
-    col_left, col_right = st.columns([1.2, 1])
+        Under the hood, VectorAlgoAI:
+        - converts text into a structured strategy config,  
+        - attaches machine-learning models per instrument,  
+        - and serves everything through a web dashboard and future API.
+        """
+    )
 
-    with col_left:
-        st.subheader("1️⃣ Describe your strategy")
-        user_strategy = st.text_area(
-            "Tell VectorAlgoAI what you want your bot to do:",
-            value=textwrap.dedent(DEFAULT_INSTRUCTIONS).strip(),
-            height=220,
-        )
-        generate = st.button("🚀 Generate Bot", type="primary")
+    st.markdown("### Our vision")
+    st.markdown(
+        """
+        - Build tools that feel like **quant infrastructure**, not a toy.  
+        - Stay **transparent and explainable** – every signal should have a reason.  
+        - Help traders move from **intuition → structured logic → automated execution**.
+        """
+    )
 
-    with col_right:
-        st.subheader("👤 About VectorAlgoAI")
+elif menu == "Services":
+    st.markdown("<div class='section-title'>What the platform will offer</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-subtitle'>A first look at the VectorAlgoAI feature set for launch and beyond.</div>",
+        unsafe_allow_html=True,
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='card-tag'>Core</div>", unsafe_allow_html=True)
+        st.markdown("<div class='card-title'>Strategy-to-Bot Engine</div>", unsafe_allow_html=True)
         st.markdown(
-            """
-            **VectorAlgoAI** turns your strategy idea into a structured bot config.
-
-            This MVP shows:
-            - Natural language ➜ structured config (JSON/YAML)  
-            - Real market data when available (yfinance or your local CSV)  
-            - Config-driven signals (EMA/RSI **or** Bollinger Bands)  
-            - AI model overlay for EURUSD 1h (probability of next bar up)  
-            """
+            "<div class='card-text'>Describe your idea in plain English. "
+            "We generate rule-based logic, backtest-ready config, and an executable trading bot.</div>",
+            unsafe_allow_html=True,
         )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    if generate and user_strategy.strip():
-        with st.spinner("Translating your strategy into a bot config..."):
-            cfg = call_gpt_strategy_parser(user_strategy)
-
-        st.success("Bot config generated ✅")
-
-        tab_yaml, tab_json, tab_chart, tab_summary = st.tabs(
-            ["🧾 YAML Config", "🧩 Raw JSON", "📊 Chart + AI", "🧠 Bot Summary"]
+    with c2:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='card-tag'>AI Layer</div>", unsafe_allow_html=True)
+        st.markdown("<div class='card-title'>ML & Sentiment Signals</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='card-text'>Instrument-specific ML models, technical indicators, "
+            "and news sentiment combined into hybrid AI signals.</div>",
+            unsafe_allow_html=True,
         )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        with tab_yaml:
-            st.code(config_to_yaml(cfg), language="yaml")
+    with c3:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='card-tag'>Dashboard</div>", unsafe_allow_html=True)
+        st.markdown("<div class='card-title'>No-Code Trading Workspace</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='card-text'>Clean, responsive web dashboard with charts, open positions, "
+            "signal explanations, and risk metrics.</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        with tab_json:
-            st.json(cfg)
+    st.markdown("")
+    c4, c5 = st.columns(2)
 
-        with tab_chart:
-            import plotly.graph_objects as go
+    with c4:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='card-tag'>Onboarding</div>", unsafe_allow_html=True)
+        st.markdown("<div class='card-title'>AI Strategy Wizard</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='card-text'>For traders who don't yet have a strategy, "
+            "an interactive wizard helps design one based on risk, style, and market preferences.</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-            symbol = cfg.get("market", {}).get("symbol", "EURUSD")
-            timeframe = cfg.get("market", {}).get("timeframe", "1h")
+    with c5:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='card-tag'>Future</div>", unsafe_allow_html=True)
+        st.markdown("<div class='card-title'>Prop-Firm & API Integrations</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='card-text'>Long-term, VectorAlgoAI aims to integrate with prop firms "
+            "and offer APIs for professional automation and research.</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-            df, data_source = load_price_data(symbol, timeframe, n_points=300)
-            df, logic_desc = add_signals_from_config(df, cfg)
+elif menu == "Founders":
+    st.markdown("<div class='section-title'>The people behind VectorAlgoAI</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-subtitle'>Built by traders and technologists who care about real-world edge.</div>",
+        unsafe_allow_html=True,
+    )
 
-            df_ai, prob_series, ai_desc = get_ml_predictions(symbol, timeframe, df)
+    c1, c2 = st.columns(2)
 
-            plot_df = df_ai.copy()
-            if ai_filter_enabled and prob_series is not None:
-                plot_df["signal_filtered"] = 0
-                long_mask = (plot_df["signal"] == 1) & (plot_df.get("ai_prob_up", 0) >= 0.55)
-                short_mask = (plot_df["signal"] == -1) & (plot_df.get("ai_prob_up", 0) <= 0.45)
-                plot_df.loc[long_mask, "signal_filtered"] = 1
-                plot_df.loc[short_mask, "signal_filtered"] = -1
+    with c1:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='card-title'>Praveen Kumar</div>", unsafe_allow_html=True)
+        st.markdown("<div class='card-tag'>Founder · AI & Trading Automation</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='card-text'>Praveen combines a background in Artificial Intelligence with several years of "
+            "hands-on trading experience. VectorAlgoAI is his way of giving retail traders access to the kind of tools "
+            "usually reserved for quant desks — transparent, explainable, and deeply practical.</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-                buys = plot_df[plot_df["signal_filtered"] == 1]
-                sells = plot_df[plot_df["signal_filtered"] == -1]
-                signal_caption = (
-                    "Signals filtered by AI: only longs with prob_up ≥ 0.55 "
-                    "and shorts with prob_up ≤ 0.45 (EURUSD 1h model)."
-                )
-            else:
-                buys = plot_df[plot_df["signal"] == 1]
-                sells = plot_df[plot_df["signal"] == -1]
-                signal_caption = "Signals from strategy logic only (no AI filtering)."
+    with c2:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='card-title'>Sandhya Moni</div>", unsafe_allow_html=True)
+        st.markdown("<div class='card-tag'>Co-Founder · Strategy & Product</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='card-text'>Sandhya leads the business and product strategy for VectorAlgoAI. "
+            "With experience in digital product ownership and strategic planning, she ensures the platform is "
+            "built around real trader problems, clear UX, and sustainable business value.</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+elif menu == "Trading Lab (MVP)":
+    st.markdown("## 🚀 VectorAlgoAI Trading Lab (MVP)")
+    st.markdown("This is the live demo version of our AI-driven trading dashboard.")
+    run_mvp_dashboard()
 
-            fig = go.Figure()
-            fig.add_trace(
-                go.Candlestick(
-                    x=plot_df.index,
-                    open=plot_df["open"],
-                    high=plot_df["high"],
-                    low=plot_df["low"],
-                    close=plot_df["close"],
-                    name="Price",
-                )
-            )
+elif menu == "Contact":
+    st.markdown("<div class='section-title'>Stay in the loop</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-subtitle'>We’re building VectorAlgoAI in public. "
+        "Early supporters will get first access when we launch.</div>",
+        unsafe_allow_html=True,
+    )
 
-            # Plot EMAs if present
-            if "ema_fast" in plot_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=plot_df.index,
-                        y=plot_df["ema_fast"],
-                        mode="lines",
-                        name="EMA Fast",
-                    )
-                )
-            if "ema_slow" in plot_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=plot_df.index,
-                        y=plot_df["ema_slow"],
-                        mode="lines",
-                        name="EMA Slow",
-                    )
-                )
+    st.markdown(
+        """
+        For now, this is a simple placeholder contact section.
 
-            # Plot Bollinger bands if present
-            if "bb_upper" in plot_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=plot_df.index,
-                        y=plot_df["bb_upper"],
-                        mode="lines",
-                        name="BB Upper",
-                    )
-                )
-            if "bb_lower" in plot_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=plot_df.index,
-                        y=plot_df["bb_lower"],
-                        mode="lines",
-                        name="BB Lower",
-                    )
-                )
-            if "bb_mid" in plot_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=plot_df.index,
-                        y=plot_df["bb_mid"],
-                        mode="lines",
-                        name="BB Mid",
-                    )
-                )
+        In the future we’ll add:
+        - Email capture for early-access list  
+        - Telegram / Discord community links  
+        - A lightweight feedback form for feature requests  
+        """
+    )
 
-            fig.add_trace(
-                go.Scatter(
-                    x=buys.index,
-                    y=buys["close"],
-                    mode="markers",
-                    marker_symbol="triangle-up",
-                    marker_size=10,
-                    name="Buy",
-                )
-            )
-            fig.add_trace(
-                go.Scatter(
-                    x=sells.index,
-                    y=sells["close"],
-                    mode="markers",
-                    marker_symbol="triangle-down",
-                    marker_size=10,
-                    name="Sell",
-                )
-            )
+    st.info("You can add a real email form or newsletter signup here later (SendGrid, Mailchimp, etc.).")
 
-            fig.update_layout(
-                title=f"{symbol} – {timeframe} | Config-driven signals",
-                xaxis_title="Time",
-                yaxis_title="Price",
-                xaxis_rangeslider_visible=False,
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
-            st.caption(f"Data source: {data_source}")
-            st.caption(f"Signal logic: {logic_desc}")
-            st.caption(signal_caption)
-
-            if prob_series is not None:
-                st.subheader("🧠 AI probability of next-bar up (EURUSD 1h model)")
-                st.line_chart(prob_series)
-                st.caption(ai_desc)
-            else:
-                st.info(
-                    "No AI model available yet for this symbol/timeframe. "
-                    "Currently only EURUSD 1h is supported.",
-                    icon="🧠",
-                )
-
-        with tab_summary:
-            summary_lines = [
-                f"**Bot name:** {cfg.get('meta', {}).get('name', 'VectorAlgoAI Bot')}",
-            ]
-            market = cfg.get("market", {})
-            summary_lines.append(
-                f"**Market:** {market.get('symbol', 'N/A')} – {market.get('timeframe', 'N/A')}"
-            )
-            summary_lines.append("")
-
-            entry_rules = cfg.get("entry_rules", [])
-            if isinstance(entry_rules, dict):
-                long_rules = entry_rules.get("long", [])
-                short_rules = entry_rules.get("short", [])
-                if long_rules:
-                    summary_lines.append("**Entry rules (long):**")
-                    for r in long_rules:
-                        summary_lines.append(f"- {r}")
-                if short_rules:
-                    summary_lines.append("")
-                    summary_lines.append("**Entry rules (short):**")
-                    for r in short_rules:
-                        summary_lines.append(f"- {r}")
-            else:
-                summary_lines.append("**Entry rules:**")
-                for r in entry_rules:
-                    summary_lines.append(f"- {r}")
-
-            summary_lines.append("")
-
-            exit_rules = cfg.get("exit_rules", [])
-            if isinstance(exit_rules, dict):
-                summary_lines.append("**Exit rules:**")
-                for k, v in exit_rules.items():
-                    summary_lines.append(f"- **{k}**: {v}")
-            else:
-                summary_lines.append("**Exit rules:**")
-                for r in exit_rules:
-                    summary_lines.append(f"- {r}")
-
-            summary_lines.append("")
-            risk = cfg.get("risk", {})
-            if risk:
-                summary_lines.append("**Risk settings:**")
-                for k, v in risk.items():
-                    summary_lines.append(f"- **{k}**: {v}")
-
-            notes = cfg.get("notes")
-            if notes:
-                summary_lines.append("")
-                summary_lines.append("**Notes:**")
-                summary_lines.append(notes)
-
-            st.markdown("\n".join(summary_lines))
-
-
-if __name__ == "__main__":
-    main()
-
-
+# ---------- FOOTER ----------
+st.markdown(
+    "<div class='footer'>© "
+    + str(datetime.now().year)
+    + " VectorAlgoAI · Built by Praveen Kumar · Strategy & Product by Sandhya Moni</div>",
+    unsafe_allow_html=True,
+)

@@ -1,13 +1,3 @@
-Perfect, let’s lock in one clean version.
-Here’s the **full updated `app.py`** with:
-
-* Same layout & styling you already have
-* Improved **Built-in Trading Intelligence Tools** section (tagline + sub-text)
-* All CSS for nicer login/signup contrast, hero, navbar, etc.
-
-You can replace your current `app.py` with this one:
-
-```python
 import streamlit as st
 from datetime import datetime
 import os
@@ -942,6 +932,3 @@ Contact: founder@vectoralgoai.com · contact@vectoralgoai.com · info@vectoralgo
 """,
     unsafe_allow_html=True,
 )
-```
-
-Next step: run this `app.py` and send me a fresh screenshot of any section you still don’t like (colors, spacing, wording, etc.), and I’ll keep giving you **full updated files** every time we tweak something.

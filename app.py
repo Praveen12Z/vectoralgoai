@@ -5,7 +5,7 @@ from mvp_dashboard import run_mvp_dashboard
 LAUNCH_DATE = datetime(2026, 3, 5, 0, 0, 0)
 
 st.set_page_config(
-    page_title="VectorAlgoAI | AI Trading SaaS Platform",
+    page_title="VectorAlgoAI | AI Trading for Serious Retail Traders",
     page_icon="💹",
     layout="wide",
 )
@@ -16,95 +16,205 @@ st.markdown("""
 header[data-testid="stHeader"] {display:none;}
 #MainMenu, footer {visibility:hidden;}
 
-.block-container {padding-top:90px!important; padding-bottom:40px!important;}
-body,.stApp {
-  background:radial-gradient(circle at 20% 20%,#001b2e 0%,#000814 90%)!important;
-  color:#f8fafc!important;
-  font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+.block-container {
+  padding-top:90px!important;
+  padding-bottom:40px!important;
 }
-h1,h2,h3,h4{font-weight:700;color:#f9fafb}
 
-/* Navbar */
-.navbar{
-  position:fixed;top:0;left:0;right:0;height:64px;
-  background:rgba(3,7,18,0.9);backdrop-filter:blur(18px);
-  display:flex;justify-content:space-between;align-items:center;
-  padding:0 5%;border-bottom:1px solid rgba(148,163,184,0.3);z-index:9999;
+/* Global background + typography */
+body, .stApp {
+  background:radial-gradient(circle at 0% 0%, #05091a 0%, #050317 40%, #020010 100%) !important;
+  color:#e5e7eb !important;
+  font-family:"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
-.nav-logo{
-  display:flex;align-items:center;gap:.5rem;
-  font-weight:700;font-size:1.15rem;color:#e5f2ff;letter-spacing:.04em;
+h1,h2,h3,h4{font-weight:700;color:#f9fafb;}
+p{font-size:0.95rem;line-height:1.6;}
+
+/* NAVBAR inspired by pill nav */
+.navbar{
+  position:fixed;top:0;left:0;right:0;height:72px;
+  background:rgba(5,5,20,0.92);
+  backdrop-filter:blur(24px);
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 7%;
+  border-bottom:1px solid rgba(148,163,184,0.2);
+  z-index:9999;
+}
+.nav-left{
+  display:flex;align-items:center;gap:0.7rem;
 }
 .nav-logo-mark{
-  width:22px;height:22px;border-radius:7px;
-  background:conic-gradient(from 160deg,#22d3ee,#a855f7,#22c55e,#22d3ee);
-  box-shadow:0 0 18px rgba(56,189,248,0.7);
+  width:26px;height:26px;border-radius:9px;
+  background:conic-gradient(from 220deg,#22d3ee,#a855f7,#4ade80,#22d3ee);
+  box-shadow:0 0 20px rgba(96,165,250,0.8);
 }
-.nav-logo span:last-child{
-  background:linear-gradient(90deg,#38bdf8,#22c55e);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+.nav-logo-text{
+  font-weight:700;
+  font-size:1.1rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:#e5e7eb;
 }
-.nav-menu a{
-  margin:0 .7rem;text-decoration:none;font-weight:500;font-size:.95rem;
-  color:#cbd5f5;transition:.18s ease;
+.nav-logo-sub{
+  font-size:0.75rem;
+  color:#9ca3af;
 }
-.nav-menu a:hover{color:#22d3ee}
+.nav-center{
+  background:rgba(15,23,42,0.95);
+  border-radius:999px;
+  padding:6px;
+  display:flex;
+  gap:6px;
+  box-shadow:0 12px 35px rgba(15,23,42,0.9);
+}
+.nav-pill{
+  padding:8px 18px;
+  border-radius:999px;
+  font-size:0.85rem;
+  color:#e5e7eb;
+  text-decoration:none;
+  opacity:0.8;
+  transition:0.2s ease;
+}
+.nav-pill.active{
+  background:linear-gradient(135deg,#7c3aed,#38bdf8);
+  color:#f9fafb;
+  opacity:1;
+}
+.nav-pill:hover{opacity:1;}
+.nav-right a{
+  font-size:0.9rem;
+  font-weight:600;
+  color:#e5e7eb;
+  text-decoration:none;
+}
+.nav-right a:hover{color:#a855f7;}
 
-/* Hero */
-.hero{text-align:center;padding-top:10px;padding-bottom:40px;}
-.hero h1{
-  font-size:3.1rem;
-  line-height:1.15;
-  margin-bottom:0.7rem;
-  background:linear-gradient(90deg,#22d3ee,#a855f7,#22c55e);
+/* HERO like the reference */
+.hero-wrapper{
+  padding-top:40px;
+  padding-bottom:40px;
+}
+.hero{
+  text-align:center;
+}
+.hero-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 14px;
+  border-radius:999px;
+  background:rgba(15,23,42,0.85);
+  border:1px solid rgba(148,163,184,0.35);
+  font-size:0.8rem;
+  color:#c4b5fd;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+}
+.hero-eyebrow span.icon{
+  width:8px;height:8px;border-radius:999px;
+  background:radial-gradient(circle,#22c55e,#166534);
+  box-shadow:0 0 10px rgba(34,197,94,0.9);
+}
+.hero-title{
+  margin-top:24px;
+  font-size:clamp(2.8rem, 6vw, 4.5rem);
+  line-height:1.05;
+  letter-spacing:-0.04em;
+  background:linear-gradient(120deg,#e5e7eb,#e0e7ff,#c4b5fd);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-.hero p{
-  max-width:700px;
-  margin:auto;
-  color:#94a3b8;
-  font-size:1.05rem;
+.hero-sub{
+  margin-top:18px;
+  max-width:640px;
+  margin-left:auto;
+  margin-right:auto;
+  color:#a5b4fc;
+  font-size:1rem;
 }
 
-/* Glowing Launch Box */
+/* Glowing launch pill */
 @keyframes pulseGlow{
-  0%{box-shadow:0 0 15px rgba(34,197,94,.4),0 0 30px rgba(34,197,94,.6);}
-  50%{box-shadow:0 0 35px rgba(34,197,94,.8),0 0 55px rgba(34,197,94,1);}
-  100%{box-shadow:0 0 15px rgba(34,197,94,.4),0 0 30px rgba(34,197,94,.6);}
+  0%{box-shadow:0 0 18px rgba(129,140,248,.45),0 0 32px rgba(129,140,248,.7);}
+  50%{box-shadow:0 0 32px rgba(167,139,250,.95),0 0 52px rgba(129,140,248,1);}
+  100%{box-shadow:0 0 18px rgba(129,140,248,.45),0 0 32px rgba(129,140,248,.7);}
 }
-.launch-box{
+.launch-pill{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
-  margin-top:25px;
-  padding:14px 40px;
-  border-radius:20px;
-  background:rgba(16,185,129,0.12);
-  border:1px solid rgba(34,197,94,0.5);
-  color:#a7f3d0;
-  font-size:1.25rem;
+  gap:8px;
+  margin-top:26px;
+  padding:12px 30px;
+  border-radius:999px;
+  background:radial-gradient(circle at 0% 0%,rgba(129,140,248,0.18),rgba(15,23,42,0.98));
+  border:1px solid rgba(129,140,248,0.9);
+  color:#e0e7ff;
+  font-size:0.95rem;
+  font-weight:500;
+  animation:pulseGlow 3s infinite ease-in-out;
+}
+.launch-pill span.date{
+  font-weight:700;
+  color:#c4b5fd;
+}
+
+/* CTA button */
+.hero-cta{
+  margin-top:26px;
+  display:flex;
+  justify-content:center;
+  gap:14px;
+}
+.primary-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 26px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7,#38bdf8);
+  border:none;
+  text-decoration:none;
+  color:#f9fafb;
   font-weight:600;
-  text-shadow:0 0 10px rgba(52,211,153,0.6);
-  backdrop-filter:blur(8px);
-  animation:pulseGlow 2.5s infinite ease-in-out;
+  font-size:0.95rem;
+  box-shadow:0 18px 40px rgba(88,28,135,0.9);
+  transition:0.23s ease;
 }
-.launch-box span{color:#22c55e;font-weight:700;}
-
-/* Notify form */
-.notify-wrap{
-  max-width:420px;
-  margin:18px auto 0 auto;
+.primary-cta:hover{
+  transform:translateY(-1px);
+  box-shadow:0 22px 55px rgba(109,40,217,1);
 }
-.notify-wrap label{
-  font-size:0.85rem;
-  color:#cbd5f5;
-}
-
-/* Style all text inputs (including this one + sidebar ones) */
-[data-testid="stTextInput"] input{
+.secondary-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 22px;
+  border-radius:999px;
   background:rgba(15,23,42,0.9);
+  border:1px solid rgba(148,163,184,0.5);
+  text-decoration:none;
+  color:#e5e7eb;
+  font-weight:500;
+  font-size:0.9rem;
+}
+.secondary-cta:hover{border-color:#a5b4fc;}
+
+/* Notify form container */
+.notify-wrap{
+  max-width:480px;
+  margin:24px auto 0 auto;
+}
+.notify-caption{
+  font-size:0.85rem;
+  color:#9ca3af;
+  margin-bottom:4px;
+}
+
+/* Style text inputs dark */
+[data-testid="stTextInput"] input{
+  background:rgba(15,23,42,0.95);
   border-radius:999px;
   border:1px solid rgba(148,163,184,0.7);
   padding:10px 14px;
@@ -112,69 +222,83 @@ h1,h2,h3,h4{font-weight:700;color:#f9fafb}
 }
 [data-testid="stTextInput"] input:focus{
   outline:none;
-  border:1px solid #22c55e;
-  box-shadow:0 0 0 1px rgba(34,197,94,0.6);
+  border:1px solid #7c3aed;
+  box-shadow:0 0 0 1px rgba(124,58,237,0.7);
 }
 
-/* Style all buttons consistently */
-.stButton>button{
-  border-radius:999px;
-  border:1px solid rgba(34,197,94,0.7);
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-  color:#022c22;
-  font-weight:600;
-  padding:0.45rem 1.4rem;
+/* Countdown style (matching cards) */
+.countdown-wrapper{
+  margin-top:26px;
 }
-.stButton>button:hover{
-  filter:brightness(1.05);
-}
-
-/* Countdown */
-.countdown-wrapper{margin-top:28px;}
 .countdown{
   display:flex;
   justify-content:center;
-  gap:12px;
+  gap:14px;
   flex-wrap:wrap;
 }
 .countdown-item{
-  background:rgba(15,23,42,.85);
-  border-radius:12px;
-  padding:12px 16px;
-  min-width:75px;
-  border:1px solid rgba(148,163,184,.45);
+  background:radial-gradient(circle at 0% 0%,rgba(15,23,42,1),rgba(15,23,42,0.98));
+  border-radius:18px;
+  padding:12px 18px;
+  min-width:80px;
+  border:1px solid rgba(30,64,175,0.7);
+  box-shadow:0 14px 35px rgba(15,23,42,1);
 }
-.countnum{font-size:1.5rem;font-weight:700;color:#22d3ee;}
-.countlbl{font-size:.8rem;color:#9ca3af;text-transform:uppercase;}
+.countnum{
+  font-size:1.4rem;
+  font-weight:700;
+  color:#f9fafb;
+}
+.countlbl{
+  font-size:.7rem;
+  color:#9ca3af;
+  text-transform:uppercase;
+}
 
 /* Sections */
-.section{padding:70px 8% 0 8%;text-align:center;}
-.section h2{font-size:2rem;margin-bottom:.4rem;}
-.section p{color:#94a3b8;max-width:720px;margin:auto;}
+.section{
+  padding:80px 8% 0 8%;
+  text-align:center;
+}
+.section h2{
+  font-size:2.2rem;
+  margin-bottom:.4rem;
+}
+.section p.section-lead{
+  color:#9ca3af;
+  max-width:720px;
+  margin:0.3rem auto 0 auto;
+}
 
-/* Cards */
+/* Feature cards like second screenshot */
 .card-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:24px;
-  margin-top:40px;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:22px;
+  margin-top:34px;
 }
 .card{
-  background:rgba(15,23,42,0.8);
-  border:1px solid rgba(148,163,184,0.45);
-  border-radius:20px;
-  padding:22px;
-  backdrop-filter:blur(12px);
-  box-shadow:0 18px 45px rgba(15,23,42,0.9);
-  transition:0.25s ease;
+  background:radial-gradient(circle at 0% 0%,rgba(15,23,42,0.9),rgba(15,23,42,1));
+  border-radius:18px;
+  padding:20px;
+  border:1px solid rgba(30,64,175,0.65);
+  box-shadow:0 18px 40px rgba(15,23,42,1);
+  text-align:left;
+  transition:0.2s ease;
 }
 .card:hover{
   transform:translateY(-4px);
-  box-shadow:0 22px 55px rgba(34,197,94,0.3);
-  border-color:rgba(34,197,94,0.4);
+  box-shadow:0 24px 55px rgba(15,23,42,1);
+  border-color:rgba(129,140,248,0.9);
 }
-.card h4{margin-bottom:0.4rem;}
-.card p{color:#cbd5f5;font-size:.95rem;}
+.card h4{
+  margin-bottom:.3rem;
+  font-size:1rem;
+}
+.card p{
+  color:#cbd5f5;
+  font-size:0.9rem;
+}
 
 /* Social links */
 .social-links{text-align:center;margin-top:40px;margin-bottom:10px;}
@@ -202,20 +326,12 @@ h1,h2,h3,h4{font-weight:700;color:#f9fafb}
   font-size:0.85rem;
   color:#cbd5f5;
 }
-
-/* Brand Colors */
 .social-icon.instagram i{color:#E4405F;}
 .social-icon.twitter i{color:#000;}
 .social-icon.linkedin i{color:#0077B5;}
 .social-icon.youtube i{color:#FF0000;}
 .social-icon.telegram i{color:#0088CC;}
-
 .social-icon:hover i{transform:scale(1.15);}
-.social-icon.instagram:hover i{text-shadow:0 0 12px rgba(255,105,180,0.7);}
-.social-icon.twitter:hover i{text-shadow:0 0 10px rgba(255,255,255,0.4);}
-.social-icon.linkedin:hover i{text-shadow:0 0 10px rgba(0,119,181,0.7);}
-.social-icon.youtube:hover i{text-shadow:0 0 12px rgba(255,0,0,0.7);}
-.social-icon.telegram:hover i{text-shadow:0 0 12px rgba(0,136,204,0.7);}
 
 /* Footer */
 .footer{
@@ -223,11 +339,27 @@ h1,h2,h3,h4{font-weight:700;color:#f9fafb}
   text-align:center;
   font-size:0.9rem;
   color:#64748b;
-  border-top:1px solid rgba(148,163,184,0.2);
-  margin-top:40px;
+  border-top:1px solid rgba(30,41,59,0.9);
+  margin-top:50px;
 }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+""", unsafe_allow_html=True)
+
+# --------------- META TAGS (SEO + SOCIAL PREVIEW) ---------------
+st.markdown("""
+<!-- META TAGS FOR SEO & SOCIAL -->
+<meta name="title" content="VectorAlgoAI | AI Trading for Serious Retail Traders">
+<meta name="description" content="VectorAlgoAI turns your trading ideas into AI-driven strategies — combining machine learning, technical indicators, and sentiment in one platform.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.vectoralgoai.com/">
+<meta property="og:title" content="VectorAlgoAI | AI Trading for Serious Retail Traders">
+<meta property="og:description" content="Build AI-driven trading bots. No code. No limits. Join the future of trading automation with VectorAlgoAI.">
+<meta property="og:image" content="https://www.vectoralgoai.com/static/og-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VectorAlgoAI | AI Trading for Serious Retail Traders">
+<meta name="twitter:description" content="AI-native trading lab for serious retail traders. Build bots, test ideas, and analyze with machine learning.">
+<meta name="twitter:image" content="https://www.vectoralgoai.com/static/og-preview.png">
 """, unsafe_allow_html=True)
 
 # ---------------- Countdown ----------------
@@ -253,68 +385,125 @@ def countdown():
 # ---------------- Navbar ----------------
 st.markdown("""
 <div class="navbar">
-  <div class="nav-logo">
+  <div class="nav-left">
     <div class="nav-logo-mark"></div>
-    <span>VectorAlgoAI</span>
+    <div>
+      <div class="nav-logo-text">VECTORALGOAI</div>
+      <div class="nav-logo-sub">AI-native trading lab</div>
+    </div>
   </div>
-  <div class="nav-menu">
-    <a href="#home">Home</a>
-    <a href="#about">About</a>
-    <a href="#services">Services</a>
-    <a href="#founders">Founders</a>
-    <a href="#mvp">MVP</a>
-    <a href="#contact">Contact</a>
+  <div class="nav-center">
+    <a class="nav-pill active" href="#home">Home</a>
+    <a class="nav-pill" href="#services">Features</a>
+    <a class="nav-pill" href="#mvp">Trading Lab</a>
+    <a class="nav-pill" href="#contact">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a href="#mvp">Launch Lab</a>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
 # ---------------- Hero ----------------
 st.markdown("""
-<section class="hero" id="home">
-  <h1>Build AI-Driven Trading Bots. No Code. No Limits.</h1>
-  <p>VectorAlgoAI helps traders design, test, and automate strategies using AI — without writing a single line of code.</p>
-  <div class="launch-box">🚀 Launches on <span>5 March 2026</span></div>
-</section>
+<div class="hero-wrapper" id="home">
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <span class="icon"></span>
+      <span>AI-NATIVE TRADING PLATFORM</span>
+    </div>
+    <div class="hero-title">
+      Revolutionize your trading process.
+    </div>
+    <div class="hero-sub">
+      VectorAlgoAI lets serious retail traders design, test, and automate strategies with AI –
+      without wrestling with code, infrastructure, or opaque black-box bots.
+    </div>
+    <div class="launch-pill">
+      🚀 Public launch on <span class="date">5 March 2026</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#mvp" class="primary-cta">Open Live Trading Lab</a>
+      <a href="#services" class="secondary-cta">Explore Features</a>
+    </div>
+  </div>
+</div>
 """, unsafe_allow_html=True)
 
-# ---------------- Notify Me form (under launch box, above countdown) ----------------
+# ---------------- Notify Me form under hero ----------------
 st.markdown("<div class='notify-wrap'>", unsafe_allow_html=True)
-notify_email = st.text_input("Get notified when we launch", key="notify_email")
-col_left, col_center, col_right = st.columns([1,1,1])
-with col_center:
-    if st.button("Notify Me", key="notify_button"):
-        if notify_email and "@" in notify_email:
-            try:
-                with open("early_access_emails.txt", "a") as f:
-                    f.write(notify_email.strip() + "\\n")
-            except Exception:
-                # Even if file write fails (e.g. read-only env), still show success to user
-                pass
-            st.success("You're on the launch list ✅")
-        else:
-            st.error("Please enter a valid email address.")
+st.markdown(
+    "<div class='notify-caption'>Get a personal email from the founders when we go live. No spam.</div>",
+    unsafe_allow_html=True,
+)
+
+col1, col2 = st.columns([3, 1])
+with col1:
+    notify_email = st.text_input("Email address", key="notify_email", label_visibility="collapsed")
+with col2:
+    notify_clicked = st.button("Notify Me", key="notify_button")
+
+if notify_clicked:
+    if notify_email and "@" in notify_email:
+        try:
+            with open("early_access_emails.txt", "a") as f:
+                f.write(notify_email.strip() + "\n")
+        except Exception:
+            # ignore write errors in hosted environments
+            pass
+        st.success("You're on the launch list ✅")
+    else:
+        st.error("Please enter a valid email address.")
+
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Countdown just below form
+# Countdown directly under form
 countdown()
 
-# ---------------- About ----------------
+# ---------------- About / Positioning ----------------
 st.markdown("""
 <section class="section" id="about">
-  <h2>About VectorAlgoAI</h2>
-  <p>VectorAlgoAI bridges the gap between AI innovation and real-world trading. We’re building tools for serious retail traders to transform their ideas into live, adaptive AI-powered bots — without coding.</p>
+  <h2>AI-native infrastructure for retail traders</h2>
+  <p class="section-lead">
+    VectorAlgoAI is built for traders who think in playbooks and edge – not in Python stack traces.
+    Describe your strategy, plug into real data, and let the system handle structure, execution logic,
+    and explainability.
+  </p>
 </section>
 """, unsafe_allow_html=True)
 
-# ---------------- Services ----------------
+# ---------------- Features / Services like "Built-in Developer Tools" ----------------
 st.markdown("""
 <section class="section" id="services">
-  <h2>Our Core Features</h2>
+  <h2>Built-in Trading Intelligence Tools</h2>
+  <p class="section-lead">
+    Everything you need to go from idea → validated strategy → AI-assisted automation.
+  </p>
   <div class="card-grid">
-    <div class="card"><h4>🧠 Strategy-to-Bot Engine</h4><p>Describe strategies in natural language and instantly generate structured bots.</p></div>
-    <div class="card"><h4>📈 Hybrid AI Signal Layer</h4><p>Merge indicators, patterns, and AI predictions for smarter, evolving trading signals.</p></div>
-    <div class="card"><h4>📰 News Intelligence</h4><p>Stay aligned with global sentiment — GPT-powered summaries of market-moving events.</p></div>
-    <div class="card"><h4>🧩 Explainable Decisions</h4><p>See exactly why your bot made each decision — transparency meets automation.</p></div>
+    <div class="card">
+      <h4>🧠 Strategy-to-Bot Engine</h4>
+      <p>Turn plain-English strategy descriptions into structured configs the system can test and visualize.</p>
+    </div>
+    <div class="card">
+      <h4>📈 Hybrid Signal Layer</h4>
+      <p>Blend indicators, ML probabilities, and regime filters for adaptive signals – not static rules.</p>
+    </div>
+    <div class="card">
+      <h4>📰 News & Context</h4>
+      <p>Layer macro events and sentiment on top of your technical view so you’re never trading blind.</p>
+    </div>
+    <div class="card">
+      <h4>🧩 Explainable Decisions</h4>
+      <p>Every entry and exit is traceable to rules and probabilities, so you always know <em>why</em>.</p>
+    </div>
+    <div class="card">
+      <h4>🧪 Sandbox Lab</h4>
+      <p>Experiment on historical and live data, iterate on your playbook, and version your strategies safely.</p>
+    </div>
+    <div class="card">
+      <h4>🔗 Execution-ready Roadmap</h4>
+      <p>Roadmap includes broker integrations, portfolio risk engines, and automated execution rails.</p>
+    </div>
   </div>
 </section>
 """, unsafe_allow_html=True)
@@ -322,17 +511,21 @@ st.markdown("""
 # ---------------- Founders ----------------
 st.markdown("""
 <section class="section" id="founders">
-  <h2>Meet the Founders</h2>
+  <h2>Meet the team behind VectorAlgoAI</h2>
+  <p class="section-lead">Trading, AI, and product – aligned around one mission: empower serious retail traders.</p>
   <div class="card-grid">
     <div class="card">
       <h4>👨‍💻 Praveen Kumar</h4>
       <p><strong>Founder & AI Architect</strong></p>
-      <p>AI researcher, quant trader, and builder of VectorAlgoAI. Focused on making algorithmic intelligence accessible to every serious trader.</p>
+      <p>AI researcher and quant-focused builder behind VectorAlgoAI. Praveen has spent years turning market
+      hypotheses into programmable systems and is now packaging that experience into a platform built for traders,
+      not just developers.</p>
     </div>
     <div class="card">
       <h4>👩‍💼 Sandhya Moni</h4>
       <p><strong>Co-Founder & Product Strategist</strong></p>
-      <p>Product leader with expertise in digital experience and strategy. Ensures VectorAlgoAI stays intuitive, elegant, and focused on real trader workflows.</p>
+      <p>Product leader with experience at global brands, responsible for turning complex trading workflows into
+      clean, opinionated product experiences. Sandhya keeps VectorAlgoAI grounded in real trader needs and clarity.</p>
     </div>
   </div>
 </section>
@@ -342,31 +535,44 @@ st.markdown("""
 st.markdown("""
 <section class="section" id="mvp">
   <h2>Live Trading Lab (MVP)</h2>
-  <p>Prototype of VectorAlgoAI’s strategy-to-bot engine, connecting AI signals, indicators, and sentiment in one dashboard.</p>
+  <p class="section-lead">
+    Early version of VectorAlgoAI’s strategy-to-bot engine – running on real data with config-driven signals
+    and optional AI overlays.
+  </p>
 </section>
 """, unsafe_allow_html=True)
+
 run_mvp_dashboard()
 
 # ---------------- Contact ----------------
 st.markdown("""
 <section class="section" id="contact">
   <h2>Contact & Early Access</h2>
-  <p>We’re currently onboarding early users and collaborators. Join us for exclusive early access before our launch.</p>
+  <p class="section-lead">
+    We’re onboarding a small group of serious traders and collaborators ahead of launch.
+  </p>
   <div class="card-grid">
-    <div class="card"><h4>🚀 Founder Access</h4><p><a href="mailto:founder@vectoralgoai.com" style="color:#38bdf8;">founder@vectoralgoai.com</a></p></div>
-    <div class="card"><h4>📩 General Inquiries</h4><p><a href="mailto:contact@vectoralgoai.com" style="color:#38bdf8;">contact@vectoralgoai.com</a></p></div>
-    <div class="card"><h4>📚 Info & Docs</h4><p><a href="mailto:info@vectoralgoai.com" style="color:#38bdf8;">info@vectoralgoai.com</a></p></div>
+    <div class="card">
+      <h4>🚀 Founder Access</h4>
+      <p>Email: <a href="mailto:founder@vectoralgoai.com" style="color:#a5b4fc;">founder@vectoralgoai.com</a></p>
+    </div>
+    <div class="card">
+      <h4>📩 General Inquiries</h4>
+      <p>Email: <a href="mailto:contact@vectoralgoai.com" style="color:#a5b4fc;">contact@vectoralgoai.com</a></p>
+    </div>
+    <div class="card">
+      <h4>📚 Info & Docs</h4>
+      <p>Email: <a href="mailto:info@vectoralgoai.com" style="color:#a5b4fc;">info@vectoralgoai.com</a></p>
+    </div>
   </div>
-  <br>
-  <a href="mailto:founder@vectoralgoai.com?subject=VectorAlgoAI%20Early%20Access" class="btn-primary">Join Early Access</a>
 </section>
 """, unsafe_allow_html=True)
 
 # ---------------- Social Links ----------------
 st.markdown("""
 <section class="section">
-  <h2>Follow Us</h2>
-  <p>Stay close to the roadmap, launch updates, and deep-dive content.</p>
+  <h2>Follow VectorAlgoAI</h2>
+  <p class="section-lead">Stay close to launch updates, roadmap drops, and deep-dive content.</p>
   <div class="social-links">
     <div class="social-icons">
       <a href="https://instagram.com/vectoralgoai" target="_blank" class="social-icon instagram">

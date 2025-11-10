@@ -6,7 +6,7 @@ import json
 import hashlib
 
 LAUNCH_DATE = datetime(2026, 3, 5, 0, 0, 0)
-USERS_FILE = "users.json"  # very simple user store (not production-grade)
+USERS_FILE = "users.json"  # simple user store (MVP only)
 
 
 # ---------- Simple user storage (JSON file) ----------
@@ -21,7 +21,7 @@ def load_users():
         with open(USERS_FILE, "r") as f:
             return json.load(f)
     except Exception:
-        return []  # if file is broken, ignore silently
+        return []
 
 
 def save_users(users):
@@ -29,7 +29,7 @@ def save_users(users):
         with open(USERS_FILE, "w") as f:
             json.dump(users, f)
     except Exception:
-        # On some hosted environments writing may fail; we just skip persistence.
+        # hosted environments may be read-only – just skip persistence
         pass
 
 
@@ -290,7 +290,7 @@ p{font-size:0.95rem;line-height:1.6;}
   margin-bottom:4px;
 }
 
-/* Style all text inputs */
+/* Text inputs */
 [data-testid="stTextInput"] input{
   background:rgba(15,23,42,0.95);
   border-radius:999px;
@@ -304,7 +304,7 @@ p{font-size:0.95rem;line-height:1.6;}
   box-shadow:0 0 0 1px rgba(124,58,237,0.7);
 }
 
-/* Style buttons */
+/* Buttons */
 .stButton>button{
   border-radius:999px;
   border:1px solid rgba(124,58,237,0.9);
@@ -481,8 +481,11 @@ def countdown():
     </div>
     </div>""", unsafe_allow_html=True)
 
+
 # ---------- Navbar ----------
 current_user = st.session_state.get("user_email")
+nav_user_html = f"<div class='nav-user'>Signed in as {current_user}</div>" if current_user else ""
+nav_cta_label = "Open Lab" if current_user else "Sign in to Lab"
 
 st.markdown(f"""
 <div class="navbar">
@@ -500,8 +503,8 @@ st.markdown(f"""
     <a class="nav-pill" href="#contact">Contact</a>
   </div>
   <div class="nav-right">
-    {"<div class='nav-user'>Signed in as " + current_user + "</div>" if current_user else ""}
-    <a href="#mvp">{"Open Lab" if current_user else "Sign in to Lab"}</a>
+    {nav_user_html}
+    <a href="#mvp">{nav_cta_label}</a>
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -632,12 +635,12 @@ st.markdown("""
 </section>
 """, unsafe_allow_html=True)
 
-# ---------- MVP + AUTH ----------
+# ---------- MVP + AUTH + DEMO ----------
 st.markdown("""
 <section class="section" id="mvp">
   <h2>Live Trading Lab (MVP)</h2>
   <p class="section-lead">
-    Sign up or log in to access the MVP dashboard. This is where strategies become real bots.
+    Sign up or log in to access the full MVP dashboard. Or open a one-click demo if you just want to explore.
   </p>
 </section>
 """, unsafe_allow_html=True)
@@ -645,7 +648,7 @@ st.markdown("""
 user_email = st.session_state.get("user_email")
 
 if user_email:
-    # Logged-in view: show dashboard + logout
+    # Logged-in: show dashboard + logout
     st.success(f"Signed in as {user_email}")
     logout_col, _ = st.columns([1, 3])
     with logout_col:
@@ -655,10 +658,11 @@ if user_email:
                 st.rerun()
             except Exception:
                 st.experimental_rerun()
-    # MVP dashboard
+
+    st.markdown("#### Full Trading Lab")
     run_mvp_dashboard()
 else:
-    # Not logged in: show login + signup cards
+    # Not logged in: login + signup cards
     col_login, col_signup = st.columns(2)
 
     with col_login:
@@ -699,6 +703,12 @@ else:
                 else:
                     st.error(msg)
         st.markdown("</div>", unsafe_allow_html=True)
+
+    # ↓↓↓ Public demo MVP (no login required) ↓↓↓
+    st.markdown("### Instant demo (no login)")
+    st.caption("Play with the strategy-to-bot MVP in this session. Nothing is stored, this is just a sandbox.")
+    with st.expander("Open demo trading lab", expanded=False):
+        run_mvp_dashboard()
 
 # ---------- Contact ----------
 st.markdown("""

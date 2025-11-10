@@ -156,16 +156,26 @@ p{font-size:0.95rem;line-height:1.6;}
   align-items:center;
   gap:12px;
 }
-.nav-right a{
-  font-size:0.9rem;
-  font-weight:600;
-  color:#e5e7eb;
-  text-decoration:none;
-}
-.nav-right a:hover{color:#a855f7;}
 .nav-user{
   font-size:0.8rem;
   color:#9ca3af;
+}
+
+/* CTA on right side of nav */
+.nav-cta{
+  padding:8px 18px;
+  border-radius:999px;
+  border:1px solid rgba(129,140,248,0.8);
+  background:rgba(15,23,42,0.98);
+  font-size:0.85rem;
+  font-weight:600;
+  color:#e5e7eb;
+  cursor:pointer;
+  transition:0.2s ease;
+}
+.nav-cta:hover{
+  border-color:#a855f7;
+  color:#e9d5ff;
 }
 
 /* HERO */
@@ -390,14 +400,27 @@ p{font-size:0.95rem;line-height:1.6;}
   color:#cbd5f5;
   font-size:0.9rem;
 }
+.card ul{
+  margin:0.45rem 0 0;
+  padding-left:1.1rem;
+  font-size:0.85rem;
+  color:#9ca3af;
+}
 
 /* Auth cards */
 .auth-card{
-  background:radial-gradient(circle at 0% 0%,rgba(15,23,42,0.95),rgba(15,23,42,1));
+  background:radial-gradient(circle at 0% 0%,rgba(15,23,42,0.98),rgba(15,23,42,1));
   border-radius:18px;
   padding:20px 22px;
-  border:1px solid rgba(30,64,175,0.7);
+  border:1px solid rgba(30,64,175,0.9);
   box-shadow:0 18px 40px rgba(15,23,42,1);
+}
+.auth-card h3, .auth-card h4{
+  margin-bottom:0.6rem;
+}
+.auth-card label{
+  color:#e5e7eb !important;
+  font-size:0.85rem !important;
 }
 
 /* Social links */
@@ -485,7 +508,7 @@ def countdown():
 # ---------- Navbar ----------
 current_user = st.session_state.get("user_email")
 nav_user_html = f"<div class='nav-user'>Signed in as {current_user}</div>" if current_user else ""
-nav_cta_label = "Open Lab" if current_user else "Sign in to Lab"
+cta_text = "Open Lab" if current_user else "Sign in to Lab"
 
 st.markdown(f"""
 <div class="navbar">
@@ -504,9 +527,28 @@ st.markdown(f"""
   </div>
   <div class="nav-right">
     {nav_user_html}
-    <a href="#mvp">{nav_cta_label}</a>
+    <div class="nav-cta" onclick="window.location.hash='#mvp'">{cta_text}</div>
   </div>
 </div>
+""", unsafe_allow_html=True)
+
+# JS: update active pill based on hash (so Home isn’t always highlighted)
+st.markdown("""
+<script>
+function setActiveNav(){
+  var hash = window.location.hash || '#home';
+  var pills = document.querySelectorAll('.nav-center a.nav-pill');
+  pills.forEach(function(p){
+    if(p.getAttribute('href') === hash){
+      p.classList.add('active');
+    } else {
+      p.classList.remove('active');
+    }
+  });
+}
+window.addEventListener('hashchange', setActiveNav);
+window.addEventListener('load', setActiveNav);
+</script>
 """, unsafe_allow_html=True)
 
 # ---------- Hero ----------
@@ -552,7 +594,7 @@ if notify_clicked:
     if notify_email and "@" in notify_email:
         try:
             with open("early_access_emails.txt", "a") as f:
-                f.write(notify_email.strip() + "\n")
+                f.write(notify_email.strip() + "\\n")
         except Exception:
             pass
         st.success("You're on the launch list ✅")
@@ -587,26 +629,56 @@ st.markdown("""
     <div class="card">
       <h4>🧠 Strategy-to-Bot Engine</h4>
       <p>Turn plain-English strategy descriptions into structured configs the system can test and visualize.</p>
+      <ul>
+        <li>Capture entries, exits, and risk in one config.</li>
+        <li>Generate YAML / JSON ready for backtesting or execution.</li>
+        <li>Version strategies as you iterate.</li>
+      </ul>
     </div>
     <div class="card">
       <h4>📈 Hybrid Signal Layer</h4>
       <p>Blend indicators, ML probabilities, and regime filters for adaptive signals – not static rules.</p>
+      <ul>
+        <li>Combine EMA, RSI, Bollinger and custom filters.</li>
+        <li>Overlay AI probability of next-bar up/down.</li>
+        <li>Quickly toggle filters on/off to see impact.</li>
+      </ul>
     </div>
     <div class="card">
       <h4>📰 News & Context</h4>
       <p>Layer macro events and sentiment on top of your technical view so you’re never trading blind.</p>
+      <ul>
+        <li>Tag events like CPI, FOMC, and earnings around your trades.</li>
+        <li>See when signals cluster around high-risk news windows.</li>
+        <li>Build rules that react to regime or sentiment shifts.</li>
+      </ul>
     </div>
     <div class="card">
       <h4>🧩 Explainable Decisions</h4>
       <p>Every entry and exit is traceable to rules and probabilities, so you always know <em>why</em>.</p>
+      <ul>
+        <li>Inspect the exact rule stack that fired each signal.</li>
+        <li>See AI confidence next to every trade idea.</li>
+        <li>Use explanations to refine or de-risk your playbook.</li>
+      </ul>
     </div>
     <div class="card">
       <h4>🧪 Sandbox Lab</h4>
       <p>Experiment on historical and live data, iterate on your playbook, and version your strategies safely.</p>
+      <ul>
+        <li>Swap instruments and timeframes without rewriting logic.</li>
+        <li>Test multiple parameter sets side by side.</li>
+        <li>Keep experiments separate from live capital.</li>
+      </ul>
     </div>
     <div class="card">
       <h4>🔗 Execution-ready Roadmap</h4>
       <p>Roadmap includes broker integrations, portfolio risk engines, and automated execution rails.</p>
+      <ul>
+        <li>Connect to brokers via APIs for live orders.</li>
+        <li>Portfolio-level risk & exposure controls.</li>
+        <li>Alerts, webhooks, and automation hooks.</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -704,7 +776,7 @@ else:
                     st.error(msg)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # ↓↓↓ Public demo MVP (no login required) ↓↓↓
+    # Public demo MVP (no login required)
     st.markdown("### Instant demo (no login)")
     st.caption("Play with the strategy-to-bot MVP in this session. Nothing is stored, this is just a sandbox.")
     with st.expander("Open demo trading lab", expanded=False):

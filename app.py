@@ -90,6 +90,11 @@ header[data-testid="stHeader"] {display:none;}
   padding-bottom:40px!important;
 }
 
+/* Hide any stray top-level <pre> (the white code bubble) */
+body > pre {
+  display:none !important;
+}
+
 /* Global background + typography */
 body, .stApp {
   background:radial-gradient(circle at 0% 0%, #05091a 0%, #050317 40%, #020010 100%) !important;
@@ -161,8 +166,8 @@ p{font-size:0.95rem;line-height:1.6;}
   color:#9ca3af;
 }
 
-/* CTA on right side of nav */
-.nav-cta{
+/* CTA link on right side of nav */
+.nav-cta-link{
   padding:8px 18px;
   border-radius:999px;
   border:1px solid rgba(129,140,248,0.8);
@@ -172,8 +177,9 @@ p{font-size:0.95rem;line-height:1.6;}
   color:#e5e7eb;
   cursor:pointer;
   transition:0.2s ease;
+  text-decoration:none;
 }
-.nav-cta:hover{
+.nav-cta-link:hover{
   border-color:#a855f7;
   color:#e9d5ff;
 }
@@ -412,15 +418,23 @@ p{font-size:0.95rem;line-height:1.6;}
   background:radial-gradient(circle at 0% 0%,rgba(15,23,42,0.98),rgba(15,23,42,1));
   border-radius:18px;
   padding:20px 22px;
-  border:1px solid rgba(30,64,175,0.9);
+  border:1px solid rgba(37,99,235,0.9);
   box-shadow:0 18px 40px rgba(15,23,42,1);
 }
 .auth-card h3, .auth-card h4{
   margin-bottom:0.6rem;
 }
 .auth-card label{
-  color:#e5e7eb !important;
-  font-size:0.85rem !important;
+  color:#f9fafb !important;
+  font-size:0.9rem !important;
+  font-weight:500 !important;
+}
+.auth-card [data-testid="stTextInput"] input{
+  background:rgba(15,23,42,0.96);
+  border:1px solid rgba(148,163,184,0.9);
+}
+.auth-card [data-testid="stTextInput"] input::placeholder{
+  color:#6b7280;
 }
 
 /* Social links */
@@ -527,15 +541,15 @@ st.markdown(f"""
   </div>
   <div class="nav-right">
     {nav_user_html}
-    <div class="nav-cta" onclick="window.location.hash='#mvp'">{cta_text}</div>
+    <a class="nav-cta-link" href="#mvp">{cta_text}</a>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# JS: update active pill based on hash (so Home isn’t always highlighted)
+# JS: update active pill based on hash and clicks
 st.markdown("""
 <script>
-function setActiveNav(){
+function setActiveNavFromHash(){
   var hash = window.location.hash || '#home';
   var pills = document.querySelectorAll('.nav-center a.nav-pill');
   pills.forEach(function(p){
@@ -546,8 +560,18 @@ function setActiveNav(){
     }
   });
 }
-window.addEventListener('hashchange', setActiveNav);
-window.addEventListener('load', setActiveNav);
+
+window.addEventListener('hashchange', setActiveNavFromHash);
+window.addEventListener('load', function(){
+  setActiveNavFromHash();
+  var pills = document.querySelectorAll('.nav-center a.nav-pill');
+  pills.forEach(function(p){
+    p.addEventListener('click', function(){
+      pills.forEach(function(x){ x.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+});
 </script>
 """, unsafe_allow_html=True)
 
@@ -594,7 +618,7 @@ if notify_clicked:
     if notify_email and "@" in notify_email:
         try:
             with open("early_access_emails.txt", "a") as f:
-                f.write(notify_email.strip() + "\\n")
+                f.write(notify_email.strip() + "\n")
         except Exception:
             pass
         st.success("You're on the launch list ✅")

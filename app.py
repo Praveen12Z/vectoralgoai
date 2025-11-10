@@ -1,3 +1,13 @@
+Perfect, let’s lock in one clean version.
+Here’s the **full updated `app.py`** with:
+
+* Same layout & styling you already have
+* Improved **Built-in Trading Intelligence Tools** section (tagline + sub-text)
+* All CSS for nicer login/signup contrast, hero, navbar, etc.
+
+You can replace your current `app.py` with this one:
+
+```python
 import streamlit as st
 from datetime import datetime
 import os
@@ -164,7 +174,6 @@ p{font-size:0.95rem;line-height:1.6;}
   opacity:0.8;
   transition:0.2s ease;
 }
-/* Home is .active initially; once you click another pill, :focus takes over */
 .nav-pill.active,
 .nav-pill:focus{
   background:linear-gradient(135deg,#7c3aed,#38bdf8);
@@ -397,6 +406,23 @@ p{font-size:0.95rem;line-height:1.6;}
   color:#9ca3af;
   max-width:720px;
   margin:0.3rem auto 0 auto;
+}
+
+/* New tagline + subtext for tools section */
+.section-tagline{
+  margin-top:0.5rem;
+  font-size:0.85rem;
+  text-transform:uppercase;
+  letter-spacing:0.14em;
+  color:#a5b4fc;
+}
+.section-subtext{
+  margin-top:0.75rem;
+  max-width:720px;
+  margin-left:auto;
+  margin-right:auto;
+  font-size:0.95rem;
+  color:#9ca3af;
 }
 
 .card-grid{
@@ -672,8 +698,13 @@ st.markdown(
     """
 <section class="section" id="services">
   <h2>Built-in Trading Intelligence Tools</h2>
-  <p class="section-lead">
+  <p class="section-tagline">
     Everything you need to go from idea → validated strategy → AI-assisted automation.
+  </p>
+  <p class="section-subtext">
+    Describe your playbook in plain English, let VectorAlgoAI turn it into a structured config,
+    layer in AI probabilities and news context, then test it safely in a sandbox before you ever
+    risk real capital.
   </p>
   <div class="card-grid">
     <div class="card">
@@ -911,3 +942,6 @@ Contact: founder@vectoralgoai.com · contact@vectoralgoai.com · info@vectoralgo
 """,
     unsafe_allow_html=True,
 )
+```
+
+Next step: run this `app.py` and send me a fresh screenshot of any section you still don’t like (colors, spacing, wording, etc.), and I’ll keep giving you **full updated files** every time we tweak something.

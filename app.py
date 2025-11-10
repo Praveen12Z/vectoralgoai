@@ -1,16 +1,85 @@
 import streamlit as st
 from datetime import datetime
 from mvp_dashboard import run_mvp_dashboard
+import os
+import json
+import hashlib
 
 LAUNCH_DATE = datetime(2026, 3, 5, 0, 0, 0)
+USERS_FILE = "users.json"  # very simple user store (not production-grade)
 
+
+# ---------- Simple user storage (JSON file) ----------
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return []
+    try:
+        with open(USERS_FILE, "r") as f:
+            return json.load(f)
+    except Exception:
+        return []  # if file is broken, ignore silently
+
+
+def save_users(users):
+    try:
+        with open(USERS_FILE, "w") as f:
+            json.dump(users, f)
+    except Exception:
+        # On some hosted environments writing may fail; we just skip persistence.
+        pass
+
+
+def find_user(email: str):
+    users = load_users()
+    email_lower = email.strip().lower()
+    for u in users:
+        if u.get("email", "").strip().lower() == email_lower:
+            return u
+    return None
+
+
+def register_user(email: str, password: str):
+    email = email.strip()
+    if not email or "@" not in email:
+        return False, "Please enter a valid email."
+    if len(password) < 6:
+        return False, "Password must be at least 6 characters."
+    if find_user(email) is not None:
+        return False, "An account with this email already exists."
+
+    users = load_users()
+    users.append(
+        {
+            "email": email,
+            "password_hash": hash_password(password),
+            "created_at": datetime.utcnow().isoformat() + "Z",
+        }
+    )
+    save_users(users)
+    return True, "Account created successfully. You can log in now."
+
+
+def authenticate_user(email: str, password: str):
+    user = find_user(email)
+    if user is None:
+        return False, "No account found with this email."
+    if user.get("password_hash") != hash_password(password):
+        return False, "Incorrect password."
+    return True, ""
+
+
+# ---------- Streamlit config ----------
 st.set_page_config(
     page_title="VectorAlgoAI | AI Trading for Serious Retail Traders",
     page_icon="💹",
     layout="wide",
 )
 
-# ---------------- CSS ----------------
+# ---------- CSS ----------
 st.markdown("""
 <style>
 header[data-testid="stHeader"] {display:none;}
@@ -30,7 +99,7 @@ body, .stApp {
 h1,h2,h3,h4{font-weight:700;color:#f9fafb;}
 p{font-size:0.95rem;line-height:1.6;}
 
-/* NAVBAR inspired by pill nav */
+/* NAVBAR */
 .navbar{
   position:fixed;top:0;left:0;right:0;height:72px;
   background:rgba(5,5,20,0.92);
@@ -82,6 +151,11 @@ p{font-size:0.95rem;line-height:1.6;}
   opacity:1;
 }
 .nav-pill:hover{opacity:1;}
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 .nav-right a{
   font-size:0.9rem;
   font-weight:600;
@@ -89,8 +163,12 @@ p{font-size:0.95rem;line-height:1.6;}
   text-decoration:none;
 }
 .nav-right a:hover{color:#a855f7;}
+.nav-user{
+  font-size:0.8rem;
+  color:#9ca3af;
+}
 
-/* HERO like the reference */
+/* HERO */
 .hero-wrapper{
   padding-top:40px;
   padding-bottom:40px;
@@ -160,7 +238,7 @@ p{font-size:0.95rem;line-height:1.6;}
   color:#c4b5fd;
 }
 
-/* CTA button */
+/* CTA buttons */
 .hero-cta{
   margin-top:26px;
   display:flex;
@@ -212,7 +290,7 @@ p{font-size:0.95rem;line-height:1.6;}
   margin-bottom:4px;
 }
 
-/* Style text inputs dark */
+/* Style all text inputs */
 [data-testid="stTextInput"] input{
   background:rgba(15,23,42,0.95);
   border-radius:999px;
@@ -226,7 +304,20 @@ p{font-size:0.95rem;line-height:1.6;}
   box-shadow:0 0 0 1px rgba(124,58,237,0.7);
 }
 
-/* Countdown style (matching cards) */
+/* Style buttons */
+.stButton>button{
+  border-radius:999px;
+  border:1px solid rgba(124,58,237,0.9);
+  background:linear-gradient(135deg,#7c3aed,#6d28d9);
+  color:#f9fafb;
+  font-weight:600;
+  padding:0.45rem 1.4rem;
+}
+.stButton>button:hover{
+  filter:brightness(1.05);
+}
+
+/* Countdown */
 .countdown-wrapper{
   margin-top:26px;
 }
@@ -270,7 +361,7 @@ p{font-size:0.95rem;line-height:1.6;}
   margin:0.3rem auto 0 auto;
 }
 
-/* Feature cards like second screenshot */
+/* Cards */
 .card-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
@@ -298,6 +389,15 @@ p{font-size:0.95rem;line-height:1.6;}
 .card p{
   color:#cbd5f5;
   font-size:0.9rem;
+}
+
+/* Auth cards */
+.auth-card{
+  background:radial-gradient(circle at 0% 0%,rgba(15,23,42,0.95),rgba(15,23,42,1));
+  border-radius:18px;
+  padding:20px 22px;
+  border:1px solid rgba(30,64,175,0.7);
+  box-shadow:0 18px 40px rgba(15,23,42,1);
 }
 
 /* Social links */
@@ -346,9 +446,8 @@ p{font-size:0.95rem;line-height:1.6;}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 """, unsafe_allow_html=True)
 
-# --------------- META TAGS (SEO + SOCIAL PREVIEW) ---------------
+# ---------- META TAGS ----------
 st.markdown("""
-<!-- META TAGS FOR SEO & SOCIAL -->
 <meta name="title" content="VectorAlgoAI | AI Trading for Serious Retail Traders">
 <meta name="description" content="VectorAlgoAI turns your trading ideas into AI-driven strategies — combining machine learning, technical indicators, and sentiment in one platform.">
 <meta property="og:type" content="website">
@@ -362,7 +461,7 @@ st.markdown("""
 <meta name="twitter:image" content="https://www.vectoralgoai.com/static/og-preview.png">
 """, unsafe_allow_html=True)
 
-# ---------------- Countdown ----------------
+# ---------- Countdown ----------
 def countdown():
     now = datetime.now()
     delta = LAUNCH_DATE - now
@@ -382,8 +481,10 @@ def countdown():
     </div>
     </div>""", unsafe_allow_html=True)
 
-# ---------------- Navbar ----------------
-st.markdown("""
+# ---------- Navbar ----------
+current_user = st.session_state.get("user_email")
+
+st.markdown(f"""
 <div class="navbar">
   <div class="nav-left">
     <div class="nav-logo-mark"></div>
@@ -399,12 +500,13 @@ st.markdown("""
     <a class="nav-pill" href="#contact">Contact</a>
   </div>
   <div class="nav-right">
-    <a href="#mvp">Launch Lab</a>
+    {"<div class='nav-user'>Signed in as " + current_user + "</div>" if current_user else ""}
+    <a href="#mvp">{"Open Lab" if current_user else "Sign in to Lab"}</a>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ---------------- Hero ----------------
+# ---------- Hero ----------
 st.markdown("""
 <div class="hero-wrapper" id="home">
   <div class="hero">
@@ -430,7 +532,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ---------------- Notify Me form under hero ----------------
+# ---------- Notify form ----------
 st.markdown("<div class='notify-wrap'>", unsafe_allow_html=True)
 st.markdown(
     "<div class='notify-caption'>Get a personal email from the founders when we go live. No spam.</div>",
@@ -449,7 +551,6 @@ if notify_clicked:
             with open("early_access_emails.txt", "a") as f:
                 f.write(notify_email.strip() + "\n")
         except Exception:
-            # ignore write errors in hosted environments
             pass
         st.success("You're on the launch list ✅")
     else:
@@ -457,10 +558,10 @@ if notify_clicked:
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Countdown directly under form
+# Countdown under form
 countdown()
 
-# ---------------- About / Positioning ----------------
+# ---------- About ----------
 st.markdown("""
 <section class="section" id="about">
   <h2>AI-native infrastructure for retail traders</h2>
@@ -472,7 +573,7 @@ st.markdown("""
 </section>
 """, unsafe_allow_html=True)
 
-# ---------------- Features / Services like "Built-in Developer Tools" ----------------
+# ---------- Features ----------
 st.markdown("""
 <section class="section" id="services">
   <h2>Built-in Trading Intelligence Tools</h2>
@@ -508,7 +609,7 @@ st.markdown("""
 </section>
 """, unsafe_allow_html=True)
 
-# ---------------- Founders ----------------
+# ---------- Founders ----------
 st.markdown("""
 <section class="section" id="founders">
   <h2>Meet the team behind VectorAlgoAI</h2>
@@ -531,20 +632,75 @@ st.markdown("""
 </section>
 """, unsafe_allow_html=True)
 
-# ---------------- MVP ----------------
+# ---------- MVP + AUTH ----------
 st.markdown("""
 <section class="section" id="mvp">
   <h2>Live Trading Lab (MVP)</h2>
   <p class="section-lead">
-    Early version of VectorAlgoAI’s strategy-to-bot engine – running on real data with config-driven signals
-    and optional AI overlays.
+    Sign up or log in to access the MVP dashboard. This is where strategies become real bots.
   </p>
 </section>
 """, unsafe_allow_html=True)
 
-run_mvp_dashboard()
+user_email = st.session_state.get("user_email")
 
-# ---------------- Contact ----------------
+if user_email:
+    # Logged-in view: show dashboard + logout
+    st.success(f"Signed in as {user_email}")
+    logout_col, _ = st.columns([1, 3])
+    with logout_col:
+        if st.button("Log out"):
+            st.session_state["user_email"] = None
+            try:
+                st.rerun()
+            except Exception:
+                st.experimental_rerun()
+    # MVP dashboard
+    run_mvp_dashboard()
+else:
+    # Not logged in: show login + signup cards
+    col_login, col_signup = st.columns(2)
+
+    with col_login:
+        st.markdown("<div class='auth-card'>", unsafe_allow_html=True)
+        st.subheader("Log in")
+        with st.form("login_form"):
+            login_email = st.text_input("Email", key="login_email")
+            login_password = st.text_input("Password", type="password", key="login_password")
+            submitted_login = st.form_submit_button("Log in")
+        if submitted_login:
+            ok, msg = authenticate_user(login_email, login_password)
+            if ok:
+                st.session_state["user_email"] = login_email.strip()
+                st.success("Welcome back! Redirecting to the lab...")
+                try:
+                    st.rerun()
+                except Exception:
+                    st.experimental_rerun()
+            else:
+                st.error(msg)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with col_signup:
+        st.markdown("<div class='auth-card'>", unsafe_allow_html=True)
+        st.subheader("Create account")
+        with st.form("signup_form"):
+            signup_email = st.text_input("Work email", key="signup_email")
+            signup_password = st.text_input("Password (min 6 chars)", type="password", key="signup_password")
+            signup_password2 = st.text_input("Confirm password", type="password", key="signup_password2")
+            submitted_signup = st.form_submit_button("Sign up")
+        if submitted_signup:
+            if signup_password != signup_password2:
+                st.error("Passwords do not match.")
+            else:
+                ok, msg = register_user(signup_email, signup_password)
+                if ok:
+                    st.success(msg)
+                else:
+                    st.error(msg)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------- Contact ----------
 st.markdown("""
 <section class="section" id="contact">
   <h2>Contact & Early Access</h2>
@@ -568,7 +724,7 @@ st.markdown("""
 </section>
 """, unsafe_allow_html=True)
 
-# ---------------- Social Links ----------------
+# ---------- Social ----------
 st.markdown("""
 <section class="section">
   <h2>Follow VectorAlgoAI</h2>
@@ -595,7 +751,7 @@ st.markdown("""
 </section>
 """, unsafe_allow_html=True)
 
-# ---------------- Footer ----------------
+# ---------- Footer ----------
 st.markdown(f"""
 <div class="footer">
 © {datetime.now().year} VectorAlgoAI · Built by Praveen Kumar · Strategy & Product by Sandhya Moni ·

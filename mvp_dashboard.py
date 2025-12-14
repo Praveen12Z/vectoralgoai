@@ -328,7 +328,12 @@ def run_mvp_dashboard():
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        st.subheader("📜 Strategy YAML")
+        tab_builder, tab_yaml = st.tabs(["🧩 Strategy Builder", "📜 Advanced YAML"])
+        with tab_builder:
+            render_strategy_builder()
+     with tab_yaml:
+         st.text_area("", height=420, key="strategy_yaml")
+
 
         saved_names = ["(none)"] + [s["name"] for s in user_strategies]
         selected_name = st.selectbox(

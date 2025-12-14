@@ -38,3 +38,17 @@ if run:
         "weaknesses": weaknesses,
         "suggestions": suggestions,
     }
+if "bt" in st.session_state:
+    bt = st.session_state["bt"]
+
+    render_kpis(bt["metrics"])
+    st.markdown("---")
+
+    render_dashboard_sections(
+        bt["trades"],
+        bt["weaknesses"],
+        bt["suggestions"]
+    )
+
+    st.markdown("---")
+    render_ml_confidence()

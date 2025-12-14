@@ -1,3 +1,14 @@
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+
+export default function HomePage() {
+  return (
+    <>
+      <Navbar />
+      <Hero />
+    </>
+  );
+}
 export default function Home() {
   return (
     <main className="px-8 py-20 max-w-6xl mx-auto">

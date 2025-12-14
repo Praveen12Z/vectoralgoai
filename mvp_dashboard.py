@@ -328,10 +328,10 @@ def run_mvp_dashboard():
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        tab_builder, tab_yaml = st.tabs(["🧩 Strategy Builder", "📜 Advanced YAML"])
-         with tab_builder:
+    tab_builder, tab_yaml = st.tabs(["🧩 Strategy Builder", "📜 Advanced YAML"])
+    with tab_builder:
             render_strategy_builder()
-          with tab_yaml:
+    with tab_yaml:
             st.text_area("", height=420, key="strategy_yaml")
 
 

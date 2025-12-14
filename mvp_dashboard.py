@@ -384,23 +384,23 @@ def run_mvp_dashboard():
             st.rerun()
 
     with col2:
-    run_clicked = st.button("🔴 Run Crash-Test", use_container_width=True)
+       run_clicked = st.button("🔴 Run Crash-Test", use_container_width=True)
 
-    if run_clicked:
-        try:
-            cfg: StrategyConfig = parse_strategy_yaml(
-                st.session_state["strategy_yaml"]
-            )
+       if run_clicked:
+            try:
+                cfg: StrategyConfig = parse_strategy_yaml(
+                    st.session_state["strategy_yaml"]
+                )
 
-            strategy_dict = {
-                "name": cfg.name,
-                "market": cfg.market,
-                "timeframe": cfg.timeframe,
-                "indicators": cfg.indicators,
-                "entry": cfg.entry,
-                "exit": cfg.exit,
-                "risk": cfg.risk,
-            }
+                strategy_dict = {
+                    "name": cfg.name,
+                    "market": cfg.market,
+                    "timeframe": cfg.timeframe,
+                    "indicators": cfg.indicators,
+                    "entry": cfg.entry,
+                    "exit": cfg.exit,
+                    "risk": cfg.risk,
+                }
 
             # AI Mentor
             st.session_state["mentor_feedback"] = get_mentor_feedback(strategy_dict)

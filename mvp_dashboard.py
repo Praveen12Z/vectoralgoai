@@ -319,7 +319,7 @@ def run_mvp_dashboard():
         st.session_state["current_strategy_name"] = ""
 
     # Load user strategies for this run
-    user_strategies = load_user_strategies(user_email)
+     user_strategies = load_user_strategies(user_email)
 
     # -----------------------------------------------------------------
     # -----------------------------------------------------------------

@@ -1,24 +1,45 @@
 # core/data_loader.py
 from __future__ import annotations
+
 import os
 from datetime import datetime, timedelta
 import pandas as pd
 
-from massive import RESTClient   # Massive/Polygon official client
-
-API_KEY = "H12mN8iRzm7z2yFfQaKCSv3k3ZcqDxJK"
-client = RESTClient(API_KEY)
-
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+# -----------------------------------------------------------
+# Optional Massive / Polygon client (DISABLED IN MVP)
+# -----------------------------------------------------------
+try:
+    from massive import RESTClient
+    MASSIVE_AVAILABLE = True
+except ImportError:
+    RESTClient = None
+    MASSIVE_AVAILABLE = False
 
 
 # -----------------------------------------------------------
-# Market mapper (NAS100 → correct Massive symbol)
+# Environment & paths
+# -----------------------------------------------------------
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+API_KEY = os.getenv("MASSIVE_API_KEY")
+
+client = None
+if MASSIVE_AVAILABLE and API_KEY:
+    try:
+        client = RESTClient(API_KEY)
+    except Exception:
+        client = None
+
+
+# -----------------------------------------------------------
+# Market mapper
 # -----------------------------------------------------------
 MARKET_MAP = {
-    "NAS100": "NDX",    # NASDAQ 100 index
-    "US30": "DJI",      # Dow Jones
-    "SPX500": "SPX",    # S&P 500
+    "NAS100": "NDX",
+    "US30": "DJI",
+    "SPX500": "SPX",
     "XAUUSD": "XAUUSD",
     "EURUSD": "EURUSD",
 }
@@ -29,25 +50,52 @@ def get_symbol(symbol: str) -> str:
 
 
 # -----------------------------------------------------------
-# Low-level Massive fetch
+# SAMPLE DATA LOADER (MVP MODE)
 # -----------------------------------------------------------
-def _fetch_massive(symbol: str, multiplier: int, timespan: str, years: int) -> pd.DataFrame:
+def _load_sample_data(symbol: str, timeframe: str) -> pd.DataFrame:
     """
-    Fetch raw OHLCV bars from Massive/Polygon and return a clean DataFrame.
+    Load OHLCV from local CSV for MVP / demo mode.
     """
+    fname = f"sample_{symbol.lower()}_{timeframe}.csv"
+    path = os.path.join(DATA_DIR, fname)
+
+    if not os.path.exists(path):
+        return pd.DataFrame()
+
+    df = pd.read_csv(path, parse_dates=["timestamp"])
+    df = df.set_index("timestamp")
+
+    return df[["open", "high", "low", "close", "volume"]]
+
+
+# -----------------------------------------------------------
+# Massive fetch (ONLY USED LATER – NOT MVP)
+# -----------------------------------------------------------
+def _fetch_massive(
+    symbol: str,
+    multiplier: int,
+    timespan: str,
+    years: int,
+) -> pd.DataFrame:
+    if not MASSIVE_AVAILABLE or client is None:
+        return pd.DataFrame()
+
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=365 * years)
 
     bars = []
-    for bar in client.list_aggs(
-        symbol,
-        multiplier=multiplier,
-        timespan=timespan,
-        from_=start_date.strftime("%Y-%m-%d"),
-        to=end_date.strftime("%Y-%m-%d"),
-        limit=50000,
-    ):
-        bars.append(bar)
+    try:
+        for bar in client.list_aggs(
+            symbol,
+            multiplier=multiplier,
+            timespan=timespan,
+            from_=start_date.strftime("%Y-%m-%d"),
+            to=end_date.strftime("%Y-%m-%d"),
+            limit=50000,
+        ):
+            bars.append(bar)
+    except Exception:
+        return pd.DataFrame()
 
     if not bars:
         return pd.DataFrame()
@@ -76,98 +124,64 @@ def _fetch_massive(symbol: str, multiplier: int, timespan: str, years: int) -> p
 
 
 # -----------------------------------------------------------
-# Main OHLCV loader
+# MAIN OHLCV LOADER (USED BY MVP)
 # -----------------------------------------------------------
 def load_ohlcv(symbol: str, timeframe: str, years: int = 2) -> pd.DataFrame:
     """
-    Load OHLCV candles for given symbol & timeframe.
+    Unified OHLCV loader.
 
-    Strategy:
-      - Always fetch 1h candles from Massive as a base
-      - For 4h / 1d, resample from 1h (robust even if Massive doesn't have native 4h)
-      - For 15m, try direct fetch; if empty, fall back to 1h and upsample (last resort)
+    MVP behaviour:
+    - Uses local CSV sample data only
+    - NEVER crashes if data is missing
     """
-    os.makedirs(DATA_DIR, exist_ok=True)
 
     timeframe = timeframe.lower()
+
+    # --- MVP MODE ---
+    if not MASSIVE_AVAILABLE or client is None:
+        df = _load_sample_data(symbol, timeframe)
+        return df
+
+    # --- FUTURE: LIVE MODE ---
     mapped_symbol = get_symbol(symbol)
 
-    # Cached path by symbol & timeframe
-    cache_path = os.path.join(DATA_DIR, f"{symbol.upper()}_{timeframe}.csv")
-
-    if os.path.exists(cache_path):
-        try:
-            df_cached = pd.read_csv(cache_path, parse_dates=["timestamp"], index_col="timestamp")
-            # Only return if not empty
-            if not df_cached.empty:
-                return df_cached
-        except Exception:
-            # If cache is corrupted, ignore and reload
-            pass
-
-    # --- Base: always get 1H from Massive ---
     df_1h = _fetch_massive(mapped_symbol, multiplier=1, timespan="hour", years=years)
-
     if df_1h.empty:
-        # If even 1h is empty, we give up
         return df_1h
 
-    # Normalize index frequency
     df_1h = df_1h.sort_index()
 
-    # --- Build requested timeframe from base 1H ---
     if timeframe == "1h":
-        df_out = df_1h
+        return df_1h
 
-    elif timeframe == "4h":
-        # Resample 1H → 4H
-        df_out = df_1h.resample("4H").agg(
-            {
-                "open": "first",
-                "high": "max",
-                "low": "min",
-                "close": "last",
-                "volume": "sum",
-            }
-        )
-        df_out = df_out.dropna(subset=["open", "high", "low", "close"])
-
-    elif timeframe in ("1d", "1day", "d"):
-        # Resample 1H → 1D
-        df_out = df_1h.resample("1D").agg(
-            {
-                "open": "first",
-                "high": "max",
-                "low": "min",
-                "close": "last",
-                "volume": "sum",
-            }
-        )
-        df_out = df_out.dropna(subset=["open", "high", "low", "close"])
-
-    elif timeframe == "15m":
-        # Try direct 15m from Massive first
-        df_15 = _fetch_massive(mapped_symbol, multiplier=15, timespan="minute", years=years)
-        if df_15.empty:
-            # Last resort: upsample 1h → 15m (not ideal, but avoids total failure)
-            df_15 = (
-                df_1h.resample("15T")
-                .ffill()
+    if timeframe == "4h":
+        return (
+            df_1h.resample("4H")
+            .agg(
+                {
+                    "open": "first",
+                    "high": "max",
+                    "low": "min",
+                    "close": "last",
+                    "volume": "sum",
+                }
             )
-        df_out = df_15
+            .dropna()
+        )
 
-    else:
-        # Unknown timeframe: fallback to 1h
-        df_out = df_1h
+    if timeframe in ("1d", "1day", "d"):
+        return (
+            df_1h.resample("1D")
+            .agg(
+                {
+                    "open": "first",
+                    "high": "max",
+                    "low": "min",
+                    "close": "last",
+                    "volume": "sum",
+                }
+            )
+            .dropna()
+        )
 
-    # Final clean + cache
-    df_out = df_out.sort_index()
-    df_out.index.name = "timestamp"
-
-    try:
-        df_out.to_csv(cache_path)
-    except Exception:
-        # If writing cache fails (e.g. read-only env), ignore
-        pass
-
-    return df_out
+    return df_1h

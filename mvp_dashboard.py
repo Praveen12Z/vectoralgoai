@@ -2,6 +2,7 @@
 # VectorAlgoAI – Strategy Crash-Test MVP Dashboard
 # (V2 with persistent results + Ruthless AI commentary + User Accounts
 #  + Per-User Saved Strategies + Exports)
+from ui.strategy_builder import render_strategy_builder
 
 import traceback
 from typing import Dict, Any

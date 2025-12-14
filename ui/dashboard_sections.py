@@ -1,11 +1,13 @@
 import streamlit as st
 
-def render_dashboard_sections():
-    st.subheader("📈 Performance Overview")
-    st.info("Price chart + trades (your existing Plotly chart goes here)")
-
+def render_dashboard_sections(trades, weaknesses, suggestions):
     st.subheader("📋 Trade Log")
-    st.info("Trade table, export buttons")
+    st.dataframe(trades)
 
-    st.subheader("🧨 Weakness Detection")
-    st.warning("Detected issues will appear here")
+    st.subheader("🧨 Detected Weaknesses")
+    for w in weaknesses:
+        st.warning(w)
+
+    st.subheader("🧠 Improvement Suggestions")
+    for s in suggestions:
+        st.info(s)

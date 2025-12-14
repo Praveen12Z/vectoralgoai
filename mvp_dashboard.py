@@ -325,16 +325,21 @@ def run_mvp_dashboard():
     # -----------------------------------------------------------------
     # MAIN LAYOUT: LEFT = Strategy & Saved Strategies, RIGHT = Run
     # -----------------------------------------------------------------
-    with col1:
-        tab_builder, tab_yaml = st.tabs(
+    # -----------------------------------------------------------------
+# MAIN LAYOUT: LEFT = Strategy & Saved Strategies, RIGHT = Run
+# -----------------------------------------------------------------
+col1, col2 = st.columns([1, 2])
+
+with col1:
+    tab_builder, tab_yaml = st.tabs(
         ["🧩 Strategy Builder", "📜 Advanced YAML"]
     )
 
-        with tab_builder:
-            render_strategy_builder()
+    with tab_builder:
+        render_strategy_builder()
 
-        with tab_yaml:
-            st.text_area("", height=420, key="strategy_yaml")
+    with tab_yaml:
+        st.text_area("", height=420, key="strategy_yaml")
 
     st.divider()
 
@@ -343,7 +348,6 @@ def run_mvp_dashboard():
         "Saved strategies",
         options=saved_names,
         index=0,
-        key="saved_strategy_select",
     )
 
     load_col, delete_col = st.columns(2)
@@ -379,58 +383,58 @@ def run_mvp_dashboard():
             st.session_state["strategy_yaml"],
         )
         st.rerun()
- 
+
 with col2:
-        st.subheader("")
-        run_clicked = st.button("🔴 Run Crash-Test", use_container_width=True)
+    st.subheader("")
+    run_clicked = st.button("🔴 Run Crash-Test", use_container_width=True)
 
-        if run_clicked:
-            try:
-                cfg: StrategyConfig = parse_strategy_yaml(
-                    st.session_state["strategy_yaml"]
-                )
+    if run_clicked:
+        try:
+            cfg: StrategyConfig = parse_strategy_yaml(
+                st.session_state["strategy_yaml"]
+            )
 
-                strategy_dict = {
-                    "name": cfg.name,
-                    "market": cfg.market,
-                    "timeframe": cfg.timeframe,
-                    "indicators": cfg.indicators,
-                    "entry": cfg.entry,
-                    "exit": cfg.exit,
-                    "risk": cfg.risk,
-                }
+            strategy_dict = {
+                "name": cfg.name,
+                "market": cfg.market,
+                "timeframe": cfg.timeframe,
+                "indicators": cfg.indicators,
+                "entry": cfg.entry,
+                "exit": cfg.exit,
+                "risk": cfg.risk,
+            }
 
-                st.session_state["mentor_feedback"] = get_mentor_feedback(strategy_dict)
+            st.session_state["mentor_feedback"] = get_mentor_feedback(strategy_dict)
 
-                df_price = load_ohlcv(cfg.market, cfg.timeframe, years)
-                if df_price is None or df_price.empty:
-                    raise RuntimeError("No price data loaded")
+            df_price = load_ohlcv(cfg.market, cfg.timeframe, years)
+            if df_price is None or df_price.empty:
+                raise RuntimeError("No price data loaded")
 
-                df_feat = apply_all_indicators(df_price, cfg)
+            df_feat = apply_all_indicators(df_price, cfg)
 
-                metrics, weaknesses, suggestions, trades_df = run_backtest_v2(
-                    df_feat, cfg
-                )
+            metrics, weaknesses, suggestions, trades_df = run_backtest_v2(
+                df_feat, cfg
+            )
 
-                st.session_state["bt_result"] = {
-                    "cfg": cfg,
-                    "df_feat": df_feat,
-                    "metrics": metrics,
-                    "weaknesses": weaknesses,
-                    "suggestions": suggestions,
-                    "trades_df": trades_df,
-                    "data_range": (
-                        df_price.index[0].date(),
-                        df_price.index[-1].date(),
-                        len(df_price),
-                    ),
-                }
+            st.session_state["bt_result"] = {
+                "cfg": cfg,
+                "df_feat": df_feat,
+                "metrics": metrics,
+                "weaknesses": weaknesses,
+                "suggestions": suggestions,
+                "trades_df": trades_df,
+                "data_range": (
+                    df_price.index[0].date(),
+                    df_price.index[-1].date(),
+                    len(df_price),
+                ),
+            }
 
-            except Exception as e:
-                st.session_state["bt_result"] = {
-                    "error": str(e),
-                    "traceback": traceback.format_exc(),
-                }
+        except Exception as e:
+            st.session_state["bt_result"] = {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            }
 
 
     # -----------------------------------------------------------------

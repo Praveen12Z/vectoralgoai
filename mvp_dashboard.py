@@ -384,9 +384,9 @@ def run_mvp_dashboard():
             st.rerun()
 
     with col2:
-       run_clicked = st.button("🔴 Run Crash-Test", use_container_width=True)
+        run_clicked = st.button("🔴 Run Crash-Test", use_container_width=True)
 
-       if run_clicked:
+        if run_clicked:
             try:
                 cfg: StrategyConfig = parse_strategy_yaml(
                     st.session_state["strategy_yaml"]
@@ -402,47 +402,46 @@ def run_mvp_dashboard():
                     "risk": cfg.risk,
                 }
 
-            # AI Mentor
-            st.session_state["mentor_feedback"] = get_mentor_feedback(strategy_dict)
+                # AI Mentor
+                st.session_state["mentor_feedback"] = get_mentor_feedback(strategy_dict)
 
-            # Load data
-            df_price = load_ohlcv(cfg.market, cfg.timeframe, years)
-            if df_price is None or df_price.empty:
-                raise RuntimeError("No price data loaded")
+                # Load data
+                df_price = load_ohlcv(cfg.market, cfg.timeframe, years)
+                if df_price is None or df_price.empty:
+                    raise RuntimeError("No price data loaded")
 
-            # Indicators
-            df_feat = apply_all_indicators(df_price, cfg)
+                # Indicators
+                df_feat = apply_all_indicators(df_price, cfg)
 
-            # Backtest
-            metrics, weaknesses, suggestions, trades_df = run_backtest_v2(
-                df_feat, cfg
-            )
+                # Backtest
+                metrics, weaknesses, suggestions, trades_df = run_backtest_v2(
+                    df_feat, cfg
+                )
 
-            # STORE RESULT (CRITICAL)
-            st.session_state["bt_result"] = {
-                "cfg": cfg,
-                "df_feat": df_feat,
-                "metrics": metrics,
-                "weaknesses": weaknesses,
-                "suggestions": suggestions,
-                "trades_df": trades_df,
-                "data_range": (
-                    df_price.index[0].date(),
-                    df_price.index[-1].date(),
-                    len(df_price),
-                ),
-            }
+                # STORE RESULT (CRITICAL)
+                st.session_state["bt_result"] = {
+                    "cfg": cfg,
+                    "df_feat": df_feat,
+                    "metrics": metrics,
+                    "weaknesses": weaknesses,
+                    "suggestions": suggestions,
+                    "trades_df": trades_df,
+                    "data_range": (
+                        df_price.index[0].date(),
+                        df_price.index[-1].date(),
+                        len(df_price),
+                    ),
+                }
 
-            st.rerun()
+                st.rerun()
 
-        except Exception as e:
-            st.session_state["bt_result"] = {
-                "error": str(e),
-                "traceback": traceback.format_exc(),
-            }
-            st.rerun()
+            except Exception as e:
+                st.session_state["bt_result"] = {
+                    "error": str(e),
+                    "traceback": traceback.format_exc(),
+                }
+                st.rerun()
 
-              
     # -----------------------------------------------------------------
     # READ RESULT FROM SESSION STATE
     # -----------------------------------------------------------------

@@ -415,7 +415,7 @@ def run_mvp_dashboard():
                     "trades_df": trades_df,
                     "data_range": (
                         df_price.index[0].date(),
-                        df_price.index[-1].date(),
+                        df_price.index[-1].date()
                         len(df_price),
                     ),
                 }

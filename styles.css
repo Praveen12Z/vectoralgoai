@@ -1,183 +1,222 @@
-/* UNIVERSAL */
-
-body, .stApp {
-    background: #04091a !important;
-    color: #fff !important;
+/* -------------------------------------------------------
+   GLOBAL THEME
+------------------------------------------------------- */
+body, .main, .stApp {
+    background: #060b1a !important;
+    color: white !important;
     font-family: 'Inter', sans-serif;
 }
 
-a { text-decoration: none; color: #d2d2ff; }
+/* Remove Streamlit default padding */
+.css-18e3th9 {
+    padding-top: 0 !important;
+}
 
+.block-container {
+    padding-top: 0 !important;
+}
 
-/* ---------------- NAVIGATION BAR ---------------- */
-
+/* -------------------------------------------------------
+   NAVBAR
+------------------------------------------------------- */
 .navbar {
     width: 100%;
-    padding: 16px 30px;
-    background: rgba(10, 15, 26, 0.75);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(10, 15, 32, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 18px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.navbar .left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 34px;
 }
 
 .brand {
-    font-size: 22px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
 }
 
-.nav-center a {
-    margin: 0px 15px;
-    font-size: 16px;
+.navbar .center a {
+    margin: 0 18px;
+    color: #c8c9ff;
+    font-size: 15px;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.navbar .center a:hover {
+    color: #8aa0ff;
 }
 
 .login-btn {
-    background: #6c5ce7;
-    padding: 8px 16px;
+    background: linear-gradient(135deg, #6e00ff, #b05cff);
+    padding: 8px 22px;
     border-radius: 8px;
-    color: white !important;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
 }
 
+.login-btn:hover {
+    opacity: 0.85;
+}
 
-/* ---------------- HERO ---------------- */
-
-.hero {
-    margin-top: 80px;
+/* -------------------------------------------------------
+   HERO SECTION
+------------------------------------------------------- */
+.hero-section {
     text-align: center;
+    padding: 140px 20px 120px 20px;
+    background: radial-gradient(circle at center, #102040 0%, #060b1a 80%);
 }
 
-.hero h1 {
-    font-size: 64px;
-    font-weight: 800;
-    background: linear-gradient(90deg, #b18bff, #ffffff);
+.hero-title {
+    font-size: 62px;
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(90deg, #9cc4ff, #c4a2ff);
     -webkit-background-clip: text;
     color: transparent;
 }
 
-.hero-sub {
-    font-size: 20px;
-    opacity: 0.7;
+.hero-subtitle {
+    font-size: 18px;
+    color: #c6c6d4;
+    margin-top: 18px;
 }
 
+/* CTA buttons */
 .hero-buttons {
-    margin-top: 24px;
+    margin-top: 32px;
+}
+
+.hero-buttons .cta-primary,
+.hero-buttons .cta-secondary {
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    margin: 0 8px;
 }
 
 .cta-primary {
-    padding: 14px 24px;
-    background: #6c5ce7;
-    border-radius: 12px;
-    margin-right: 12px;
+    background: #7e5fff;
     color: white !important;
+    box-shadow: 0 0 20px rgba(130, 80, 255, 0.4);
 }
 
 .cta-secondary {
-    padding: 14px 24px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 12px;
-    color: white !important;
+    background: rgba(255,255,255,0.1);
+    color: #dcdcff !important;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
-
-/* ---------------- FLOATING SHAPES ---------------- */
-
-.hero-shapes {
-    position: absolute;
-    width: 100%;
-    height: 350px;
-    background: url("https://i.ibb.co/m6SZxqP/floating-shapes.png");
-    background-size: cover;
-    opacity: 0.35;
-    animation: floatShapes 18s infinite linear;
+.cta-primary:hover {
+    background: #9570ff;
 }
 
-@keyframes floatShapes {
-    0% { transform: translateY(0px); }
-    100% { transform: translateY(-40px); }
+.cta-secondary:hover {
+    background: rgba(255,255,255,0.18);
 }
 
-
-/* ---------------- SECTIONS ---------------- */
-
-.section {
-    margin-top: 100px;
+/* -------------------------------------------------------
+   WHY SECTION
+------------------------------------------------------- */
+.why-section {
+    padding: 120px 20px;
     text-align: center;
 }
 
-.section-title {
+.why-section h2 {
     font-size: 40px;
-    margin-bottom: 35px;
+    font-weight: 800;
+    margin-bottom: 40px;
 }
 
 .feature-grid {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+    max-width: 1000px;
+    margin: auto;
 }
 
 .feature-card {
-    background: rgba(255,255,255,0.08);
-    padding: 20px 30px;
+    background: #11182e;
     border-radius: 14px;
-    margin: 10px;
-    font-size: 20px;
+    padding: 22px;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: 0.25s ease;
 }
 
+.feature-card:hover {
+    transform: translateY(-5px);
+    background: #18203d;
+}
 
-/* ---------------- PRICING ---------------- */
+/* -------------------------------------------------------
+   PRICING SECTION
+------------------------------------------------------- */
+.pricing-section {
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.pricing-section h2 {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 40px;
+}
 
 .pricing-grid {
     display: flex;
     justify-content: center;
+    gap: 40px;
     flex-wrap: wrap;
 }
 
-.pricing-card {
-    background: rgba(255,255,255,0.07);
+.price-card {
+    width: 300px;
     padding: 30px;
-    width: 280px;
-    border-radius: 16px;
-    margin: 20px;
-    text-align: center;
+    background: #11182e;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    text-align: left;
+    color: #dcdcff;
+    transition: 0.3s;
 }
 
-.pricing-card.highlight {
-    border: 2px solid #a487ff;
-    background: rgba(164,135,255,0.1);
+.price-card:hover {
+    transform: scale(1.03);
+    background: #18203d;
 }
 
-.price {
-    font-size: 32px;
-    margin-bottom: 20px;
+.price-card.popular {
+    border: 2px solid #7e5fff;
+    box-shadow: 0 0 20px rgba(120,80,255,0.3);
 }
 
-
-/* ---------------- LOGIN ---------------- */
-
-.login-box {
-    background: rgba(255,255,255,0.05);
-    padding: 40px;
-    width: 380px;
-    margin: auto;
-    border-radius: 18px;
-    margin-top: 80px;
-}
-
-
-/* ---------------- FOOTER ---------------- */
-
-.footer {
-    text-align: center;
-    margin-top: 140px;
-    opacity: 0.6;
-}
-
-.footer-links a {
-    margin: 0px 15px;
-}
-
-.footer-social span {
-    margin: 0px 8px;
-    font-size: 22px;
+/* -------------------------------------------------------
+   DASHBOARD WRAPPER
+------------------------------------------------------- */
+#dashboard {
+    padding-top: 100px;
 }

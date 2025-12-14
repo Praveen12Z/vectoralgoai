@@ -7,6 +7,7 @@ load_css()
 st.markdown(
     """
     <div class="hero">
+
         <div class="hero-left">
             <h1>VectorAlgoAI</h1>
             <p class="hero-sub">
@@ -37,6 +38,7 @@ st.markdown(
                 </ul>
             </div>
         </div>
+
     </div>
     """,
     unsafe_allow_html=True

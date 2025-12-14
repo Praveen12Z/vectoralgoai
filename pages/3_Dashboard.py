@@ -1,4 +1,11 @@
 import streamlit as st
+
+st.set_page_config(layout="wide")
+
+from pages.shared import load_css
+load_css()
+
+import streamlit as st
 from core.strategy_config import parse_strategy_yaml
 from core.data_loader import load_ohlcv
 from core.indicators import apply_all_indicators

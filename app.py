@@ -11,6 +11,6 @@ st.sidebar.markdown("Build. Crash-test. Understand.")
 
 st.sidebar.page_link("pages/1_Home.py", label="🏠 Home")
 st.sidebar.page_link("pages/2_Product.py", label="📦 Product")
-st.sidebar.page_link("pages/3_Dashboard.py", label="📊 Dashboard")
+st.sidebar.page_link("pages/2_Dashboard.py", label="📊 Dashboard")
 
 st.write("Select a page from the sidebar.")

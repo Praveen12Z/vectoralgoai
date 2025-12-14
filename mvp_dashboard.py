@@ -325,64 +325,62 @@ def run_mvp_dashboard():
     # -----------------------------------------------------------------
     # MAIN LAYOUT: LEFT = Strategy & Saved Strategies, RIGHT = Run
     # -----------------------------------------------------------------
-    col1, col2 = st.columns([1, 2])
-    with col1:
-       tab_builder, tab_yaml = st.tabs(
-           ["🧩 Strategy Builder", "📜 Advanced YAML"]
-      )
-       with tab_builder:
-           render_strategy_builder()
-       with tab_yaml:
-           st.text_area("", height=420, key="strategy_yaml")
+  with col1:
+    tab_builder, tab_yaml = st.tabs(
+        ["🧩 Strategy Builder", "📜 Advanced YAML"]
+    )
 
+    with tab_builder:
+        render_strategy_builder()
 
+    with tab_yaml:
+        st.text_area("", height=420, key="strategy_yaml")
 
-        saved_names = ["(none)"] + [s["name"] for s in user_strategies]
-        selected_name = st.selectbox(
-            "Saved strategies",
-            options=saved_names,
-            index=0,
-            key="saved_strategy_select",
-        )
+    st.divider()
 
-        load_col, delete_col = st.columns(2)
-        with load_col:
-            if st.button("⬇️ Load Selected", use_container_width=True):
-                if selected_name != "(none)":
-                    match = next(
-                        (s for s in user_strategies if s["name"] == selected_name),
-                        None,
-                    )
-                    if match is not None:
-                        st.session_state["strategy_yaml"] = match.get("yaml", "")
-                        st.session_state["current_strategy_name"] = match.get("name", "")
-                        st.success(f"Loaded strategy '{selected_name}'.")
-                        st.rerun()
+    saved_names = ["(none)"] + [s["name"] for s in user_strategies]
+    selected_name = st.selectbox(
+        "Saved strategies",
+        options=saved_names,
+        index=0,
+        key="saved_strategy_select",
+    )
 
-        with delete_col:
-            if st.button("🗑️ Delete Selected", use_container_width=True):
-                if selected_name != "(none)":
-                    delete_user_strategy(user_email, selected_name)
+    load_col, delete_col = st.columns(2)
+
+    with load_col:
+        if st.button("⬇️ Load Selected", use_container_width=True):
+            if selected_name != "(none)":
+                match = next(
+                    (s for s in user_strategies if s["name"] == selected_name),
+                    None,
+                )
+                if match:
+                    st.session_state["strategy_yaml"] = match["yaml"]
+                    st.session_state["current_strategy_name"] = match["name"]
                     st.rerun()
 
-        st.text_input(
-            "Strategy name (for saving)",
-            key="current_strategy_name",
-            placeholder="e.g. NAS100 Pullback v5",
+    with delete_col:
+        if st.button("🗑️ Delete Selected", use_container_width=True):
+            if selected_name != "(none)":
+                delete_user_strategy(user_email, selected_name)
+                st.rerun()
+
+    st.text_input(
+        "Strategy name (for saving)",
+        key="current_strategy_name",
+        placeholder="e.g. NAS100 Pullback v5",
+    )
+
+    if st.button("💾 Save / Update Strategy", use_container_width=True):
+        save_user_strategy(
+            user_email,
+            st.session_state["current_strategy_name"],
+            st.session_state["strategy_yaml"],
         )
+        st.rerun()
  
-        st.text_area("", height=400, key="strategy_yaml")
-
-        if st.button("💾 Save / Update Strategy", use_container_width=True):
-            save_user_strategy(
-                user_email,
-                st.session_state["current_strategy_name"],
-                st.session_state["strategy_yaml"],
-            )
-            st.rerun()
-
-
-    with col2:
+with col2:
         st.subheader("")
         run_clicked = st.button("🔴 Run Crash-Test", use_container_width=True)
 

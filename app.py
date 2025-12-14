@@ -1,16 +1,22 @@
 import streamlit as st
+from pages_shared import load_css, top_nav
 
-st.set_page_config(
-    page_title="VectorAlgoAI",
-    layout="wide",
-    initial_sidebar_state="expanded"
+st.set_page_config(page_title="VectorAlgoAI", layout="wide")
+
+load_css()
+
+# Top Navbar (works everywhere)
+top_nav(active="Home")
+
+st.title("🧪 VectorAlgoAI")
+
+st.markdown(
+    """
+    <div class="container">
+      <div class="notice">
+        Use the top navigation to switch pages.
+      </div>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
-
-st.sidebar.title("VectorAlgoAI")
-st.sidebar.markdown("Build. Crash-test. Understand.")
-
-st.sidebar.page_link("Home", label="🏠 Home")
-st.sidebar.page_link("Product", label="📦 Product")
-st.sidebar.page_link("Dashboard", label="📊 Dashboard")
-
-st.write("Select a page from the sidebar.")

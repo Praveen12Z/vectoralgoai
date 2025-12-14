@@ -1,179 +1,194 @@
 import streamlit as st
-from mvp_dashboard import run_mvp_dashboard
+import pandas as pd
+import plotly.express as px
 
-# -----------------------------------------------------------
-# GLOBAL CONFIG
-# -----------------------------------------------------------
-st.set_page_config(page_title="VectorAlgoAI", layout="wide")
+# -----------------------------------------------------
+# LOAD CSS
+# -----------------------------------------------------
+def load_css():
+    with open("styles.css", "r") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# -----------------------------------------------------------
-# CUSTOM CSS
-# -----------------------------------------------------------
-CSS = """
-<style>
-html, body, [class*="css"] {
-    background: #070b14 !important;
-    color: #e8eefc !important;
-}
+load_css()
 
-.topbar {
-    display: flex;
-    gap: 20px;
-    padding: 12px 20px;
-    background: #0b1120;
-    border-bottom: 1px solid rgba(148,163,184,.2);
-}
+# -----------------------------------------------------
+# TOP NAVIGATION BAR (WEBSITE)
+# -----------------------------------------------------
+st.markdown("""
+<div class="top-nav">
+    <div class="nav-left">
+        <span class="brand">⚡ VectorAlgoAI</span>
+    </div>
 
-.topbar button {
-    padding: 10px 18px;
-    border-radius: 8px;
-    background: rgba(148,163,184,.1);
-    color: #e8eefc;
-    border: 1px solid rgba(148,163,184,.2);
-}
+    <div class="nav-right">
+        <a class="nav-item" href="?page=home">Home</a>
+        <a class="nav-item" href="?page=features">Features</a>
+        <a class="nav-item" href="?page=pricing">Pricing</a>
+        <a class="nav-item" href="?page=product">Product</a>
+        <a class="nav-item nav-dashboard" href="?page=dashboard">Dashboard</a>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-.topbar-title {
-    font-size: 24px;
-    font-weight: 800;
-    margin-right: auto;
-}
+# -----------------------------------------------------
+# ROUTING LOGIC
+# -----------------------------------------------------
+page = st.query_params.get("page", ["home"])[0]
 
-.hero {
-    padding: 40px;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #1e293b, #0f172a 60%);
-    box-shadow: 0 20px 60px rgba(0,0,0,.4);
-}
 
-.card {
-    padding: 20px;
-    border-radius: 14px;
-    background: rgba(2,6,23,.5);
-    border: 1px solid rgba(148,163,184,.2);
-    margin-top: 20px;
-}
+# -----------------------------------------------------
+# 3️⃣ LANDING PAGE (HOME)
+# -----------------------------------------------------
+def render_home():
+    st.markdown("""
+    <div class="hero-section">
+        <h1 class="hero-title">Revolutionize your trading workflow</h1>
+        <p class="hero-sub">
+            AI-powered strategy validation, ruthless insights, and real-time risk intelligence.
+        </p>
 
-.cta-primary {
-    padding: 12px 18px;
-    background: #2563eb;
-    color: white !important;
-    border-radius: 10px;
-    text-decoration: none;
-}
-
-.cta-secondary {
-    padding: 12px 18px;
-    background: rgba(148,163,184,.15);
-    border: 1px solid rgba(148,163,184,.25);
-    color: #e8eefc !important;
-    border-radius: 10px;
-    text-decoration: none;
-}
-</style>
-"""
-
-st.markdown(CSS, unsafe_allow_html=True)
-
-# -----------------------------------------------------------
-# NAVIGATION STATE
-# -----------------------------------------------------------
-if "page" not in st.session_state:
-    st.session_state["page"] = "Home"
-
-def go(page):
-    st.session_state["page"] = page
-    st.rerun()
-
-# -----------------------------------------------------------
-# TOP NAV BAR
-# -----------------------------------------------------------
-st.markdown(
-    """
-    <div class="topbar">
-        <div class="topbar-title">VectorAlgoAI</div>
+        <div class="hero-buttons">
+            <a href="?page=dashboard" class="cta-primary">🚀 Open Dashboard</a>
+            <a href="?page=product" class="cta-secondary">📦 Explore Product</a>
         </div>
-    """,
-    unsafe_allow_html=True
-)
-
-col1, col2, col3 = st.columns(3)
-with col1:
-    if st.button("🏠 Home"):
-        go("Home")
-with col2:
-    if st.button("📦 Product"):
-        go("Product")
-with col3:
-    if st.button("📊 Dashboard"):
-        go("Dashboard")
-
-st.write("---")
-
-# -----------------------------------------------------------
-# PAGE LOGIC
-# -----------------------------------------------------------
-
-# HOME PAGE
-if st.session_state["page"] == "Home":
-    st.markdown(
-    """
-    <div class="hero">
-        <h1>Build. Crash-test. Understand.</h1>
-        <p>AI-powered strategy validation for serious traders.</p>
-        <br>
-        <a href="#" onclick="window.location.reload()" class="cta-primary">🚀 Open Dashboard</a>
-        <a href="#" onclick="window.location.reload()" class="cta-secondary">📦 See Product</a>
-    </div>
-
-    <div class="card">
-        <h3>MVP Today</h3>
-        <ul>
-            <li>Strategy Builder (no code)</li>
-            <li>Backtest + Trades + Exports</li>
-            <li>Ruthless Mentor Feedback</li>
-        </ul>
-
-        <h3>Next</h3>
-        <ul>
-            <li>ML Models per instrument</li>
-            <li>XAI Explanations</li>
-            <li>Prop-firm risk layer</li>
-        </ul>
-    </div>
-    """,
-    unsafe_allow_html=True,
-    )
-
-# PRODUCT PAGE
-elif st.session_state["page"] == "Product":
-    st.markdown(
-    """
-    <div class="hero">
-        <h1>What makes VectorAlgoAI different?</h1>
-        <p>We don’t predict blindly — we validate ideas like a quant.</p>
-    </div>
-
-    <div class="card">
-        <h3>No Blind Predictions</h3>
-        <ul>
-            <li>No black-box ML</li>
-            <li>Evidence-based decision layers</li>
-        </ul>
-
-        <h3>Stress-Test Engine</h3>
-        <ul>
-            <li>Real market conditions</li>
-            <li>Failure-mode analysis</li>
-        </ul>
-
-        <h3>XAI (Next Phase)</h3>
-        <ul>
-            <li>Why this signal?</li>
-            <li>When does it fail?</li>
-        </ul>
     </div>
     """, unsafe_allow_html=True)
 
-# DASHBOARD PAGE
-elif st.session_state["page"] == "Dashboard":
-    run_mvp_dashboard()
+    # Features Section
+    st.markdown("""
+    <div class="section-title">Built for real traders</div>
+
+    <div class="feature-grid">
+        <div class="feature-card">🤖 AI Strategy Builder<br><span>No code. Instant YAML.</span></div>
+        <div class="feature-card">📉 Backtesting Engine<br><span>Fast, accurate, powerful.</span></div>
+        <div class="feature-card">💀 Ruthless Mentor<br><span>Unfiltered institutional feedback.</span></div>
+        <div class="feature-card">📊 ML Confidence Scoring<br><span>Coming next...</span></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# -----------------------------------------------------
+# 4️⃣ PRODUCT PAGE
+# -----------------------------------------------------
+def render_product():
+    st.markdown("""
+    <div class="section-title">What makes VectorAlgoAI different?</div>
+
+    <ul class="product-list">
+        <li>We don’t predict blindly — we validate ideas.</li>
+        <li>We explain WHY a strategy succeeds or fails.</li>
+        <li>We prepare traders for prop-firm evaluation reality.</li>
+        <li>We bring ML + XAI to real trading workflows.</li>
+    </ul>
+    """ , unsafe_allow_html=True)
+
+
+# -----------------------------------------------------
+# 5️⃣ PRICING PAGE
+# -----------------------------------------------------
+def render_pricing():
+    st.markdown("""
+    <div class="section-title">Pricing Plans</div>
+
+    <div class="pricing-grid">
+
+        <div class="price-card">
+            <h3>€1 Starter</h3>
+            <p>Entry membership to build confidence</p>
+            <ul>
+                <li>Strategy Builder</li>
+                <li>Backtesting</li>
+                <li>Exports</li>
+            </ul>
+        </div>
+
+        <div class="price-card price-popular">
+            <h3>Pro</h3>
+            <p>For serious weekly iterators</p>
+            <ul>
+                <li>Advanced filters</li>
+                <li>Better reports</li>
+                <li>More instruments</li>
+            </ul>
+        </div>
+
+        <div class="price-card">
+            <h3>Prop / Teams</h3>
+            <p>Risk constraints + team strategy tools</p>
+            <ul>
+                <li>Risk layer</li>
+                <li>Portfolio tools</li>
+                <li>Team library</li>
+            </ul>
+        </div>
+
+    </div>
+    """ , unsafe_allow_html=True)
+
+
+# -----------------------------------------------------
+# 6️⃣ FEATURES PAGE
+# -----------------------------------------------------
+def render_features():
+    st.markdown("""
+    <div class="section-title">Supercharge your workflow</div>
+
+    <div class="code-box">
+    <pre>
+// VectorAlgoAI ML Pipeline
+def train_model(data):
+    clean = preprocess(data)
+    features = engineer(clean)
+    model = fit(features)
+    return model
+    </pre>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# -----------------------------------------------------
+# 7️⃣ DASHBOARD PAGE (Dastone-style)
+# -----------------------------------------------------
+def render_dashboard():
+
+    st.sidebar.markdown("<h2 class='sidebar-title'>📊 Dashboard</h2>", unsafe_allow_html=True)
+
+    st.sidebar.write("Navigation")
+    st.sidebar.button("Overview")
+    st.sidebar.button("Analytics")
+    st.sidebar.button("Trades")
+    st.sidebar.button("Settings")
+
+    st.markdown("<h1 class='dash-title'>Trading Dashboard</h1>", unsafe_allow_html=True)
+
+    # KPI ROW
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Win Rate", "54%", "+3%")
+    col2.metric("Profit Factor", "1.42", "+0.12")
+    col3.metric("Total Trades", "248", "+19")
+
+    # Chart
+    df = pd.DataFrame({
+        "Month": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        "PnL": [1200, 900, 3000, 2800, 4000, 3500]
+    })
+
+    fig = px.line(df, x="Month", y="PnL", title="Equity Curve", markers=True)
+    st.plotly_chart(fig, use_container_width=True)
+
+
+# -----------------------------------------------------
+# PAGE ROUTING EXECUTION
+# -----------------------------------------------------
+if page == "home":
+    render_home()
+elif page == "product":
+    render_product()
+elif page == "pricing":
+    render_pricing()
+elif page == "features":
+    render_features()
+elif page == "dashboard":
+    render_dashboard()
+else:
+    render_home()

@@ -8,7 +8,6 @@ else:
     st.error("❌ styles.css not found!")
  
 from mvp_dashboard import run_mvp_dashboard
-
 st.set_page_config(
     page_title="VectorAlgoAI",
     layout="wide",

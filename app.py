@@ -1,14 +1,23 @@
 import streamlit as st
-import os
+import pathlib
 
-CSS_PATH = "assets/styles.css"
-
-if os.path.exists(CSS_PATH):
-    with open(CSS_PATH) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+CSS = pathlib.Path("assets/styles.css")
+if CSS.exists():
+    st.markdown(f"<style>{CSS.read_text()}</style>", unsafe_allow_html=True)
 else:
-    st.error(f"❌ CSS file not found: {CSS_PATH}")
+    st.error("❌ styles.css not found!")
+ 
+from mvp_dashboard import run_mvp_dashboard
 
+st.set_page_config(
+    page_title="VectorAlgoAI",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
+# Load CSS
+with open("assets/styles.css") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # NAVBAR
 st.markdown("""

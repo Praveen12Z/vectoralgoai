@@ -1,222 +1,210 @@
-/* -------------------------------------------------------
-   GLOBAL THEME
-------------------------------------------------------- */
-body, .main, .stApp {
-    background: #060b1a !important;
-    color: white !important;
-    font-family: 'Inter', sans-serif;
+/* =========================================================
+   GLOBAL THEME — Premium Dark / Navy + Purple Accent
+   Works for Landing Page + Dashboard (Dastone UI Style)
+   VectorAlgoAI — Unified Theme
+   ========================================================= */
+
+:root {
+    --bg-dark: #050B17;
+    --bg-card: #0E1525;
+    --bg-light: #111827;
+    --text-primary: #E5E7EB;
+    --text-secondary: #9CA3AF;
+    --accent: #8B5CF6;
+    --accent2: #6366F1;
+    --accent-glow: rgba(139, 92, 246, 0.35);
+    --border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Remove Streamlit default padding */
-.css-18e3th9 {
-    padding-top: 0 !important;
+/* GLOBAL RESET */
+body, html {
+    background: var(--bg-dark) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
-.block-container {
-    padding-top: 0 !important;
-}
+/* =========================================================
+   NAVBAR (Landing Page)
+   ========================================================= */
 
-/* -------------------------------------------------------
-   NAVBAR
-------------------------------------------------------- */
 .navbar {
     width: 100%;
-    background: rgba(10, 15, 32, 0.7);
-    backdrop-filter: blur(10px);
-    padding: 18px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 999;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 20px 40px;
+    background: rgba(10, 15, 30, 0.75);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.navbar .left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.logo {
-    width: 34px;
-}
-
-.brand {
-    font-size: 20px;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.navbar .center a {
-    margin: 0 18px;
-    color: #c8c9ff;
-    font-size: 15px;
+.navbar a {
     text-decoration: none;
+    font-weight: 500;
+    margin-right: 22px;
+    color: var(--text-secondary);
+}
+
+.navbar a:hover {
+    color: var(--accent);
+}
+
+/* LOGIN BUTTON */
+.nav-login-btn {
+    padding: 10px 22px;
+    background: var(--accent);
+    border-radius: 8px;
+    color: white !important;
+    font-weight: 600;
     transition: 0.2s ease;
 }
 
-.navbar .center a:hover {
-    color: #8aa0ff;
+.nav-login-btn:hover {
+    background: var(--accent2);
+    box-shadow: 0 0 15px var(--accent-glow);
 }
 
-.login-btn {
-    background: linear-gradient(135deg, #6e00ff, #b05cff);
-    padding: 8px 22px;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-}
-
-.login-btn:hover {
-    opacity: 0.85;
-}
-
-/* -------------------------------------------------------
-   HERO SECTION
-------------------------------------------------------- */
-.hero-section {
-    text-align: center;
-    padding: 140px 20px 120px 20px;
-    background: radial-gradient(circle at center, #102040 0%, #060b1a 80%);
-}
-
+/* =========================================================
+   HERO SECTION — AISaaS Style
+   ========================================================= */
 .hero-title {
-    font-size: 62px;
-    font-weight: 900;
-    line-height: 1.1;
-    background: linear-gradient(90deg, #9cc4ff, #c4a2ff);
-    -webkit-background-clip: text;
-    color: transparent;
+    font-size: 58px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: white;
+    text-align: center;
 }
 
-.hero-subtitle {
-    font-size: 18px;
-    color: #c6c6d4;
-    margin-top: 18px;
+.hero-sub {
+    font-size: 20px;
+    text-align: center;
+    margin-top: 10px;
+    color: var(--text-secondary);
 }
 
-/* CTA buttons */
-.hero-buttons {
-    margin-top: 32px;
-}
-
-.hero-buttons .cta-primary,
-.hero-buttons .cta-secondary {
+/* HERO BUTTONS */
+.cta-primary, .cta-secondary {
     padding: 12px 26px;
-    border-radius: 10px;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
+    border-radius: 10px;
+    display: inline-block;
     text-decoration: none;
-    margin: 0 8px;
+    margin-right: 10px;
 }
 
 .cta-primary {
-    background: #7e5fff;
+    background: var(--accent);
     color: white !important;
-    box-shadow: 0 0 20px rgba(130, 80, 255, 0.4);
+    box-shadow: 0 0 18px var(--accent-glow);
 }
 
 .cta-secondary {
-    background: rgba(255,255,255,0.1);
-    color: #dcdcff !important;
-    border: 1px solid rgba(255,255,255,0.2);
+    background: #1F2937;
+    color: var(--text-primary) !important;
 }
 
 .cta-primary:hover {
-    background: #9570ff;
+    background: var(--accent2);
 }
 
 .cta-secondary:hover {
-    background: rgba(255,255,255,0.18);
+    background: #374151;
 }
 
-/* -------------------------------------------------------
-   WHY SECTION
-------------------------------------------------------- */
-.why-section {
-    padding: 120px 20px;
-    text-align: center;
-}
-
-.why-section h2 {
-    font-size: 40px;
-    font-weight: 800;
-    margin-bottom: 40px;
-}
-
+/* =========================================================
+   FEATURE CARDS — AISaaS Style
+   ========================================================= */
 .feature-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 22px;
-    max-width: 1000px;
-    margin: auto;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    max-width: 900px;
+    margin: 40px auto;
 }
 
 .feature-card {
-    background: #11182e;
-    border-radius: 14px;
+    background: var(--bg-card);
     padding: 22px;
-    font-size: 17px;
-    font-weight: 600;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.05);
-    transition: 0.25s ease;
+    transition: 0.2s ease;
+    font-size: 17px;
 }
 
 .feature-card:hover {
-    transform: translateY(-5px);
-    background: #18203d;
+    border-color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
 }
 
-/* -------------------------------------------------------
-   PRICING SECTION
-------------------------------------------------------- */
-.pricing-section {
-    padding: 100px 20px;
+/* =========================================================
+   DASHBOARD (Dastone UI Style)
+   ========================================================= */
+
+.dashboard-container {
+    padding: 25px;
+}
+
+/* DASHBOARD CARDS */
+.dashboard-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 22px;
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
+}
+
+/* KPI VALUE */
+.kpi-value {
+    font-size: 34px;
+    font-weight: 700;
+    color: white;
+}
+
+.kpi-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* TABLES */
+table {
+    background: var(--bg-card) !important;
+    border-radius: 10px;
+    color: var(--text-primary) !important;
+}
+
+thead tr {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+tbody tr:hover {
+    background: rgba(139, 92, 246, 0.12) !important;
+}
+
+/* =========================================================
+   BUTTONS (Unified)
+   ========================================================= */
+.btn-primary {
+    background: var(--accent);
+    color: white !important;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: var(--accent2);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* SECTION TITLES */
+.section-title {
     text-align: center;
-}
-
-.pricing-section h2 {
-    font-size: 40px;
-    font-weight: 800;
-    margin-bottom: 40px;
-}
-
-.pricing-grid {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
-}
-
-.price-card {
-    width: 300px;
-    padding: 30px;
-    background: #11182e;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.08);
-    text-align: left;
-    color: #dcdcff;
-    transition: 0.3s;
-}
-
-.price-card:hover {
-    transform: scale(1.03);
-    background: #18203d;
-}
-
-.price-card.popular {
-    border: 2px solid #7e5fff;
-    box-shadow: 0 0 20px rgba(120,80,255,0.3);
-}
-
-/* -------------------------------------------------------
-   DASHBOARD WRAPPER
-------------------------------------------------------- */
-#dashboard {
-    padding-top: 100px;
+    font-size: 36px;
+    font-weight: 700;
+    margin-top: 60px;
+    margin-bottom: 20px;
 }

@@ -1,3 +1,6 @@
+from mvp_dashboard import run_mvp_dashboard
+
+run_mvp_dashboard()
 import streamlit as st
 
 st.set_page_config(layout="wide")

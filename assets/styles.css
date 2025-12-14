@@ -1,0 +1,32 @@
+/* Global background */
+html, body, [class*="css"] {
+    background-color: #020617;
+    color: #e5e7eb;
+}
+
+/* Headings */
+h1, h2, h3, h4 {
+    color: #e5e7eb;
+    font-weight: 600;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #020617;
+    border-right: 1px solid #1e293b;
+}
+
+/* Buttons */
+button[kind="primary"] {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    border-radius: 6px;
+}
+
+/* Metric cards */
+[data-testid="metric-container"] {
+    background-color: #020617;
+    border: 1px solid #1e293b;
+    padding: 12px;
+    border-radius: 8px;
+}

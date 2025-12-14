@@ -1,3 +1,4 @@
+from massive import RESTClient
 
 streamlit
 pandas

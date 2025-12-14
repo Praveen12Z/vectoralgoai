@@ -1,0 +1,48 @@
+body {
+    background: linear-gradient(135deg, #020617, #020617);
+    color: #e5e7eb;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+    padding: 60px;
+    background: linear-gradient(135deg, #0f172a, #020617);
+    border-radius: 24px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.hero-sub {
+    font-size: 18px;
+    color: #cbd5f5;
+    margin-bottom: 30px;
+}
+
+.hero-cta a {
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.cta-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.cta-secondary {
+    border: 1px solid #475569;
+    color: #cbd5f5;
+}
+
+.hero-card {
+    background: rgba(15, 23, 42, 0.9);
+    padding: 30px;
+    border-radius: 16px;
+}

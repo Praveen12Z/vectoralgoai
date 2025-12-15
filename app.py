@@ -1,100 +1,193 @@
 import streamlit as st
-import os
 
+# -----------------------------
+#  Global page config
+# -----------------------------
 st.set_page_config(page_title="VectorAlgoAI", layout="wide")
 
-# ----------------------------------------
-# Load CSS
-# ----------------------------------------
-def load_css():
-    css_path = "assets/styles.css"
-    if os.path.exists(css_path):
-        with open(css_path) as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-load_css()
+# -----------------------------
+#  CSS THEME (Premium – Dark / Purple)
+# -----------------------------
+page_css = """
+<style>
 
-# ----------------------------------------
+body {
+    background-color: #060b18;
+    color: #e8e8e8;
+    font-family: 'Inter', sans-serif;
+}
+
+/* NAVBAR */
+.navbar {
+    width: 100%;
+    padding: 18px 40px;
+    background: #111827cc;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-left {
+    font-size: 26px;
+    font-weight: 700;
+    color: #7dd3fc;
+}
+.nav-menu a {
+    margin-right: 28px;
+    color: #c3cbe0;
+    text-decoration: none;
+    font-size: 16px;
+}
+.nav-menu a.active {
+    color: #ffffff;
+    font-weight: 700;
+}
+.nav-menu a:hover {
+    color: #ffffff;
+}
+
+/* HERO */
+.hero {
+    padding: 80px 0;
+    text-align: center;
+}
+.hero h1 {
+    font-size: 60px;
+    font-weight: 800;
+    background: linear-gradient(90deg,#a78bfa,#7dd3fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.hero-sub {
+    font-size: 20px;
+    margin-top: -10px;
+    color: #cbd5e1;
+}
+
+/* Buttons */
+.cta {
+    margin-top: 28px;
+}
+.cta a {
+    padding: 12px 26px;
+    border-radius: 10px;
+    margin-right: 12px;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 600;
+}
+.cta-primary {
+    background: #7c3aed;
+    color: white;
+}
+.cta-secondary {
+    background: #1f2937;
+    color: #e2e8f0;
+}
+
+/* FEATURE GRID */
+.feature-section {
+    padding: 40px;
+    margin-top: 30px;
+}
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+.feature-box {
+    background: #111827;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+</style>
+"""
+st.markdown(page_css, unsafe_allow_html=True)
+
+# -----------------------------
+# NAVIGATION SYSTEM
+# -----------------------------
+if "page" not in st.session_state:
+    st.session_state.page = "home"
+
+def goto(page):
+    st.session_state.page = page
+    st.rerun()
+
 # NAVBAR
-# ----------------------------------------
-st.markdown("""
-<div class="navbar">
-    <div class="nav-left">VectorAlgoAI</div>
-    <div class="nav-right">
-        <a href="/" class="nav-item">Home</a>
-        <a href="/Product" class="nav-item">Product</a>
-        <a href="/Dashboard" class="nav-item nav-cta">Dashboard</a>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ----------------------------------------
-# HERO SECTION
-# ----------------------------------------
-st.markdown("""
-<div class="hero-container">
-
-    <div class="hero-left">
-        <h1 class="hero-title">Build. Crash-test. Understand.</h1>
-        <p class="hero-subtitle">AI-powered strategy validation for serious traders.</p>
-
-        <div class="hero-buttons">
-            <a href="/Dashboard" class="hero-btn-primary">🚀 Open Dashboard</a>
-            <a href="/Product" class="hero-btn-secondary">📦 See Product</a>
+st.markdown(
+    f"""
+    <div class="navbar">
+        <div class="nav-left">⚡ VectorAlgoAI</div>
+        <div class="nav-menu">
+            <a href="#" {'class="active"' if st.session_state.page=='home' else ''} onclick="window.location.href='?page=home'">Home</a>
+            <a href="#" {'class="active"' if st.session_state.page=='product' else ''} onclick="window.location.href='?page=product'">Product</a>
+            <a href="#" {'class="active"' if st.session_state.page=='dashboard' else ''} onclick="window.location.href='?page=dashboard'">Dashboard</a>
         </div>
     </div>
+    """,
+    unsafe_allow_html=True
+)
 
-    <div class="hero-right">
-        <div class="hero-card">
-            <h3>MVP Today</h3>
-            <ul>
-                <li>No-code Strategy Builder</li>
-                <li>Backtest + Trades + Exports</li>
-                <li>Ruthless Mentor Feedback</li>
-            </ul>
+# URL read
+query_params = st.experimental_get_query_params()
+if "page" in query_params:
+    st.session_state.page = query_params["page"][0]
 
-            <h3>Next</h3>
-            <ul>
-                <li>ML models per instrument</li>
-                <li>XAI explanations</li>
-                <li>Prop-firm risk layer</li>
-            </ul>
+# -----------------------------
+# PAGE: HOME
+# -----------------------------
+if st.session_state.page == "home":
+    st.markdown("""
+    <div class="hero">
+        <h1>Revolutionize Your Trading Process</h1>
+        <p class="hero-sub">AI-powered strategy validation, ruthless feedback, and ML-enhanced trading insights.</p>
+
+        <div class="cta">
+            <a class="cta-primary" href="?page=dashboard">🚀 Open Dashboard</a>
+            <a class="cta-secondary" href="?page=product">📦 View Product</a>
         </div>
     </div>
+    """, unsafe_allow_html=True)
 
-</div>
-""", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="feature-section">
+        <h2>Why VectorAlgoAI?</h2>
+        <br>
+        <div class="feature-grid">
 
-# ----------------------------------------
-# FEATURES SECTION
-# ----------------------------------------
-st.markdown("""
-<div class="section">
-    <h2 class="section-title">Why VectorAlgoAI?</h2>
+            <div class="feature-box">✨ No-Code Strategy Builder</div>
+            <div class="feature-box">📊 Backtest + Trades + Exports</div>
+            <div class="feature-box">🧠 Ruthless Mentor Feedback</div>
 
-    <div class="features-grid">
-        <div class="feature-box">
-            <h4>No-Code Strategy Builder</h4>
-            <p>Build institutional-style logic without touching code.</p>
-        </div>
+            <div class="feature-box">🤖 ML Models Per Instrument (Phase 2)</div>
+            <div class="feature-box">🔍 XAI Explanations</div>
+            <div class="feature-box">📉 Prop-Firm Risk Layer</div>
 
-        <div class="feature-box">
-            <h4>True Market Backtesting</h4>
-            <p>Execution-quality rules, ATR stops, RR, and more.</p>
-        </div>
-
-        <div class="feature-box">
-            <h4>Ruthless Mentor Feedback</h4>
-            <p>Objective, brutal, PM-level commentary on your strategy.</p>
         </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-# ----------------------------------------
-# FOOTER
-# ----------------------------------------
-st.markdown("""
-<div class="footer">
-    <p>© 2025 VectorAlgoAI — Built by Praveen Kumar • Product by Sandhya Moni</p>
-</div>
-""", unsafe_allow_html=True)
+# -----------------------------
+# PAGE: PRODUCT
+# -----------------------------
+elif st.session_state.page == "product":
+    st.title("📦 Product Overview")
+    st.write("""
+    **What makes VectorAlgoAI different?**
+
+    - We don’t predict blindly — we stress-test ideas  
+    - We explain WHY strategies fail  
+    - We prepare traders for prop-firm evaluations  
+    - ML confidence scoring (Phase 2)  
+    - XAI: Why this signal, why now  
+    """)
+
+# -----------------------------
+# PAGE: DASHBOARD (MVP placeholder)
+# -----------------------------
+elif st.session_state.page == "dashboard":
+    st.title("📊 Strategy Crash-Test Dashboard (MVP)")
+    st.info("Your full MVP with backtesting will load here. Ready to integrate next!")
+

@@ -1,116 +1,100 @@
 import streamlit as st
-import pathlib
+import os
 
-CSS = pathlib.Path("assets/styles.css")
-if CSS.exists():
-    st.markdown(f"<style>{CSS.read_text()}</style>", unsafe_allow_html=True)
-else:
-    st.error("❌ styles.css not found!")
- 
-from mvp_dashboard import run_mvp_dashboard
-st.set_page_config(
-    page_title="VectorAlgoAI",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+st.set_page_config(page_title="VectorAlgoAI", layout="wide")
 
+# ----------------------------------------
 # Load CSS
-with open("assets/styles.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+# ----------------------------------------
+def load_css():
+    css_path = "assets/styles.css"
+    if os.path.exists(css_path):
+        with open(css_path) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+load_css()
 
+# ----------------------------------------
 # NAVBAR
+# ----------------------------------------
 st.markdown("""
 <div class="navbar">
-    <div class="left">
-        <img src="https://i.imgur.com/FRQfZ4P.png" class="logo">
-        <span class="brand">VectorAlgoAI</span>
-    </div>
-    <div class="center">
-        <a href="#home">Home</a>
-        <a href="#why">Why</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#dashboard">Dashboard</a>
-    </div>
-    <div class="right">
-        <button class="login-btn">Login</button>
+    <div class="nav-left">VectorAlgoAI</div>
+    <div class="nav-right">
+        <a href="/" class="nav-item">Home</a>
+        <a href="/Product" class="nav-item">Product</a>
+        <a href="/Dashboard" class="nav-item nav-cta">Dashboard</a>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ---------- HOME SECTION ----------
+# ----------------------------------------
+# HERO SECTION
+# ----------------------------------------
 st.markdown("""
-<div id="home" class="hero-section">
-    <h1 class="hero-title">Revolutionize<br>Your Trading Process</h1>
-    <p class="hero-subtitle">
-        AI-powered strategy validation, ruthless feedback,<br>
-        and ML-enhanced trading insights.
-    </p>
+<div class="hero-container">
 
-    <div class="hero-buttons">
-        <a onclick="window.location.href='#dashboard'" class="cta-primary">🚀 Open Dashboard</a>
-        <a onclick="window.location.href='#why'" class="cta-secondary">📦 View Product</a>
+    <div class="hero-left">
+        <h1 class="hero-title">Build. Crash-test. Understand.</h1>
+        <p class="hero-subtitle">AI-powered strategy validation for serious traders.</p>
+
+        <div class="hero-buttons">
+            <a href="/Dashboard" class="hero-btn-primary">🚀 Open Dashboard</a>
+            <a href="/Product" class="hero-btn-secondary">📦 See Product</a>
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
 
-# ---------- WHY SECTION ----------
-st.markdown("""
-<div id="why" class="why-section">
-    <h2>Why VectorAlgoAI?</h2>
-
-    <div class="feature-grid">
-        <div class="feature-card">⚡ No-Code Strategy Builder</div>
-        <div class="feature-card">📊 Backtest + Trades + Exports</div>
-        <div class="feature-card">🧠 Ruthless Mentor Feedback</div>
-        <div class="feature-card">🤖 ML Models (Phase 2)</div>
-        <div class="feature-card">👁️ XAI Explanations</div>
-        <div class="feature-card">📉 Prop-Firm Risk Layer</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ---------- PRICING ----------
-st.markdown("""
-<div id="pricing" class="pricing-section">
-    <h2>Pricing Plans</h2>
-
-    <div class="pricing-grid">
-        <div class="price-card">
-            <h3>€1 Starter</h3>
-            <p>Perfect for learning & testing.</p>
+    <div class="hero-right">
+        <div class="hero-card">
+            <h3>MVP Today</h3>
             <ul>
-                <li>Strategy Builder</li>
-                <li>Basic Backtest</li>
-                <li>Exports</li>
+                <li>No-code Strategy Builder</li>
+                <li>Backtest + Trades + Exports</li>
+                <li>Ruthless Mentor Feedback</li>
+            </ul>
+
+            <h3>Next</h3>
+            <ul>
+                <li>ML models per instrument</li>
+                <li>XAI explanations</li>
+                <li>Prop-firm risk layer</li>
             </ul>
         </div>
+    </div>
 
-        <div class="price-card popular">
-            <h3>Pro</h3>
-            <p>Best for active traders.</p>
-            <ul>
-                <li>Advanced Indicators</li>
-                <li>Better Reports</li>
-                <li>Multi-Instrument</li>
-            </ul>
+</div>
+""", unsafe_allow_html=True)
+
+# ----------------------------------------
+# FEATURES SECTION
+# ----------------------------------------
+st.markdown("""
+<div class="section">
+    <h2 class="section-title">Why VectorAlgoAI?</h2>
+
+    <div class="features-grid">
+        <div class="feature-box">
+            <h4>No-Code Strategy Builder</h4>
+            <p>Build institutional-style logic without touching code.</p>
         </div>
 
-        <div class="price-card">
-            <h3>Prop / Teams</h3>
-            <p>For serious evaluation.</p>
-            <ul>
-                <li>Risk Layer</li>
-                <li>Portfolio View</li>
-                <li>Team Strategy Library</li>
-            </ul>
+        <div class="feature-box">
+            <h4>True Market Backtesting</h4>
+            <p>Execution-quality rules, ATR stops, RR, and more.</p>
+        </div>
+
+        <div class="feature-box">
+            <h4>Ruthless Mentor Feedback</h4>
+            <p>Objective, brutal, PM-level commentary on your strategy.</p>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ---------- DASHBOARD SECTION ----------
-st.markdown('<div id="dashboard"></div>', unsafe_allow_html=True)
-
-with st.container():
-    st.write("## 📊 VectorAlgoAI – Strategy Crash-Test Dashboard")
-    run_mvp_dashboard()
+# ----------------------------------------
+# FOOTER
+# ----------------------------------------
+st.markdown("""
+<div class="footer">
+    <p>© 2025 VectorAlgoAI — Built by Praveen Kumar • Product by Sandhya Moni</p>
+</div>
+""", unsafe_allow_html=True)

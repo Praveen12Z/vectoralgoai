@@ -1,193 +1,172 @@
 import streamlit as st
 
-# -----------------------------
-#  Global page config
-# -----------------------------
 st.set_page_config(page_title="VectorAlgoAI", layout="wide")
 
-# -----------------------------
-#  CSS THEME (Premium – Dark / Purple)
-# -----------------------------
-page_css = """
+# ----------------------------------------------------------
+# GLOBAL CSS (Premium AISaaS Style)
+# ----------------------------------------------------------
+st.markdown("""
 <style>
 
 body {
-    background-color: #060b18;
-    color: #e8e8e8;
+    background: #040613;
     font-family: 'Inter', sans-serif;
+    color: white;
 }
 
-/* NAVBAR */
 .navbar {
     width: 100%;
     padding: 18px 40px;
-    background: #111827cc;
+    background: #2c3440;
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.nav-left {
-    font-size: 26px;
-    font-weight: 700;
-    color: #7dd3fc;
-}
-.nav-menu a {
-    margin-right: 28px;
-    color: #c3cbe0;
-    text-decoration: none;
-    font-size: 16px;
-}
-.nav-menu a.active {
-    color: #ffffff;
-    font-weight: 700;
-}
-.nav-menu a:hover {
-    color: #ffffff;
+    align-items: center;
+    border-radius: 6px;
 }
 
-/* HERO */
-.hero {
-    padding: 80px 0;
-    text-align: center;
+.nav-left {
+    font-size: 22px;
+    font-weight: 700;
 }
-.hero h1 {
+
+.nav-right a {
+    margin-left: 25px;
+    text-decoration: none;
+    font-size: 16px;
+    color: white;
+    opacity: 0.85;
+}
+
+.nav-right a:hover {
+    opacity: 1;
+}
+
+.hero-title {
     font-size: 60px;
     font-weight: 800;
-    background: linear-gradient(90deg,#a78bfa,#7dd3fc);
+    text-align: center;
+    margin-top: 80px;
+    background: linear-gradient(90deg, #7bb4ff, #c0bfff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
 .hero-sub {
-    font-size: 20px;
+    text-align: center;
+    font-size: 18px;
+    opacity: 0.7;
     margin-top: -10px;
-    color: #cbd5e1;
 }
 
-/* Buttons */
-.cta {
-    margin-top: 28px;
+.hero-buttons {
+    text-align: center;
+    margin-top: 40px;
 }
-.cta a {
-    padding: 12px 26px;
+
+.btn-primary {
+    background: #5b7bff;
+    padding: 14px 26px;
     border-radius: 10px;
-    margin-right: 12px;
-    text-decoration: none;
-    font-size: 17px;
-    font-weight: 600;
-}
-.cta-primary {
-    background: #7c3aed;
     color: white;
-}
-.cta-secondary {
-    background: #1f2937;
-    color: #e2e8f0;
+    margin-right: 15px;
+    text-decoration: none;
 }
 
-/* FEATURE GRID */
-.feature-section {
-    padding: 40px;
-    margin-top: 30px;
+.btn-secondary {
+    background: #3a3f47;
+    padding: 14px 26px;
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
 }
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
+
+.section-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-top: 80px;
+    text-align: center;
 }
+
 .feature-box {
-    background: #111827;
-    padding: 20px;
+    background: #111525;
+    padding: 20px 30px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.06);
+    margin: 10px 0;
 }
 
 </style>
-"""
-st.markdown(page_css, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# -----------------------------
+# ----------------------------------------------------------
 # NAVIGATION SYSTEM
-# -----------------------------
-if "page" not in st.session_state:
-    st.session_state.page = "home"
+# ----------------------------------------------------------
+page = st.experimental_get_query_params().get("page", ["home"])[0]
 
-def goto(page):
-    st.session_state.page = page
-    st.rerun()
+def goto(page_name):
+    st.experimental_set_query_params(page=page_name)
 
-# NAVBAR
-st.markdown(
-    f"""
-    <div class="navbar">
-        <div class="nav-left">⚡ VectorAlgoAI</div>
-        <div class="nav-menu">
-            <a href="#" {'class="active"' if st.session_state.page=='home' else ''} onclick="window.location.href='?page=home'">Home</a>
-            <a href="#" {'class="active"' if st.session_state.page=='product' else ''} onclick="window.location.href='?page=product'">Product</a>
-            <a href="#" {'class="active"' if st.session_state.page=='dashboard' else ''} onclick="window.location.href='?page=dashboard'">Dashboard</a>
-        </div>
+
+# ----------------------------------------------------------
+# NAV BAR
+# ----------------------------------------------------------
+st.markdown("""
+<div class="navbar">
+    <div class="nav-left">⚡ VectorAlgoAI</div>
+    <div class="nav-right">
+        <a href="?page=home">Home</a>
+        <a href="?page=product">Product</a>
+        <a href="?page=dashboard">Dashboard</a>
     </div>
-    """,
-    unsafe_allow_html=True
-)
+</div>
+""", unsafe_allow_html=True)
 
-# URL read
-query_params = st.experimental_get_query_params()
-if "page" in query_params:
-    st.session_state.page = query_params["page"][0]
 
-# -----------------------------
-# PAGE: HOME
-# -----------------------------
-if st.session_state.page == "home":
+# ----------------------------------------------------------
+# HOMEPAGE
+# ----------------------------------------------------------
+if page == "home":
+    st.markdown('<div class="hero-title">Revolutionize Your Trading Process</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-sub">AI-powered strategy validation, ruthless feedback, and ML-enhanced trading insights.</div>', unsafe_allow_html=True)
+
     st.markdown("""
-    <div class="hero">
-        <h1>Revolutionize Your Trading Process</h1>
-        <p class="hero-sub">AI-powered strategy validation, ruthless feedback, and ML-enhanced trading insights.</p>
-
-        <div class="cta">
-            <a class="cta-primary" href="?page=dashboard">🚀 Open Dashboard</a>
-            <a class="cta-secondary" href="?page=product">📦 View Product</a>
-        </div>
+    <div class="hero-buttons">
+        <a class="btn-primary" href="?page=dashboard">🚀 Open Dashboard</a>
+        <a class="btn-secondary" href="?page=product">📦 View Product</a>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="feature-section">
-        <h2>Why VectorAlgoAI?</h2>
-        <br>
-        <div class="feature-grid">
+    st.markdown('<div class="section-title">Why VectorAlgoAI?</div>', unsafe_allow_html=True)
 
-            <div class="feature-box">✨ No-Code Strategy Builder</div>
-            <div class="feature-box">📊 Backtest + Trades + Exports</div>
-            <div class="feature-box">🧠 Ruthless Mentor Feedback</div>
+    cols = st.columns(3)
+    cols[0].markdown('<div class="feature-box">✨ No-Code Strategy Builder</div>', unsafe_allow_html=True)
+    cols[1].markdown('<div class="feature-box">📊 Backtest + Trades + Exports</div>', unsafe_allow_html=True)
+    cols[2].markdown('<div class="feature-box">🧠 Ruthless Mentor Feedback</div>', unsafe_allow_html=True)
 
-            <div class="feature-box">🤖 ML Models Per Instrument (Phase 2)</div>
-            <div class="feature-box">🔍 XAI Explanations</div>
-            <div class="feature-box">📉 Prop-Firm Risk Layer</div>
+    cols = st.columns(3)
+    cols[0].markdown('<div class="feature-box">🤖 ML Models (Phase 2)</div>', unsafe_allow_html=True)
+    cols[1].markdown('<div class="feature-box">🔍 XAI Explanations</div>', unsafe_allow_html=True)
+    cols[2].markdown('<div class="feature-box">🛡 Prop-Firm Risk Layer</div>', unsafe_allow_html=True)
 
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
 
-# -----------------------------
-# PAGE: PRODUCT
-# -----------------------------
-elif st.session_state.page == "product":
+# ----------------------------------------------------------
+# PRODUCT PAGE
+# ----------------------------------------------------------
+elif page == "product":
     st.title("📦 Product Overview")
-    st.write("""
-    **What makes VectorAlgoAI different?**
-
-    - We don’t predict blindly — we stress-test ideas  
-    - We explain WHY strategies fail  
-    - We prepare traders for prop-firm evaluations  
-    - ML confidence scoring (Phase 2)  
-    - XAI: Why this signal, why now  
+    st.write("Why VectorAlgoAI is built different:")
+    st.markdown("""
+    - No-code strategy builder  
+    - Brutal transparency about failing strategies  
+    - Fast backtesting engine  
+    - ML + XAI roadmap  
     """)
 
-# -----------------------------
-# PAGE: DASHBOARD (MVP placeholder)
-# -----------------------------
-elif st.session_state.page == "dashboard":
-    st.title("📊 Strategy Crash-Test Dashboard (MVP)")
-    st.info("Your full MVP with backtesting will load here. Ready to integrate next!")
+
+# ----------------------------------------------------------
+# DASHBOARD (MVP WILL BE ATTACHED NEXT)
+# ----------------------------------------------------------
+elif page == "dashboard":
+    st.title("📊 Dashboard (MVP Loading Soon...)")
+    st.write("This page will host your full Crash-Test MVP.")
+
 
